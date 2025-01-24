@@ -1,11 +1,14 @@
 // import { useState } from 'react'
 // import reactLogo from './assets/react.svg'
 // import viteLogo from '/vite.svg'
-import './App.css'
+// import './App.css'
 import { Route, Routes, useLocation } from 'react-router-dom';
 import Home from './views/Home';
-import LoginEmployee from './views/LoginEmployee';
+import LoginEmployee from './views/RegisterEmployee';
 import NotFount from './views/NotFount';
+import LoginUser from './views/LoginUser';
+import Start from './views/Start';
+import RegisterEmployee from './views/RegisterEmployee';
 
 function App() {
   const location = useLocation();
@@ -14,7 +17,9 @@ function App() {
     <>
      <Routes>
       <Route path='/' element={<Home/>}/>
-      <Route path='/validacion_de_empleado' element={<LoginEmployee/>}/>
+      <Route path='/inicio' element={<Start/>}/>
+      <Route path='/iniciar_sesion' element={<LoginUser/>}/>
+      <Route path='/validacion_de_empleado' element={<RegisterEmployee/>}/>
       <Route path='*' element={<NotFount/>}/>
      </Routes>
     </>
