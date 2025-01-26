@@ -1,0 +1,91 @@
+/* Contenedor principal para centrar contenido */
+.dummy-positioning {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Icono de éxito */
+.success-icon {
+  display: inline-block;
+  width: 8em;
+  height: 8em;
+  font-size: 20px; /* Tamaño base del icono */
+  border-radius: 50%;
+  border: 4px solid #7ddf6d; /* Verde aclarado manualmente */
+  background-color: #fff;
+  position: relative;
+  overflow: hidden;
+  transform-origin: center;
+  animation: showSuccess 180ms ease-in-out;
+  transform: scale(1);
+}
+
+/* Elementos internos del icono */
+.success-icon__tip,
+.success-icon__long {
+  display: block;
+  position: absolute;
+  height: 4px;
+  background-color: #7ddf6d; /* Verde aclarado manualmente */
+  border-radius: 10px;
+  visibility: hidden; /* Por defecto, oculto */
+}
+
+/* La parte corta del check (punta) */
+.success-icon__tip {
+  width: 2.4em;
+  top: 4.3em;
+  left: 1.4em;
+  transform: rotate(45deg);
+  animation: tipInPlace 300ms ease-in-out 180ms forwards;
+}
+
+/* La parte larga del check */
+.success-icon__long {
+  width: 4em;
+  top: 3.7em;
+  left: 2.75em;
+  transform: rotate(-45deg);
+  animation: longInPlace 140ms ease-in-out 440ms forwards;
+}
+
+/* Animaciones */
+@keyframes showSuccess {
+  from {
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+@keyframes tipInPlace {
+  from {
+    width: 0;
+    top: 0;
+    left: -1.6em;
+  }
+  to {
+    width: 2.4em;
+    top: 4.3em;
+    left: 1.4em;
+    visibility: visible;
+  }
+}
+
+@keyframes longInPlace {
+  from {
+    width: 0;
+    top: 5.1em;
+    left: 3.2em;
+  }
+  to {
+    width: 4em;
+    top: 3.7em;
+    left: 2.75em;
+    visibility: visible;
+  }
+}
