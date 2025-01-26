@@ -1,12 +1,17 @@
 import { useEffect, useRef, useState } from "react";
 import Webcam from "react-webcam";
 import validateInputRegisterE from "./helpers/validateInputRegisterE";
-import "./styles/iconsAnimation.css";
-import "./styles/iconSucess.css";
+import "./styles/iconError.css";
+import "./styles/iconSuccess.css";
 
 const RegisterE = () => {
   const initialState = {
     document: "",
+  };
+
+  const initialIsMsg = {
+    type: "",
+    message: "",
   };
 
   const webcamRef = useRef<Webcam>(null);
@@ -18,7 +23,7 @@ const RegisterE = () => {
   const [errors, setErrors] = useState<{ [key: string]: string }>(initialState);
 
   const [isLoading, setIsLoading] = useState(false);
-  const [isMsg, setIsMsg] = useState("Cargando...");
+  const [isMsg, setIsMsg] = useState(initialIsMsg);
 
   const [cameraAvailable, setCameraAvailable] = useState<boolean | null>(null); // Estado para indicar si hay cámaras
 
@@ -69,20 +74,24 @@ const RegisterE = () => {
     capture();
     console.log(userDataInputs);
     setIsLoading(true);
-
+    console.log(isCameraReady);
+    // console.log("imagen", imgSrc);
     if (cameraAvailable && isCameraReady) {
-      setIsMsg("Exito");
+      setIsMsg({ type: "success", message: "Se ha registrado con exito" });
+      setUserDataInputs(initialState);
+      setErrors(initialState);
+      setImgSrc(null);
       setTimeout(() => {
         setTimeout(() => {}, 2000);
         setIsLoading(false);
-        setIsMsg("Cargando...");
+        setIsMsg({ type: "loading", message: "Cargando..." });
       }, 3000);
     } else {
-      setIsMsg("Error");
+      setIsMsg({ type: "error", message: "Conecte el dispositivo y/o espere un momento" });
       setTimeout(() => {
         setTimeout(() => {}, 2000);
         setIsLoading(false);
-        setIsMsg("Cargando...");
+        setIsMsg({ type: "loading", message: "Cargando..." });
       }, 3000);
     }
     console.log(isMsg);
@@ -99,8 +108,8 @@ const RegisterE = () => {
   return (
     <>
       {isLoading ? (
-        <section className="w-[400px] h-[500px] text-center  m-0 flex flex-col items-center justify-start bg-white shadow-xl p-24 rounded-md">
-          {isMsg === "Cargando..." ? (
+        <>
+          {isMsg.type === "loading" ? (
             <div role="status">
               <svg
                 aria-hidden="true"
@@ -118,26 +127,32 @@ const RegisterE = () => {
                   fill="currentFill"
                 />
               </svg>
-              <span className="sr-only">Loading...</span>
+              <span className="sr-only">{isMsg.message}</span>
             </div>
-          ) : isMsg === "Error" ? (
-            <div className="swal2-icon swal2-error swal2-animate-error-icon w-15 h-15" style={{ display: "flex" }}>
-              <span className="swal2-x-mark ">
-                <span className="swal2-x-mark-line-left"></span>
-                <span className="swal2-x-mark-line-right"></span>
-              </span>
-            </div>
-          ) : (
-            <div className="dummy-positioning d-flex">
-              <div className="success-icon">
-                <div className="success-icon__tip"></div>
-                <div className="success-icon__long"></div>
+          ) : isMsg.type === "error" ? (
+            <section className="w-[400px] h-[500px] text-center  m-0 flex flex-col items-center justify-start bg-[#f5ebec] shadow-xl p-24 rounded-md">
+              <div className="w-[400px] h-[500px]  m-0 ">
+                <div className="swal2-icon swal2-error swal2-animate-error-icon" style={{ display: "flex" }}>
+                  <span className="swal2-x-mark ">
+                    <span className="swal2-x-mark-line-left"></span>
+                    <span className="swal2-x-mark-line-right"></span>
+                  </span>
+                </div>
               </div>
-            </div>
+              <h1 className="text-2xl ">{isMsg.message}</h1>
+            </section>
+          ) : (
+            <section className="w-[400px] h-[500px] text-center  m-0 flex flex-col items-center justify-start bg-[#ebf5ee] shadow-xl p-24 rounded-md">
+              <div className="dummy-positioning d-flex">
+                <div className="success-icon">
+                  <div className="success-icon__tip"></div>
+                  <div className="success-icon__long"></div>
+                </div>
+              </div>
+              <h1 className="text-2xl ">{isMsg.message}</h1>
+            </section>
           )}
-
-          <h1 className="text-2xl ">{isMsg}</h1>
-        </section>
+        </>
       ) : (
         <section className="w-[400px] h-[500px] text-center  m-0 flex flex-col items-center justify-start bg-white shadow-xl p-24 rounded-md">
           <h1 className="text-2xl ">Ingrese su numero de documento</h1>
@@ -148,7 +163,9 @@ const RegisterE = () => {
               value={userDataInputs.document}
               onChange={handleChange}
               className={`mt-11 block px-2 h-[35px]  text-black py-2.5  w-[200px]
-                text-sm  bg-transparent border-2  border-gray-300 appearance-none  dark:border-gray-600  focus:outline-none focus:ring-0 focus:border-green-600 peer rounded-lg`}
+                text-sm  bg-transparent border-2  border-gray-300 appearance-none  dark:border-gray-600  focus:outline-none focus:ring-0 focus:border-[#4151cada] peer rounded-lg ${
+                  errors.document ? "focus:border-red-600 dark:border-red-600" : "focus:border-[#4151cada]"
+                }`}
             />
             {errors.document ? <span className="absolute  text-red-500 block w-full text-[12px]">{errors.document}</span> : null}
 
@@ -156,7 +173,7 @@ const RegisterE = () => {
               type="submit"
               // onClick={capture}
               disabled={userDataInputs.document.length === 0 || Object.keys(errors).some((e) => errors[e])}
-              className={` my-11  w-[200px] h-[40px]  hover:bg-[#d0ebdb] hover:shadow-xl text-black font-semibold hover:text-black py-2 px-4 border hover:border-transparent rounded-lg ${
+              className={`text-center my-11  w-[200px] h-[40px] bg-[#d0ebdb]  hover:bg-[#c4ebd4] hover:shadow-xl text-black font-semibold hover:text-black    hover:border-transparent rounded-lg ${
                 userDataInputs.document.length === 0 || Object.keys(errors).some((e) => errors[e])
                   ? "opacity-50 cursor-not-allowed disabled"
                   : ""

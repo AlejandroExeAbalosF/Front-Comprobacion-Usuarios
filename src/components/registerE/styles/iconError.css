@@ -1,18 +1,18 @@
 @-webkit-keyframes swal2-animate-error-x-mark {
   0% {
-    margin-top: 1.625em;
+    margin-top: 2.925em; /* Incrementado un 80% de 1.625em */
     -webkit-transform: scale(0.4);
     transform: scale(0.4);
     opacity: 0;
   }
   50% {
-    margin-top: 1.625em;
+    margin-top: 2.925em; /* Incrementado un 80% de 1.625em */
     -webkit-transform: scale(0.4);
     transform: scale(0.4);
     opacity: 0;
   }
   80% {
-    margin-top: -0.375em;
+    margin-top: -0.675em; /* Incrementado un 80% de -0.375em */
     -webkit-transform: scale(1.15);
     transform: scale(1.15);
   }
@@ -87,12 +87,12 @@
 .swal2-icon {
   position: relative;
   justify-content: center;
-  width: 5em;
-  height: 5em;
+  width: 9em; /* Incrementado un 80% de 5em */
+  height: 9em; /* Incrementado un 80% de 5em */
   margin: 1.25em auto 1.875em;
-  border: 0.25em solid transparent;
+  border: 0.25em solid transparent; /* Incrementado de 0.25em grosor de linea de circulo*/
   border-radius: 50%;
-  line-height: 5em;
+  line-height: 9em; /* Incrementado un 80% de 5em */
   cursor: default;
   box-sizing: content-box;
   -webkit-user-select: none;
@@ -114,19 +114,19 @@
 .swal2-icon.swal2-error [class^="swal2-x-mark-line"] {
   display: block;
   position: absolute;
-  top: 2.3125em;
-  width: 2.9375em;
-  height: 0.3125em;
-  border-radius: 0.125em;
+  top: 4.1625em; /* Incrementado un 80% de 2.3125em */
+  width: 5.2875em; /* Incrementado un 80% de 2.9375em */
+  height: 0.36875em; /* Incrementado de 0.3125em grosor de linea de la X */
+  border-radius: 0.225em; /* Incrementado un 80% de 0.125em */
   background-color: #f27474;
 }
 .swal2-icon.swal2-error [class^="swal2-x-mark-line"][class$="left"] {
-  left: 1.0625em;
+  left: 1.9125em; /* Incrementado un 80% de 1.0625em */
   -webkit-transform: rotate(45deg);
   transform: rotate(45deg);
 }
 .swal2-icon.swal2-error [class^="swal2-x-mark-line"][class$="right"] {
-  right: 1em;
+  right: 1.8em; /* Incrementado un 80% de 1em */
   -webkit-transform: rotate(-45deg);
   transform: rotate(-45deg);
 }
