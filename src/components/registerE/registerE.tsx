@@ -75,18 +75,26 @@ const RegisterE = () => {
     console.log(userDataInputs);
     setIsLoading(true);
     console.log(isCameraReady);
-    // console.log("imagen", imgSrc);
-    if (cameraAvailable && isCameraReady) {
+    // if (webcamRef.current) {
+      
+    //   console.log("Captura:", imageSrc);
+    //   setImgSrc(imageSrc);
+    //   console.log("imagenxxx", imgSrc );
+    // }
+    const imageSrc = webcamRef.current ? webcamRef.current.getScreenshot() : null;
+    console.log("Captura:", imageSrc);
+    if (cameraAvailable && isCameraReady && imageSrc !== null) {
       setIsMsg({ type: "success", message: "Se ha registrado con exito" });
       setUserDataInputs(initialState);
       setErrors(initialState);
-      setImgSrc(null);
+      // setImgSrc(null);
       setTimeout(() => {
         setTimeout(() => {}, 2000);
         setIsLoading(false);
         setIsMsg({ type: "loading", message: "Cargando..." });
       }, 3000);
     } else {
+      // setImgSrc(null);
       setIsMsg({ type: "error", message: "Conecte el dispositivo y/o espere un momento" });
       setTimeout(() => {
         setTimeout(() => {}, 2000);
@@ -100,8 +108,9 @@ const RegisterE = () => {
   const capture = () => {
     if (webcamRef.current) {
       const imageSrc = webcamRef.current.getScreenshot();
-      console.log("Captura:", imageSrc);
+      
       setImgSrc(imageSrc);
+      // console.log("imagenxxx", imgSrc );
     }
   };
 
@@ -130,7 +139,7 @@ const RegisterE = () => {
               <span className="sr-only">{isMsg.message}</span>
             </div>
           ) : isMsg.type === "error" ? (
-            <section className="w-[400px] h-[500px] text-center  m-0 flex flex-col items-center justify-start bg-[#f5ebec] shadow-xl p-24 rounded-md">
+            <section className="w-[400px] h-[500px] text-center  m-0 flex flex-col items-center justify-start  shadow-xl p-24 rounded-md bg-[#f5ebec] ">
               <div className="w-[400px] h-[500px]  m-0 ">
                 <div className="swal2-icon swal2-error swal2-animate-error-icon" style={{ display: "flex" }}>
                   <span className="swal2-x-mark ">
@@ -191,7 +200,7 @@ const RegisterE = () => {
                 facingMode: "user", // Cámara frontal
               }}
               style={{
-                marginTop: "20px",
+                
                 visibility: "hidden", // Oculta el componente pero mantiene el flujo activo
                 position: "absolute", // Opcional: Retira del flujo visual
                 width: "320px", // Mantén un tamaño visible para que el flujo funcione
