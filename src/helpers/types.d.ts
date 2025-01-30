@@ -29,3 +29,5 @@ export interface IRegistration {
     createdAt: string;
   
 }
+
+export interface INotificaciónData extends IUser, IRegistration {}

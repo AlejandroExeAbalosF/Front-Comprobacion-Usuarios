@@ -10,6 +10,7 @@ import LoginUser from "./views/LoginUser";
 import Start from "./views/Start";
 import RegisterEmployee from "./views/RegisterEmployee";
 import Proof from "./views/Proof";
+import { Toaster } from "sonner";
 
 function App() {
   const location = useLocation();
@@ -24,6 +25,7 @@ function App() {
         <Route path="*" element={<NotFount />} />
         <Route path="/prueba" element={<Proof />} />
       </Routes>
+      <Toaster />
     </>
   );
 }
