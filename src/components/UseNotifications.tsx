@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import { INotificaciónData, IRegistration } from "../helpers/types";
 import { toast } from "sonner";
+import dayjs from "dayjs";
+import { BsFillRecordFill } from "react-icons/bs";
+import { formatName } from "../utils/formatName";
 
 const BACK_API_URL = import.meta.env.VITE_LOCAL_API_URL;
 const socket = io(BACK_API_URL); // Asegúrate de que la URL es la correcta
@@ -12,9 +15,20 @@ export function useNotifications() {
   useEffect(() => {
     socket.on("employeeValidated", (data) => {
       if (data.validated) {
-        toast.success(`Empleado ${data.name} ${data.lastName} ha ingresado`);
+        // toast.success(`Empleado ${data.name} ${data.lastName} ha ingresado`);  
+        toast(` ${formatName(data.name,data.lastName)} ha ingresado`, {
+          className: ``,
+          description: `${dayjs(data.entryDate).format("DD/MM/YYYY")} - ${dayjs(data.entryDate).format("HH:mm")}`,
+          duration: 10000,
+          icon: <BsFillRecordFill className="icon-notification w-6 h-6 text-green-500"/>,
+        });
       } else {
-        toast.info(`Empleado ${data.name} ${data.lastName} ha salido`);
+        toast(` ${formatName(data.name,data.lastName)} ha salido`, {
+          className: ``,
+          description: `${dayjs(data.exitDate).format("DD/MM/YYYY")} - ${dayjs(data.exitDate).format("HH:mm")}`,
+          duration: 10000,
+          icon: <BsFillRecordFill className="icon-notification w-6 h-6 text-red-500"/>,
+        });
       }
       console.log("Empleado validado:", data);
       setNotifications(data);

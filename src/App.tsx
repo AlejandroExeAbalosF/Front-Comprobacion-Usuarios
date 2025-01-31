@@ -25,7 +25,7 @@ function App() {
         <Route path="*" element={<NotFount />} />
         <Route path="/prueba" element={<Proof />} />
       </Routes>
-      <Toaster />
+      <Toaster  expand={true} />
     </>
   );
 }

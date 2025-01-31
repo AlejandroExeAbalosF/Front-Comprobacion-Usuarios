@@ -5,6 +5,8 @@ import { toast } from "sonner";
 import { useNotifications } from "../UseNotifications";
 import dayjs from "dayjs";
 import { formatName } from "../../utils/formatName";
+import { BsFillPersonLinesFill } from "react-icons/bs";
+import { BsReverseLayoutTextWindowReverse } from "react-icons/bs";
 
 const RegistrationTable = () => {
   const notifications = useNotifications();
@@ -34,9 +36,12 @@ const RegistrationTable = () => {
       //     (a: IUser, b: IUser) => a.number - b.number,
       //   );
       // console.log(response.data);
-      setUsers(response.data);
+      if(response.data){
+        setUsers(response.data);
 
-      setUsersFilter(response.data);
+        setUsersFilter(response.data);
+      }
+     
       console.log(response.data);
     };
 
@@ -74,13 +79,17 @@ const RegistrationTable = () => {
           });
         }
       }
+      // user?.registrations.length > 0 ? user.registrations[0].validated ?
       if (filterColumn.type === "Estado") {
         if (filterColumn.order) {
           filteredUsers.sort((a: IUser, b: IUser) => {
-            if (String(a.state) < String(b.state)) {
+            console.log("estado de user a", a);
+            const stateA = a.registrations[0].validated ? "a" : a.registrations[0].validated ? "b" : "c";
+            const stateB = b.registrations[0].validated ? "a" : a.registrations[0].validated ? "b" : "c";
+            if (String(stateA) < String(stateB)) {
               return 1;
             }
-            if (String(a.state) > String(b.state)) {
+            if (String(stateA) > String(stateB)) {
               return -1;
             }
             // a debe ser igual b
@@ -88,10 +97,12 @@ const RegistrationTable = () => {
           });
         } else {
           filteredUsers.sort((a: IUser, b: IUser) => {
-            if (String(a.state) < String(b.state)) {
+            const stateA = a.registrations[0].validated ? "a" : a.registrations[0].validated ? "b" : "c";
+            const stateB = b.registrations[0].validated ? "a" : a.registrations[0].validated ? "b" : "c";
+            if (String(stateA) < String(stateB)) {
               return -1;
             }
-            if (String(a.state) > String(b.state)) {
+            if (String(stateA) > String(stateB)) {
               return 1;
             }
             // a debe ser igual b
@@ -164,16 +175,16 @@ const RegistrationTable = () => {
               <dl className="sm:hidden">
                 <dt className="sr-only">Estado</dt>
                 <dd className="">
-                  {user?.state === true ? (
+                  {user?.registrations.length > 0 ? user.registrations[0].validated ? (
                     <div className="ml-14 inline-block  text-center px-2 py-1 font-sans text-xs font-bold text-green-900 uppercase rounded-md select-none whitespace-nowrap bg-green-500/20">
-                      <span className="">Activo</span>
+                      <span className="">Presente</span>
                     </div>
-                  ) : user?.state === false ? (
-                    <div className="relative grid items-center px-2 py-1 font-sans text-xs font-bold text-red-900 uppercase rounded-md select-none whitespace-nowrap bg-red-500/20">
+                  ) :(
+                    <div className="ml-14 inline-block  text-center px-2 py-1 font-sans text-xs font-bold text-blue-900 uppercase rounded-md select-none whitespace-nowrap bg-blue-500/20">
                       <span className="">Inactivo</span>
                     </div>
                   ) : (
-                    <div className="relative grid items-center px-2 py-1 font-sans text-xs font-bold uppercase rounded-md select-none whitespace-nowrap bg-blue-gray-500/20 text-blue-gray-900">
+                    <div className="ml-14 inline-block  text-center px-2 py-1 font-sans text-xs font-bold uppercase rounded-md select-none whitespace-nowrap bg-blue-gray-500/20 text-blue-gray-900">
                       <span className="">No Estado</span>
                     </div>
                   )}
@@ -183,7 +194,7 @@ const RegistrationTable = () => {
           </div>
         </td>
         <td className="hidden lg:table-cell p-4 border-b border-[#cfd8dc]">
-          <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">{user.document}</p>
+          <p className=" font-sans text-sm  flex flex-col items-center lg:items-start antialiased font-normal leading-normal text-blue-gray-900">{user.document}</p>
         </td>
         <td className="hidden lg:table-cell p-4 border-b border-[#cfd8dc]">
           <div className="flex flex-col">
@@ -210,7 +221,7 @@ const RegistrationTable = () => {
                   <span className="">Presente</span>
                 </div>
               ) : (
-                <div className="relative grid items-center px-2 py-1 font-sans text-xs font-bold text-red-900 uppercase rounded-md select-none whitespace-nowrap bg-red-500/20">
+                <div className="relative grid items-center px-2 py-1 font-sans text-xs font-bold text-blue-900 uppercase rounded-md select-none whitespace-nowrap bg-blue-500/20">
                   <span className="">Inactivo</span>
                 </div>
               )
@@ -221,32 +232,42 @@ const RegistrationTable = () => {
             )}
           </div>
         </td>
-        <td className=" sm:table-cell w-[100px] text-center  p-4 border-b border-[#cfd8dc]">
-          <p className="lg:w-auto w-[100px] block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
+        <td className=" sm:table-cell w-[100px] text-center flex flex-col items-center p-4 border-b border-[#cfd8dc]">
+          <p className="lg:w-auto block font-sans text-sm text-center antialiased font-normal leading-normal text-blue-gray-900">
             {user?.registrations.length > 0 && user.registrations[0].entryDate
               ? dayjs(user.registrations[0].entryDate).format("DD/MM/YYYY")
               : "-"}
           </p>
-          <p className="lg:w-auto w-[100px] block font-sans text-sm text-center antialiased font-normal leading-normal text-blue-gray-900">
+          <p className="lg:w-auto  block font-sans text-sm text-center antialiased font-normal leading-normal text-blue-gray-900">
             {user?.registrations.length > 0 && user.registrations[0].entryDate
               ? dayjs(user.registrations[0].entryDate).format("HH:mm")
               : null}
           </p>
         </td>
         <td className=" sm:table-cell w-[100px] text-center  p-4 border-b border-[#cfd8dc]">
-          <p className="lg:w-auto w-[100px] block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
+          <p className="lg:w-auto  block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
             {user?.registrations.length > 0 && user.registrations[0].exitDate
               ? dayjs(user.registrations[0].exitDate).format("DD/MM/YYYY")
               : "-"}
           </p>
-          <p className="lg:w-auto w-[100px] block font-sans text-sm text-center antialiased font-normal leading-normal text-blue-gray-900">
+          <p className="lg:w-auto  block font-sans text-sm text-center antialiased font-normal leading-normal text-blue-gray-900">
             {user?.registrations.length > 0 && user.registrations[0].exitDate
               ? dayjs(user.registrations[0].exitDate).format("HH:mm")
               : null}
           </p>
         </td>
-        <td className="hidden lg:table-cell p-4 border-b border-[#cfd8dc]">
-          <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900"></p>
+        <td className="hidden lg:table-cell lg:flex lg:flex-row items-center p-4 border-b border-[#cfd8dc]">
+          <div className="flex flex-row items-center justify-around ">
+          <BsFillPersonLinesFill className="w-7 h-7 cursor-pointer"/>
+          <BsReverseLayoutTextWindowReverse className="w-6 h-6 cursor-pointer "/>
+          </div>
+          <p  className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
+           
+            
+          </p>
+          <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
+            
+          </p>
         </td>
       </tr>
     );
@@ -264,7 +285,7 @@ const RegistrationTable = () => {
   };
   //!-----------------------------------------------------------
   return (
-    <section className="2xl:w-[1500px]">
+    <section className="2xl:w-[1500px] lg:w-[1200px] md:w-[900px]">
       <h2 className="notificationsext-2xl font-bold flex  items-start">Listado de Empleados</h2>
       <div className="xs:w-4/5 m-auto my-2 relative flex flex-col w-full h-full text-gray-700 bg-white shadow-md rounded-xl bg-clip-border">
         <div className="relative mx-4 mt-4 overflow-hidden text-gray-700 bg-white rounded-none bg-clip-border">
@@ -325,7 +346,7 @@ const RegistrationTable = () => {
                   className=" hidden lg:table-cell  cursor-pointer p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
                   onClick={onClickName}
                 >
-                  <p className=" font-sans text-sm antialiased font-bold  leading-none ">Documento</p>
+                  <p className=" font-sans text-sm text-center lg:text-start  antialiased font-bold  leading-none ">Documento</p>
                 </th>
                 <th className="hidden lg:table-cell p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50">
                   <p className=" font-sans text-sm antialiased font-bold  leading-none ">Contactos</p>
