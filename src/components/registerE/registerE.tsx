@@ -4,6 +4,7 @@ import "./styles/iconError.css";
 import "./styles/iconSuccess.css";
 import axios from "axios";
 import validateInputRegisterE from "./helpers/validateInputRegisterE";
+import Buttonn from "../Buttonn";
 
 const RegisterE = () => {
   const BACK_API_URL = import.meta.env.VITE_LOCAL_API_URL;
@@ -216,6 +217,7 @@ const RegisterE = () => {
           <h1 className="text-2xl ">Ingrese su numero de documento</h1>
           <form onSubmit={handleSubmit} className="relative  group ">
             <input
+              autoComplete="off"
               type="text"
               name="document"
               value={userDataInputs.document}
@@ -227,7 +229,7 @@ const RegisterE = () => {
             />
             {errors.document ? <span className="absolute  text-red-500 block w-full text-[12px]">{errors.document}</span> : null}
 
-            <button
+            {/* <button
               type="submit"
               // onClick={capture}
               disabled={userDataInputs.document.length === 0 || Object.keys(errors).some((e) => errors[e])}
@@ -238,7 +240,12 @@ const RegisterE = () => {
               }`}
             >
               Continuar
-            </button>
+            </button> */}
+            <Buttonn
+              onClick={capture}
+              disabled={userDataInputs.document.length === 0 || Object.keys(errors).some((e) => errors[e])}
+              text="Continuar"
+            />
             <Webcam
               onUserMedia={() => setIsCameraReady(true)} // Marca la cámara como lista
               screenshotFormat="image/png"
@@ -255,7 +262,7 @@ const RegisterE = () => {
                 height: "240px",
               }}
             />
-            {imgSrc && <img src={imgSrc} alt="Captura de pantalla" />}
+            {/* {imgSrc && <img src={imgSrc} alt="Captura de pantalla" />} */}
           </form>
         </section>
       )}

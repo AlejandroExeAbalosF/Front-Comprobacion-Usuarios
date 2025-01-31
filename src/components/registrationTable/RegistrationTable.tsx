@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { IUser } from "../../helpers/types";
 import { toast } from "sonner";
 import { useNotifications } from "../UseNotifications";
+import dayjs from "dayjs";
+import { formatName } from "../../utils/formatName";
 
 const RegistrationTable = () => {
   const notifications = useNotifications();
@@ -15,9 +17,9 @@ const RegistrationTable = () => {
     order: true,
   });
 
-  useEffect(() => {
-    console.log("noti", notifications);
-  }, [notifications]);
+  // useEffect(() => {
+  //   console.log("noti", notifications);
+  // }, [notifications]);
   useEffect(() => {
     const fetchUsers = async () => {
       const storedToken = await localStorage.getItem("token");
@@ -154,7 +156,7 @@ const RegistrationTable = () => {
             />
             <div className="flex flex-col w-[150px] sm:w-[250px]  lg:w-full">
               <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900 overflow-hidden text-ellipsis">
-                {user.name} {user.lastName}
+                {formatName(user.name, user.lastName)}
               </p>
               <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900 opacity-70  truncate">
                 {user.email}
@@ -192,9 +194,15 @@ const RegistrationTable = () => {
           </div>
         </td>
         <td className="hidden lg:table-cell p-4 border-b border-[#cfd8dc]">
-          <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900"></p>
+          <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
+            {user?.registrations.length > 0 && user.registrations[0].entryCapture ? (
+              <img src={`data:image/png;base64,${user.registrations[0].entryCapture.data.toString("base64")}`}></img>
+            ) : (
+              "No"
+            )}
+          </p>
         </td>
-        <td className="hidden sm:table-cell p-4 border-b border-[#cfd8dc]">
+        <td className="hidden sm:table-cell w-[100px] text-center p-4 border-b border-[#cfd8dc]">
           <div className="w-max">
             {user?.registrations.length > 0 ? (
               user.registrations[0].validated ? (
@@ -213,14 +221,28 @@ const RegistrationTable = () => {
             )}
           </div>
         </td>
-        <td className=" sm:table-cell   p-4 border-b border-[#cfd8dc]">
+        <td className=" sm:table-cell w-[100px] text-center  p-4 border-b border-[#cfd8dc]">
           <p className="lg:w-auto w-[100px] block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-            {user?.registrations.length > 0 ? user.registrations[0].entryDate : "-"}
+            {user?.registrations.length > 0 && user.registrations[0].entryDate
+              ? dayjs(user.registrations[0].entryDate).format("DD/MM/YYYY")
+              : "-"}
+          </p>
+          <p className="lg:w-auto w-[100px] block font-sans text-sm text-center antialiased font-normal leading-normal text-blue-gray-900">
+            {user?.registrations.length > 0 && user.registrations[0].entryDate
+              ? dayjs(user.registrations[0].entryDate).format("HH:mm")
+              : null}
           </p>
         </td>
-        <td className=" sm:table-cell   p-4 border-b border-[#cfd8dc]">
+        <td className=" sm:table-cell w-[100px] text-center  p-4 border-b border-[#cfd8dc]">
           <p className="lg:w-auto w-[100px] block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-            {user?.registrations.length > 0 ? user.registrations[0].exitDate : "-"}
+            {user?.registrations.length > 0 && user.registrations[0].exitDate
+              ? dayjs(user.registrations[0].exitDate).format("DD/MM/YYYY")
+              : "-"}
+          </p>
+          <p className="lg:w-auto w-[100px] block font-sans text-sm text-center antialiased font-normal leading-normal text-blue-gray-900">
+            {user?.registrations.length > 0 && user.registrations[0].exitDate
+              ? dayjs(user.registrations[0].exitDate).format("HH:mm")
+              : null}
           </p>
         </td>
         <td className="hidden lg:table-cell p-4 border-b border-[#cfd8dc]">
@@ -276,11 +298,11 @@ const RegistrationTable = () => {
                     </svg>
                   </div>
                   <input
-                    className="peer h-full w-full rounded-[7px] border border-blue-gray-200 border-t-transparent bg-transparent px-3 py-2.5 !pr-9 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 focus:border-2 focus:border-gray-900 focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
+                    className="peer h-full w-full rounded-[7px] border border-[#E2E8F0] border-t-transparent bg-transparent px-3 py-2.5 !pr-9 font-sans text-sm font-normal text-[#2B4B5B] outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-[#E2E8F0] placeholder-shown:border-t-[#E2E8F0] focus:border-2 focus:border-gray-900 focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-[#F8FAFC]"
                     placeholder=" "
                     onChange={(e) => setSearchTerm(e.target.value)}
                   />
-                  <label className="before:content[' '] after:content[' '] pointer-events-none absolute left-0 -top-1.5 flex h-full w-full select-none !overflow-visible truncate text-[11px] font-normal leading-tight text-gray-500 transition-all before:pointer-events-none before:mt-[6.5px] before:mr-1 before:box-border before:block before:h-1.5 before:w-2.5 before:rounded-tl-md before:border-t before:border-l before:border-blue-gray-200 before:transition-all after:pointer-events-none after:mt-[6.5px] after:ml-1 after:box-border after:block after:h-1.5 after:w-2.5 after:flex-grow after:rounded-tr-md after:border-t after:border-r after:border-blue-gray-200 after:transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[3.75] peer-placeholder-shown:text-blue-gray-500 peer-placeholder-shown:before:border-transparent peer-placeholder-shown:after:border-transparent peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-gray-900 peer-focus:before:border-t-2 peer-focus:before:border-l-2 peer-focus:before:!border-gray-900 peer-focus:after:border-t-2 peer-focus:after:border-r-2 peer-focus:after:!border-gray-900 peer-disabled:text-transparent peer-disabled:before:border-transparent peer-disabled:after:border-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
+                  <label className="before:content[' '] after:content[' '] pointer-events-none absolute left-0 -top-1.5 flex h-full w-full select-none !overflow-visible truncate text-[11px] font-normal leading-tight text-gray-500 transition-all before:pointer-events-none before:mt-[6.5px] before:mr-1 before:box-border before:block before:h-1.5 before:w-2.5 before:rounded-tl-md before:border-t before:border-l before:border-[#E2E8F0] before:transition-all after:pointer-events-none after:mt-[6.5px] after:ml-1 after:box-border after:block after:h-1.5 after:w-2.5 after:flex-grow after:rounded-tr-md after:border-t after:border-r after:border-[#E2E8F0] after:transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[3.75] peer-placeholder-shown:text-blue-gray-500 peer-placeholder-shown:before:border-transparent peer-placeholder-shown:after:border-transparent peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-gray-900 peer-focus:before:border-t-2 peer-focus:before:border-l-2 peer-focus:before:!border-gray-900 peer-focus:after:border-t-2 peer-focus:after:border-r-2 peer-focus:after:!border-gray-900 peer-disabled:text-transparent peer-disabled:before:border-transparent peer-disabled:after:border-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
                     Buscar
                   </label>
                 </div>
@@ -312,25 +334,25 @@ const RegistrationTable = () => {
                   className="hidden lg:table-cell cursor-pointer p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
                   onClick={onClickName}
                 >
-                  <p className=" block font-sans text-sm antialiased font-bold  leading-none ">Rol</p>
+                  <p className=" block font-sans text-sm antialiased font-bold  leading-none ">Funcion</p>
                 </th>
                 <th
                   className="hidden sm:table-cell cursor-pointer p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
                   onClick={onClickName}
                 >
-                  <p className="block font-sans text-sm antialiased font-bold  leading-none">Estado</p>
+                  <p className="block font-sans text-sm text-center antialiased font-bold  leading-none">Estado</p>
                 </th>
                 <th
                   className=" sm:table-cell cursor-pointer  p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
                   onClick={onClickName}
                 >
-                  <p className="block font-sans text-sm antialiased font-bold  leading-none">Ingreso</p>
+                  <p className="block font-sans text-sm text-center antialiased font-bold  leading-none">Ingreso</p>
                 </th>
                 <th
                   className=" sm:table-cell cursor-pointer  p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
                   onClick={onClickName}
                 >
-                  <p className="block font-sans text-sm antialiased font-bold  leading-none">Salida</p>
+                  <p className="block font-sans text-sm text-center antialiased font-bold  leading-none">Salida</p>
                 </th>
                 <th className="hidden lg:table-cell p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50">
                   <p className="block font-sans text-sm antialiased font-bold  leading-none"></p>

@@ -1,4 +1,4 @@
 export const dataInputs = [
-    { name: 'username', placeholder: 'Ingrese su Usuario', type: 'text' },
-    { name: 'password', placeholder: 'Ingrese su Contraseña', type: 'password' },
-]
+  { name: "username", placeholder: "Ingrese Usuario", type: "text" },
+  { name: "password", placeholder: "Ingrese Contraseña", type: "password" },
+];

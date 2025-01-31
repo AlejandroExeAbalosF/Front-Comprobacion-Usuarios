@@ -3,7 +3,7 @@ import RegistrationTable from "../components/registrationTable/RegistrationTable
 import { useNotifications } from "../components/UseNotifications";
 
 export default function Start() {
-  const notifications = useNotifications();
+  // const notifications = useNotifications();
   // toast(notifications);
   return (
     <>
