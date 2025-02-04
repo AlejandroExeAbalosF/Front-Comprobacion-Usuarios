@@ -14,20 +14,20 @@ export function useNotifications() {
 
   useEffect(() => {
     socket.on("employeeValidated", (data) => {
-      if (data.validated) {
-        // toast.success(`Empleado ${data.name} ${data.lastName} ha ingresado`);  
-        toast(` ${formatName(data.name,data.lastName)} ha ingresado`, {
+      if (data.validated === "present") {
+        // toast.success(`Empleado ${data.name} ${data.lastName} ha ingresado`);
+        toast(` ${formatName(data.name, data.lastName)} ha ingresado`, {
           className: ``,
           description: `${dayjs(data.entryDate).format("DD/MM/YYYY")} - ${dayjs(data.entryDate).format("HH:mm")}`,
           duration: 10000,
-          icon: <BsFillRecordFill className="icon-notification w-6 h-6 text-green-500"/>,
+          icon: <BsFillRecordFill className="icon-notification w-6 h-6 text-green-500" />,
         });
       } else {
-        toast(` ${formatName(data.name,data.lastName)} ha salido`, {
+        toast(` ${formatName(data.name, data.lastName)} ha salido`, {
           className: ``,
           description: `${dayjs(data.exitDate).format("DD/MM/YYYY")} - ${dayjs(data.exitDate).format("HH:mm")}`,
           duration: 10000,
-          icon: <BsFillRecordFill className="icon-notification w-6 h-6 text-red-500"/>,
+          icon: <BsFillRecordFill className="icon-notification w-6 h-6 text-red-500" />,
         });
       }
       console.log("Empleado validado:", data);

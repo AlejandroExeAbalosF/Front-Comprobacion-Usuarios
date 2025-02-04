@@ -16,11 +16,11 @@ export interface IUser {
     image?: string;
     state?: boolean;
     createdAt?: string;
-    registrations: [IRegistrations];
+    registrations: IRegistrations[];
   }
 export interface IRegistration {
     id: string;
-    validated: boolean;
+    validated: string;
     state: boolean;
     entryCapture?: string;
     exitCapture?: string;
@@ -30,4 +30,8 @@ export interface IRegistration {
   
 }
 
-export interface INotificaciónData extends IUser, IRegistration {}
+export interface INotificaciónData extends IUser, IRegistration {
+  idR: string;
+  date: string;
+  capture: string;
+}

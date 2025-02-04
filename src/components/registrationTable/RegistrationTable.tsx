@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { IUser } from "../../helpers/types";
+import { IRegistration, IUser } from "../../helpers/types";
 import { toast } from "sonner";
 import { useNotifications } from "../UseNotifications";
 import dayjs from "dayjs";
@@ -12,147 +12,283 @@ const RegistrationTable = () => {
   const notifications = useNotifications();
   const BACK_API_URL = import.meta.env.VITE_LOCAL_API_URL;
   const [Users, setUsers] = useState<IUser[]>([]);
-  const [usersFilter, setUsersFilter] = useState<IUser[]>(Users); // [usersFilter]
+  const [usersFilter, setUsersFilter] = useState<IUser[]>([]); // [usersFilter]
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [filterColumn, setFilterColumn] = useState({
-    type: "",
-    order: true,
+    type: "Empleados",
+    order: false,
   });
 
-  // useEffect(() => {
-  //   console.log("noti", notifications);
-  // }, [notifications]);
+  //----------
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+  const [userDetails, setUserDetails] = useState<IRegistration[] | null>([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // Función para abrir el modal y cargar datos
+  const handleOpenModalRegister = (userId: string) => {
+    setSelectedUserId(userId);
+    setIsModalOpen(true);
+  };
+
+  // Efecto para cargar datos del usuario cuando el modal se abre
+  useEffect(() => {
+    if (isModalOpen && selectedUserId !== null) {
+      axios
+        .get(`${BACK_API_URL}/registrations/user/${selectedUserId}`, {
+          withCredentials: true,
+        })
+        .then(({ data }) => {
+          setUserDetails(data);
+          console.log(data);
+        })
+        .catch((error) => {
+          toast.error(error.response.data.message);
+        });
+    }
+  }, [isModalOpen, selectedUserId]);
+
+  //-----------
+  useEffect(() => {
+    // console.log("notifications", notifications);
+    if (notifications) {
+      setUsers((prevUsers) =>
+        prevUsers.map((user) => {
+          if (user.id === notifications?.id) {
+            // Verificamos si el usuario ya tiene registros
+            const updatedRegistrations = user.registrations?.length
+              ? user.registrations.map((registration) => {
+                  if (registration.id === notifications.idR) {
+                    return {
+                      ...registration,
+                      validated: notifications.validated,
+                      entryDate:
+                        registration.entryDate || (notifications.validated === "present" ? notifications.date : undefined),
+                      entryCapture:
+                        registration.entryCapture || (notifications.validated === "present" ? notifications.capture : undefined),
+                      exitDate: notifications.validated === "idle" ? notifications.date : registration.exitDate,
+                      exitCapture: notifications.validated === "idle" ? notifications.capture : registration.exitCapture,
+                    };
+                  }
+                  return registration;
+                })
+              : [
+                  {
+                    id: notifications.idR,
+                    validated: notifications.validated,
+                    entryDate: notifications.validated === "present" ? notifications.date : undefined,
+                    entryCapture: notifications.validated === "present" ? notifications.capture : undefined,
+                    exitDate: notifications.validated === "idle" ? notifications.date : undefined,
+                    exitCapture: notifications.validated === "idle" ? notifications.capture : undefined,
+                  },
+                ];
+
+            return { ...user, registrations: updatedRegistrations };
+          }
+          return user;
+        })
+      );
+    }
+    // console.log("userN", userN);
+  }, [notifications]);
   useEffect(() => {
     const fetchUsers = async () => {
       const storedToken = await localStorage.getItem("token");
       // setToken(storedToken);
 
-      const response = await axios.get(`${BACK_API_URL}/users/users_with_last_registration`, {
-        headers: { Authorization: `Bearer ${storedToken}` },
-      });
+      try {
+        const response = await axios.get(`${BACK_API_URL}/users/users_with_last_registration`, {
+          withCredentials: true, // Envia la cookie HTTPOnly automáticamente
+        });
+        // console.log(response.data);
+        if (response.data) {
+          setUsers(response.data);
 
+          setUsersFilter(response.data);
+        }
+      } catch (error) {
+        toast.error("Error al cargar Empleados.");
+      }
       // Ordenar el array de propiedades por el número de casa de forma ascendente
       //   const sortedUsers = response.data.sort(
       //     (a: IUser, b: IUser) => a.number - b.number,
       //   );
-      // console.log(response.data);
-      if(response.data){
-        setUsers(response.data);
 
-        setUsersFilter(response.data);
-      }
-     
-      console.log(response.data);
+      // console.log(response.data);
     };
 
     fetchUsers();
   }, [BACK_API_URL]);
 
-  useEffect(() => {
-    const checkToken = async () => {
-      const filteredUsers = [...Users].filter((userData) => {
-        const searchString = `${userData.name} ${userData.lastName} ${userData.document} ${userData.email}`;
-        return searchString.toLowerCase().includes(searchTerm.toLowerCase());
-      });
-      if (filterColumn.type === "Propietario") {
-        if (filterColumn.order) {
-          filteredUsers.sort((a: IUser, b: IUser) => {
-            if (a.name < b.name) {
-              return 1;
-            }
-            if (a.name > b.name) {
-              return -1;
-            }
-            // a debe ser igual b
-            return 0;
-          });
-        } else {
-          filteredUsers.sort((a: IUser, b: IUser) => {
-            if (a.name < b.name) {
-              return -1;
-            }
-            if (a.name > b.name) {
-              return 1;
-            }
-            // a debe ser igual b
-            return 0;
-          });
-        }
-      }
-      // user?.registrations.length > 0 ? user.registrations[0].validated ?
-      if (filterColumn.type === "Estado") {
-        if (filterColumn.order) {
-          filteredUsers.sort((a: IUser, b: IUser) => {
-            console.log("estado de user a", a);
-            const stateA = a.registrations[0].validated ? "a" : a.registrations[0].validated ? "b" : "c";
-            const stateB = b.registrations[0].validated ? "a" : a.registrations[0].validated ? "b" : "c";
-            if (String(stateA) < String(stateB)) {
-              return 1;
-            }
-            if (String(stateA) > String(stateB)) {
-              return -1;
-            }
-            // a debe ser igual b
-            return 0;
-          });
-        } else {
-          filteredUsers.sort((a: IUser, b: IUser) => {
-            const stateA = a.registrations[0].validated ? "a" : a.registrations[0].validated ? "b" : "c";
-            const stateB = b.registrations[0].validated ? "a" : a.registrations[0].validated ? "b" : "c";
-            if (String(stateA) < String(stateB)) {
-              return -1;
-            }
-            if (String(stateA) > String(stateB)) {
-              return 1;
-            }
-            // a debe ser igual b
-            return 0;
-          });
-        }
-      }
+  // useEffect(() => {
+  //   const checkToken = async () => {
+  //     const filteredUsers = [...Users].filter((userData) => {
+  //       const searchString = `${userData.name} ${userData.lastName} ${userData.document} ${userData.email}`;
+  //       return searchString.toLowerCase().includes(searchTerm.toLowerCase());
+  //     });
+  //     if (filterColumn.type === "Empleados") {
+  //       if (filterColumn.order) {
+  //         filteredUsers.sort((a: IUser, b: IUser) => {
+  //           if (a.name < b.name) {
+  //             return 1;
+  //           }
+  //           if (a.name > b.name) {
+  //             return -1;
+  //           }
+  //           // a debe ser igual b
+  //           return 0;
+  //         });
+  //       } else {
+  //         filteredUsers.sort((a: IUser, b: IUser) => {
+  //           if (a.name < b.name) {
+  //             return -1;
+  //           }
+  //           if (a.name > b.name) {
+  //             return 1;
+  //           }
+  //           // a debe ser igual b
+  //           return 0;
+  //         });
+  //       }
+  //     }
+  //     if (filterColumn.type === "Ingreso") {
+  //       if (filterColumn.order) {
+  //         filteredUsers.sort((a: IUser, b: IUser) => {
+  //           // Si ambos usuarios tienen registros, comparamos las fechas
+  //           if (a.registrations.length > 0 && b.registrations.length > 0) {
+  //             const dateA = new Date(a.registrations[0].entryDate);
+  //             const dateB = new Date(b.registrations[0].entryDate);
+  //             return dateB.getTime() - dateA.getTime(); // Orden descendente
+  //           }
 
-      if (filterColumn.type === "Documento") {
-        if (filterColumn.order) {
-          filteredUsers.sort((a: IUser, b: IUser) => a.document - b.document);
-        } else {
-          filteredUsers.sort((a: IUser, b: IUser) => b.document - a.document);
-        }
-      }
-      // if (filterColumn.type === "Ult. Login") {
-      //   if (filterColumn.order) {
-      //     filteredUsers.sort((a: IUser, b: IUser) => new Date(a.lastLogin).getTime() - new Date(b.lastLogin).getTime());
-      //   } else {
-      //     filteredUsers.sort((a: IUser, b: IUser) => new Date(b.lastLogin).getTime() - new Date(a.lastLogin).getTime());
-      //   }
-      // }
-      if (filterColumn.type === "Rol") {
-        if (filterColumn.order) {
-          filteredUsers.sort((a: IUser, b: IUser) => {
-            if (a.rol < b.rol) {
-              return 1;
-            }
-            if (a.rol > b.rol) {
-              return -1;
-            }
-            // a debe ser igual b
-            return 0;
-          });
-        } else {
-          filteredUsers.sort((a: IUser, b: IUser) => {
-            if (a.rol < b.rol) {
-              return -1;
-            }
-            if (a.rol > b.rol) {
-              return 1;
-            }
-            // a debe ser igual b
-            return 0;
-          });
-        }
-      }
-      setUsersFilter(filteredUsers);
+  //           // Si uno de los usuarios no tiene registros, lo coloca al final (o al principio si prefieres)
+  //           if (a.registrations.length === 0 && b.registrations.length > 0) {
+  //             return 1; // a va al final
+  //           }
+  //           if (b.registrations.length === 0 && a.registrations.length > 0) {
+  //             return -1; // b va al final
+  //           }
+
+  //           // Si ambos no tienen registros, no importa el orden
+  //           return 0;
+  //         });
+  //       } else {
+  //         filteredUsers.sort((a: IUser, b: IUser) => {
+  //           // Si ambos usuarios tienen registros, comparamos las fechas
+  //           if (a.registrations.length > 0 && b.registrations.length > 0) {
+  //             const dateA = new Date(a.registrations[0].entryDate);
+  //             const dateB = new Date(b.registrations[0].entryDate);
+  //             return dateA.getTime() - dateB.getTime(); // Orden descendente
+  //           }
+
+  //           // Si uno de los usuarios no tiene registros, lo coloca al final (o al principio si prefieres)
+  //           if (a.registrations.length === 0 && b.registrations.length > 0) {
+  //             return 1; // a va al final
+  //           }
+  //           if (b.registrations.length === 0 && a.registrations.length > 0) {
+  //             return -1; // b va al final
+  //           }
+
+  //           // Si ambos no tienen registros, no importa el orden
+  //           return 0;
+  //         });
+  //       }
+  //     }
+  //     // user?.registrations.length > 0 ? user.registrations[0].validated ?
+  //     if (filterColumn.type === "Estado") {
+  //       if (filterColumn.order) {
+  //         const priority = { present: 1, idle: 2, absent: 3 };
+  //         filteredUsers.sort((a: IUser, b: IUser) => {
+  //           // Obtener el valor de validated de cada usuario
+  //           const validatedA = a.registrations.length > 0 ? a.registrations[0].validated : "absent"; // Si no tiene registro, lo tratamos como "absent"
+  //           const validatedB = b.registrations.length > 0 ? b.registrations[0].validated : "absent";
+
+  //           // Comparar según el nivel de prioridad definido
+  //           return priority[validatedA] - priority[validatedB];
+  //         });
+  //       } else {
+  //         const priority = { present: 1, idle: 2, absent: 3 };
+  //         filteredUsers.sort((a: IUser, b: IUser) => {
+  //           // Obtener el valor de validated de cada usuario
+  //           const validatedA = a.registrations.length > 0 ? a.registrations[0].validated : "absent"; // Si no tiene registro, lo tratamos como "absent"
+  //           const validatedB = b.registrations.length > 0 ? b.registrations[0].validated : "absent";
+
+  //           // Comparar según el nivel de prioridad definido
+  //           return priority[validatedB] - priority[validatedA];
+  //         });
+  //       }
+  //     }
+
+  //     if (filterColumn.type === "Documento") {
+  //       if (filterColumn.order) {
+  //         filteredUsers.sort((a: IUser, b: IUser) => a.document - b.document);
+  //       } else {
+  //         filteredUsers.sort((a: IUser, b: IUser) => b.document - a.document);
+  //       }
+  //     }
+  //     // if (filterColumn.type === "Ult. Login") {
+  //     //   if (filterColumn.order) {
+  //     //     filteredUsers.sort((a: IUser, b: IUser) => new Date(a.lastLogin).getTime() - new Date(b.lastLogin).getTime());
+  //     //   } else {
+  //     //     filteredUsers.sort((a: IUser, b: IUser) => new Date(b.lastLogin).getTime() - new Date(a.lastLogin).getTime());
+  //     //   }
+  //     // }
+  //     if (filterColumn.type === "Rol") {
+  //       if (filterColumn.order) {
+  //         filteredUsers.sort((a: IUser, b: IUser) => {
+  //           if (a.rol < b.rol) {
+  //             return 1;
+  //           }
+  //           if (a.rol > b.rol) {
+  //             return -1;
+  //           }
+  //           // a debe ser igual b
+  //           return 0;
+  //         });
+  //       } else {
+  //         filteredUsers.sort((a: IUser, b: IUser) => {
+  //           if (a.rol < b.rol) {
+  //             return -1;
+  //           }
+  //           if (a.rol > b.rol) {
+  //             return 1;
+  //           }
+  //           // a debe ser igual b
+  //           return 0;
+  //         });
+  //       }
+  //     }
+  //     setUsersFilter(filteredUsers);
+  //   };
+  //   checkToken();
+  // }, [searchTerm, filterColumn, Users]);
+
+  useEffect(() => {
+    const filteredUsers = Users.filter((userData) =>
+      `${userData.name} ${userData.lastName} ${userData.document} ${userData.email}`
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase())
+    );
+
+    const sortFunctions = {
+      Empleados: (a: IUser, b: IUser) => (filterColumn.order ? b.name.localeCompare(a.name) : a.name.localeCompare(b.name)),
+      Ingreso: (a: IUser, b: IUser) => {
+        const dateA = a.registrations[0]?.entryDate ? new Date(a.registrations[0].entryDate).getTime() : 0;
+        const dateB = b.registrations[0]?.entryDate ? new Date(b.registrations[0].entryDate).getTime() : 0;
+        return filterColumn.order ? dateB - dateA : dateA - dateB;
+      },
+      Estado: (a: IUser, b: IUser) => {
+        const priority = { present: 1, idle: 2, absent: 3 };
+        const validatedA = a.registrations[0]?.validated || "absent";
+        const validatedB = b.registrations[0]?.validated || "absent";
+        return filterColumn.order ? priority[validatedA] - priority[validatedB] : priority[validatedB] - priority[validatedA];
+      },
+      Documento: (a: IUser, b: IUser) => (filterColumn.order ? a.document - b.document : b.document - a.document),
+      Rol: (a: IUser, b: IUser) => (filterColumn.order ? b.rol.localeCompare(a.rol) : a.rol.localeCompare(b.rol)),
     };
-    checkToken();
+
+    filteredUsers.sort(sortFunctions[filterColumn.type] || (() => 0));
+
+    setUsersFilter(filteredUsers);
   }, [searchTerm, filterColumn, Users]);
 
   const renderUserButton = (user: IUser) => {
@@ -175,14 +311,16 @@ const RegistrationTable = () => {
               <dl className="sm:hidden">
                 <dt className="sr-only">Estado</dt>
                 <dd className="">
-                  {user?.registrations.length > 0 ? user.registrations[0].validated ? (
-                    <div className="ml-14 inline-block  text-center px-2 py-1 font-sans text-xs font-bold text-green-900 uppercase rounded-md select-none whitespace-nowrap bg-green-500/20">
-                      <span className="">Presente</span>
-                    </div>
-                  ) :(
-                    <div className="ml-14 inline-block  text-center px-2 py-1 font-sans text-xs font-bold text-blue-900 uppercase rounded-md select-none whitespace-nowrap bg-blue-500/20">
-                      <span className="">Inactivo</span>
-                    </div>
+                  {user?.registrations.length > 0 ? (
+                    user.registrations[0].validated ? (
+                      <div className="ml-14 inline-block  text-center px-2 py-1 font-sans text-xs font-bold text-green-900 uppercase rounded-md select-none whitespace-nowrap bg-green-500/20">
+                        <span className="">Presente</span>
+                      </div>
+                    ) : (
+                      <div className="ml-14 inline-block  text-center px-2 py-1 font-sans text-xs font-bold text-blue-900 uppercase rounded-md select-none whitespace-nowrap bg-blue-500/20">
+                        <span className="">Inactivo</span>
+                      </div>
+                    )
                   ) : (
                     <div className="ml-14 inline-block  text-center px-2 py-1 font-sans text-xs font-bold uppercase rounded-md select-none whitespace-nowrap bg-blue-gray-500/20 text-blue-gray-900">
                       <span className="">No Estado</span>
@@ -194,20 +332,26 @@ const RegistrationTable = () => {
           </div>
         </td>
         <td className="hidden lg:table-cell p-4 border-b border-[#cfd8dc]">
-          <p className=" font-sans text-sm  flex flex-col items-center lg:items-start antialiased font-normal leading-normal text-blue-gray-900">{user.document}</p>
+          <p className=" font-sans text-sm  flex flex-col items-center lg:items-start antialiased font-normal leading-normal text-blue-gray-900">
+            {user.document}
+          </p>
         </td>
         <td className="hidden lg:table-cell p-4 border-b border-[#cfd8dc]">
           <div className="flex flex-col">
             <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">{user.cellphone}</p>
             <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900 opacity-70">
-              {user.phone}
+              {user?.registrations.length > 0 && user.registrations[0].exitCapture ? (
+                <img className="w-[100px]" src={`${BACK_API_URL}/uploads/${user.registrations[0].exitCapture}`}></img>
+              ) : (
+                "No"
+              )}
             </p>
           </div>
         </td>
         <td className="hidden lg:table-cell p-4 border-b border-[#cfd8dc]">
           <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
             {user?.registrations.length > 0 && user.registrations[0].entryCapture ? (
-              <img src={`data:image/png;base64,${user.registrations[0].entryCapture.data.toString("base64")}`}></img>
+              <img className="w-[100px]" src={`${BACK_API_URL}/uploads/${user.registrations[0].entryCapture}`}></img>
             ) : (
               "No"
             )}
@@ -216,20 +360,20 @@ const RegistrationTable = () => {
         <td className="hidden sm:table-cell w-[100px] text-center p-4 border-b border-[#cfd8dc]">
           <div className="w-max">
             {user?.registrations.length > 0 ? (
-              user.registrations[0].validated ? (
+              user.registrations[0].validated === "present" ? (
                 <div className="relative grid items-center px-2 py-1 font-sans text-xs font-bold text-green-900 uppercase rounded-md select-none whitespace-nowrap bg-green-500/20">
                   <span className="">Presente</span>
                 </div>
-              ) : (
+              ) : user.registrations[0].validated === "idle" ? (
                 <div className="relative grid items-center px-2 py-1 font-sans text-xs font-bold text-blue-900 uppercase rounded-md select-none whitespace-nowrap bg-blue-500/20">
                   <span className="">Inactivo</span>
                 </div>
+              ) : (
+                <div className="relative grid items-center px-2 py-1 font-sans text-xs font-bold uppercase rounded-md select-none whitespace-nowrap bg-blue-gray-500/20 text-blue-gray-900">
+                  <span className="">No Estado</span>
+                </div>
               )
-            ) : (
-              <div className="relative grid items-center px-2 py-1 font-sans text-xs font-bold uppercase rounded-md select-none whitespace-nowrap bg-blue-gray-500/20 text-blue-gray-900">
-                <span className="">No Estado</span>
-              </div>
-            )}
+            ) : null}
           </div>
         </td>
         <td className=" sm:table-cell w-[100px] text-center flex flex-col items-center p-4 border-b border-[#cfd8dc]">
@@ -258,16 +402,14 @@ const RegistrationTable = () => {
         </td>
         <td className="hidden lg:table-cell lg:flex lg:flex-row items-center p-4 border-b border-[#cfd8dc]">
           <div className="flex flex-row items-center justify-around ">
-          <BsFillPersonLinesFill className="w-7 h-7 cursor-pointer"/>
-          <BsReverseLayoutTextWindowReverse className="w-6 h-6 cursor-pointer "/>
+            <BsFillPersonLinesFill className="w-7 h-7 cursor-pointer" />
+            <BsReverseLayoutTextWindowReverse
+              className="w-6 h-6 cursor-pointer "
+              onClick={() => handleOpenModalRegister(user.id)}
+            />
           </div>
-          <p  className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-           
-            
-          </p>
-          <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-            
-          </p>
+          <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900"></p>
+          <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900"></p>
         </td>
       </tr>
     );
@@ -332,7 +474,7 @@ const RegistrationTable = () => {
           </div>
         </div>
         {/* Tabla */}
-        <div className="p-6 px-0 overflow-scroll h-[600px]">
+        <div className="p-6 px-0 overflow-scroll overflow-x-hidden h-[600px]">
           <table className="w-full mt-4 text-left table-auto min-w-max">
             <thead>
               <tr className="bg-[#F5F7F8]">
@@ -387,6 +529,77 @@ const RegistrationTable = () => {
           </table>
         </div>
       </div>
+      {/* Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-1/3">
+            <h2 className="text-xl font-bold mb-4">Detalles del Usuario</h2>
+            {userDetails ? (
+              <div className="p-6 px-0 overflow-scroll overflow-x-hidden h-[600px]">
+                <table className="w-full mt-4 text-left table-auto min-w-max">
+                  <thead>
+                    <tr className="bg-[#F5F7F8]">
+                      <th
+                        className="cursor-pointer w-[250px] sm:w-[350px] p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
+                        onClick={onClickName}
+                      >
+                        <p className="block font-sans text-sm antialiased font-bold leading-none ">Empleados</p>
+                      </th>
+                      <th
+                        className=" hidden lg:table-cell  cursor-pointer p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
+                        onClick={onClickName}
+                      >
+                        <p className=" font-sans text-sm text-center lg:text-start  antialiased font-bold  leading-none ">
+                          Documento
+                        </p>
+                      </th>
+                      <th className="hidden lg:table-cell p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50">
+                        <p className=" font-sans text-sm antialiased font-bold  leading-none ">Contactos</p>
+                      </th>
+                      <th
+                        className="hidden lg:table-cell cursor-pointer p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
+                        onClick={onClickName}
+                      >
+                        <p className=" block font-sans text-sm antialiased font-bold  leading-none ">Funcion</p>
+                      </th>
+                      <th
+                        className="hidden sm:table-cell cursor-pointer p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
+                        onClick={onClickName}
+                      >
+                        <p className="block font-sans text-sm text-center antialiased font-bold  leading-none">Estado</p>
+                      </th>
+                      <th
+                        className=" sm:table-cell cursor-pointer  p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
+                        onClick={onClickName}
+                      >
+                        <p className="block font-sans text-sm text-center antialiased font-bold  leading-none">Ingreso</p>
+                      </th>
+                      <th
+                        className=" sm:table-cell cursor-pointer  p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
+                        onClick={onClickName}
+                      >
+                        <p className="block font-sans text-sm text-center antialiased font-bold  leading-none">Salida</p>
+                      </th>
+                      <th className="hidden lg:table-cell p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50">
+                        <p className="block font-sans text-sm antialiased font-bold  leading-none"></p>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {/*  */}
+                    {userDetails.map((registerData) => registerData.entryDate)}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <p>Cargando...</p>
+            )}
+            <button className="mt-4 px-4 py-2 bg-red-500 text-white rounded" onClick={() => setIsModalOpen(false)}>
+              Cerrar
+            </button>
+          </div>
+        </div>
+      )}
     </section>
   );
 };

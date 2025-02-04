@@ -5,9 +5,9 @@ import "./styles/iconSuccess.css";
 import axios from "axios";
 import validateInputRegisterE from "./helpers/validateInputRegisterE";
 import Buttonn from "../Buttonn";
-
+const BACK_API_URL = import.meta.env.VITE_LOCAL_API_URL;
 const RegisterE = () => {
-  const BACK_API_URL = import.meta.env.VITE_LOCAL_API_URL;
+  // const BACK_API_URL = import.meta.env.VITE_LOCAL_API_URL;
   const initialState = {
     document: "",
   };
@@ -73,19 +73,29 @@ const RegisterE = () => {
   };
 
   // Convertir Data URL a File
-  const convertDataURLToFile = (dataUrl, filename) => {
-    const arr = dataUrl.split(","),
-      mime = arr[0].match(/:(.*?);/)[1];
+  const convertDataURLToFile = (dataUrl, filename = "captured_image") => {
+    const arr = dataUrl.split(",");
+    const mime = arr[0].match(/:(.*?);/)[1];
+
+    // Diccionario para asignar la extensión según el tipo MIME
+    const mimeToExt: Record<string, string> = {
+      "image/jpeg": ".jpg",
+      "image/png": ".png",
+      "image/jpg": ".jpg",
+    };
+
+    const extension = mimeToExt[mime] || ".png"; // Usa .png por defecto si no se reconoce el tipo
+    filename = filename.includes(".") ? filename : filename + extension; // Asegurar la extensión
+
     const bstr = atob(arr[1]);
     let n = bstr.length;
     const u8arr = new Uint8Array(n);
     while (n--) {
       u8arr[n] = bstr.charCodeAt(n);
     }
-    const file = new File([u8arr], filename, { type: mime });
-    return file; // Guardar el archivo en el estado
-  };
 
+    return new File([u8arr], filename, { type: mime });
+  };
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     capture();
@@ -104,7 +114,9 @@ const RegisterE = () => {
     // console.log("Captura:", imageSrc);
     if (cameraAvailable && isCameraReady && imageSrc !== null) {
       const newRegister = Number(userDataInputs.document);
+      console.log("Captura: direta", imageSrc);
       const img = convertDataURLToFile(imageSrc, "file");
+      console.log("img", img);
       const formData = new FormData();
       formData.append("document", newRegister.toString());
       formData.append("file", img);
@@ -133,7 +145,6 @@ const RegisterE = () => {
           }, 3000);
         })
         .catch((error) => {
-          console.log(error.response?.data);
           setIsMsg({ type: "error", message: error.response?.data.message || "Hubo un Problema" }); //mejorar el diseño al recibir muchos errores
           setTimeout(() => {
             setIsLoading(false);
@@ -246,24 +257,24 @@ const RegisterE = () => {
               disabled={userDataInputs.document.length === 0 || Object.keys(errors).some((e) => errors[e])}
               text="Continuar"
             />
-            <Webcam
-              onUserMedia={() => setIsCameraReady(true)} // Marca la cámara como lista
-              screenshotFormat="image/png"
-              ref={webcamRef}
-              videoConstraints={{
-                width: 1280,
-                height: 720,
-                facingMode: "user", // Cámara frontal
-              }}
-              style={{
-                visibility: "hidden", // Oculta el componente pero mantiene el flujo activo
-                position: "absolute", // Opcional: Retira del flujo visual
-                width: "320px", // Mantén un tamaño visible para que el flujo funcione
-                height: "240px",
-              }}
-            />
-            {/* {imgSrc && <img src={imgSrc} alt="Captura de pantalla" />} */}
           </form>
+          <Webcam
+            onUserMedia={() => setIsCameraReady(true)} // Marca la cámara como lista
+            screenshotFormat="image/png"
+            ref={webcamRef}
+            videoConstraints={{
+              width: 1280,
+              height: 720,
+              facingMode: "user", // Cámara frontal
+            }}
+            style={{
+              visibility: "hidden", // Oculta el componente pero mantiene el flujo activo
+              position: "absolute", // Opcional: Retira del flujo visual
+              width: "1280px", // Mantén un tamaño visible para que el flujo funcione
+              height: "720px",
+            }}
+          />
+          {/* {imgSrc && <img src={imgSrc} alt="Captura de pantalla" />} */}
         </section>
       )}
     </>

@@ -11,21 +11,27 @@ import Start from "./views/Start";
 import RegisterEmployee from "./views/RegisterEmployee";
 import Proof from "./views/Proof";
 import { Toaster } from "sonner";
+import InitAuth from "./components/InitAuth";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   const location = useLocation();
 
   return (
     <>
+      {/* Inicializa Redux con los datos del usuario al cargar la página */}
+      <InitAuth />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/inicio" element={<Start />} />
         <Route path="/iniciar_sesion" element={<LoginUser />} />
         <Route path="/validacion_de_empleado" element={<RegisterEmployee />} />
         <Route path="*" element={<NotFount />} />
         <Route path="/prueba" element={<Proof />} />
+        <Route element={<ProtectedRoute />}>
+          <Route path="/inicio" element={<Start />} />
+        </Route>
       </Routes>
-      <Toaster  expand={true} />
+      <Toaster expand={true} />
     </>
   );
 }

@@ -21,19 +21,45 @@ body {
   background-color: aliceblue;
 }
 
-.icon-notification{
+.icon-notification {
   animation: icon-notification-animate 1s ease 0s 10 normal forwards;
 }
 @keyframes icon-notification-animate {
-	0% {
-		opacity: 1;
-	}
+  0% {
+    opacity: 1;
+  }
 
-	50% {
-		opacity: 0.2;
-	}
+  50% {
+    opacity: 0.2;
+  }
 
-	100% {
-		opacity: 1;
-	}
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Estilizar el scrollbar en navegadores WebKit */
+::-webkit-scrollbar {
+  width: 12px; /* Ajusta el ancho del scrollbar */
+}
+
+/* Fondo de la barra (track) */
+::-webkit-scrollbar-track {
+  background: #1a1a1a; /* Color oscuro */
+}
+
+/* Estilo del "thumb" (barra que se desliza) */
+::-webkit-scrollbar-thumb {
+  background: #666; /* Gris oscuro */
+  border-radius: 6px;
+}
+
+/* Cambia el color del thumb al pasar el mouse */
+::-webkit-scrollbar-thumb:hover {
+  background: #777; /* Gris más claro */
+}
+
+* {
+  scrollbar-color: #888 #f1f1f1;
+  scrollbar-width: thin; /* Opciones: auto, thin, none */
 }
