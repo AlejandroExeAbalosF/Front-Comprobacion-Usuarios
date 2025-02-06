@@ -7,8 +7,21 @@ export interface IUser {
     lastName: string;
     document: number;
     email: string;
+    sex: string;
+    birthDate: string;
     cellphone?: number;
     phone?: number;
+    privateAddress?: string;
+    studyLevel?: string;
+    profession: string;
+    function?: string;
+    asset?: string;
+    situation?: string;
+    incomeDate?: string;
+    legalInstrument?: string;
+    laborAddress?: string;
+    ministry?: string;
+    secretariat?: string;
     rol:
       | "superadmin"
       | "admin"
@@ -27,7 +40,7 @@ export interface IRegistration {
     entryDate: string;
     exitDate: string;
     createdAt: string;
-  
+    user?: IUser
 }
 
 export interface INotificaciónData extends IUser, IRegistration {

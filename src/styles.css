@@ -19,6 +19,9 @@
 
 body {
   background-color: aliceblue;
+  /* font-family: Poppins, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Open Sans,
+    Helvetica Neue, sans-serif; */
+  font-family: var(--font-sans);
 }
 
 .icon-notification {
@@ -62,4 +65,17 @@ body {
 * {
   scrollbar-color: #888 #f1f1f1;
   scrollbar-width: thin; /* Opciones: auto, thin, none */
+}
+
+/* input form create */
+.input-form-create {
+  @apply transition-all text-sm bg-transparent  border border-[#E2E8F0] placeholder-shown:border placeholder-shown:border-[#E2E8F0] placeholder-shown:border-t-[#E2E8F0]  dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-[#4151cada] rounded-[7px];
+}
+
+.form-title-md {
+  @apply text-[16px] font-semibold text-[#1a2680da];
+}
+
+.edit_profile_input_hover:hover ~ .edit_profile_img_hover {
+  background-color: rgba(80, 80, 80, 0.185);
 }

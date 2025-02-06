@@ -8,89 +8,45 @@ import { formatName } from "../../utils/formatName";
 import { BsFillPersonLinesFill } from "react-icons/bs";
 import { BsReverseLayoutTextWindowReverse } from "react-icons/bs";
 import ModalRegistration from "../modalRegistration/ModalRegistration";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import { setFilterColumn, setSearchTerm, setUsers, updateUserFromNotification } from "../../redux/slices/usersEmpSlice";
+import ModalGeneric from "../ModalGeneric";
 
-const RegistrationTable = () => {
+const RegistrationTableR = () => {
   const notifications = useNotifications();
   const BACK_API_URL = import.meta.env.VITE_LOCAL_API_URL;
-  const [Users, setUsers] = useState<IUser[]>([]);
-  const [usersFilter, setUsersFilter] = useState<IUser[]>([]); // [usersFilter]
-  const [searchTerm, setSearchTerm] = useState<string>("");
-  const [filterColumn, setFilterColumn] = useState({
-    type: "Empleados",
-    order: false,
-  });
+  //   const [Users, setUsers] = useState<IUser[]>([]);
+  //   const [usersFilter, setUsersFilter] = useState<IUser[]>([]); // [usersFilter]
+  //   const [searchTerm, setSearchTerm] = useState<string>("");
+  //   const [filterColumn, setFilterColumn] = useState({
+  //     type: "Empleados",
+  //     order: false,
+  //   });
 
+  const dispatch = useAppDispatch();
+  const { usersFilter, searchTerm, filterColumn } = useAppSelector((state) => state.usersEmp);
   //----------
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
-  const [userDetails, setUserDetails] = useState<IRegistration[] | null>([]);
+  const [userDetails, setUserDetails] = useState<IUser | null>();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isTypeModal, setIsTypeModal] = useState("");
 
   // Función para abrir el modal y cargar datos
-  const handleOpenModalRegister = (userId: string) => {
-    setSelectedUserId(userId);
+  const handleOpenModal = (userId: IUser | null, event: React.SyntheticEvent) => {
+    console.log("event", event.currentTarget.id);
+    setIsTypeModal(event.currentTarget.id);
+    setUserDetails(userId);
     setIsModalOpen(true);
   };
-
-  // Efecto para cargar datos del usuario cuando el modal se abre
-  useEffect(() => {
-    if (isModalOpen && selectedUserId !== null) {
-      axios
-        .get(`${BACK_API_URL}/registrations/user/${selectedUserId}`, {
-          withCredentials: true,
-        })
-        .then(({ data }) => {
-          setUserDetails(data);
-          console.log(data);
-        })
-        .catch((error) => {
-          toast.error(error.response.data.message);
-        });
-    }
-  }, [isModalOpen, selectedUserId]);
 
   //-----------
   useEffect(() => {
     // console.log("notifications", notifications);
     if (notifications) {
-      setUsers((prevUsers) =>
-        prevUsers.map((user) => {
-          if (user.id === notifications?.id) {
-            // Verificamos si el usuario ya tiene registros
-            const updatedRegistrations = user.registrations?.length
-              ? user.registrations.map((registration) => {
-                  if (registration.id === notifications.idR) {
-                    return {
-                      ...registration,
-                      validated: notifications.validated,
-                      entryDate:
-                        registration.entryDate || (notifications.validated === "present" ? notifications.date : undefined),
-                      entryCapture:
-                        registration.entryCapture || (notifications.validated === "present" ? notifications.capture : undefined),
-                      exitDate: notifications.validated === "idle" ? notifications.date : registration.exitDate,
-                      exitCapture: notifications.validated === "idle" ? notifications.capture : registration.exitCapture,
-                    };
-                  }
-                  return registration;
-                })
-              : [
-                  {
-                    id: notifications.idR,
-                    validated: notifications.validated,
-                    entryDate: notifications.validated === "present" ? notifications.date : undefined,
-                    entryCapture: notifications.validated === "present" ? notifications.capture : undefined,
-                    exitDate: notifications.validated === "idle" ? notifications.date : undefined,
-                    exitCapture: notifications.validated === "idle" ? notifications.capture : undefined,
-                  },
-                ];
-
-            return { ...user, registrations: updatedRegistrations };
-          }
-          return user;
-        })
-      );
+      dispatch(updateUserFromNotification(notifications));
     }
     // console.log("userN", userN);
-  }, [notifications]);
+  }, [notifications, dispatch]);
   useEffect(() => {
     const fetchUsers = async () => {
       const storedToken = await localStorage.getItem("token");
@@ -102,9 +58,11 @@ const RegistrationTable = () => {
         });
         // console.log(response.data);
         if (response.data) {
-          setUsers(response.data);
+          dispatch(setUsers(response.data));
+          dispatch(setFilterColumn({ type: "Empleados", order: false }));
+          //   setUsers(response.data);
 
-          setUsersFilter(response.data);
+          //   setUsersFilter(response.data);
         }
       } catch (error) {
         toast.error("Error al cargar Empleados.");
@@ -118,179 +76,7 @@ const RegistrationTable = () => {
     };
 
     fetchUsers();
-  }, [BACK_API_URL]);
-
-  // useEffect(() => {
-  //   const checkToken = async () => {
-  //     const filteredUsers = [...Users].filter((userData) => {
-  //       const searchString = `${userData.name} ${userData.lastName} ${userData.document} ${userData.email}`;
-  //       return searchString.toLowerCase().includes(searchTerm.toLowerCase());
-  //     });
-  //     if (filterColumn.type === "Empleados") {
-  //       if (filterColumn.order) {
-  //         filteredUsers.sort((a: IUser, b: IUser) => {
-  //           if (a.name < b.name) {
-  //             return 1;
-  //           }
-  //           if (a.name > b.name) {
-  //             return -1;
-  //           }
-  //           // a debe ser igual b
-  //           return 0;
-  //         });
-  //       } else {
-  //         filteredUsers.sort((a: IUser, b: IUser) => {
-  //           if (a.name < b.name) {
-  //             return -1;
-  //           }
-  //           if (a.name > b.name) {
-  //             return 1;
-  //           }
-  //           // a debe ser igual b
-  //           return 0;
-  //         });
-  //       }
-  //     }
-  //     if (filterColumn.type === "Ingreso") {
-  //       if (filterColumn.order) {
-  //         filteredUsers.sort((a: IUser, b: IUser) => {
-  //           // Si ambos usuarios tienen registros, comparamos las fechas
-  //           if (a.registrations.length > 0 && b.registrations.length > 0) {
-  //             const dateA = new Date(a.registrations[0].entryDate);
-  //             const dateB = new Date(b.registrations[0].entryDate);
-  //             return dateB.getTime() - dateA.getTime(); // Orden descendente
-  //           }
-
-  //           // Si uno de los usuarios no tiene registros, lo coloca al final (o al principio si prefieres)
-  //           if (a.registrations.length === 0 && b.registrations.length > 0) {
-  //             return 1; // a va al final
-  //           }
-  //           if (b.registrations.length === 0 && a.registrations.length > 0) {
-  //             return -1; // b va al final
-  //           }
-
-  //           // Si ambos no tienen registros, no importa el orden
-  //           return 0;
-  //         });
-  //       } else {
-  //         filteredUsers.sort((a: IUser, b: IUser) => {
-  //           // Si ambos usuarios tienen registros, comparamos las fechas
-  //           if (a.registrations.length > 0 && b.registrations.length > 0) {
-  //             const dateA = new Date(a.registrations[0].entryDate);
-  //             const dateB = new Date(b.registrations[0].entryDate);
-  //             return dateA.getTime() - dateB.getTime(); // Orden descendente
-  //           }
-
-  //           // Si uno de los usuarios no tiene registros, lo coloca al final (o al principio si prefieres)
-  //           if (a.registrations.length === 0 && b.registrations.length > 0) {
-  //             return 1; // a va al final
-  //           }
-  //           if (b.registrations.length === 0 && a.registrations.length > 0) {
-  //             return -1; // b va al final
-  //           }
-
-  //           // Si ambos no tienen registros, no importa el orden
-  //           return 0;
-  //         });
-  //       }
-  //     }
-  //     // user?.registrations.length > 0 ? user.registrations[0].validated ?
-  //     if (filterColumn.type === "Estado") {
-  //       if (filterColumn.order) {
-  //         const priority = { present: 1, idle: 2, absent: 3 };
-  //         filteredUsers.sort((a: IUser, b: IUser) => {
-  //           // Obtener el valor de validated de cada usuario
-  //           const validatedA = a.registrations.length > 0 ? a.registrations[0].validated : "absent"; // Si no tiene registro, lo tratamos como "absent"
-  //           const validatedB = b.registrations.length > 0 ? b.registrations[0].validated : "absent";
-
-  //           // Comparar según el nivel de prioridad definido
-  //           return priority[validatedA] - priority[validatedB];
-  //         });
-  //       } else {
-  //         const priority = { present: 1, idle: 2, absent: 3 };
-  //         filteredUsers.sort((a: IUser, b: IUser) => {
-  //           // Obtener el valor de validated de cada usuario
-  //           const validatedA = a.registrations.length > 0 ? a.registrations[0].validated : "absent"; // Si no tiene registro, lo tratamos como "absent"
-  //           const validatedB = b.registrations.length > 0 ? b.registrations[0].validated : "absent";
-
-  //           // Comparar según el nivel de prioridad definido
-  //           return priority[validatedB] - priority[validatedA];
-  //         });
-  //       }
-  //     }
-
-  //     if (filterColumn.type === "Documento") {
-  //       if (filterColumn.order) {
-  //         filteredUsers.sort((a: IUser, b: IUser) => a.document - b.document);
-  //       } else {
-  //         filteredUsers.sort((a: IUser, b: IUser) => b.document - a.document);
-  //       }
-  //     }
-  //     // if (filterColumn.type === "Ult. Login") {
-  //     //   if (filterColumn.order) {
-  //     //     filteredUsers.sort((a: IUser, b: IUser) => new Date(a.lastLogin).getTime() - new Date(b.lastLogin).getTime());
-  //     //   } else {
-  //     //     filteredUsers.sort((a: IUser, b: IUser) => new Date(b.lastLogin).getTime() - new Date(a.lastLogin).getTime());
-  //     //   }
-  //     // }
-  //     if (filterColumn.type === "Rol") {
-  //       if (filterColumn.order) {
-  //         filteredUsers.sort((a: IUser, b: IUser) => {
-  //           if (a.rol < b.rol) {
-  //             return 1;
-  //           }
-  //           if (a.rol > b.rol) {
-  //             return -1;
-  //           }
-  //           // a debe ser igual b
-  //           return 0;
-  //         });
-  //       } else {
-  //         filteredUsers.sort((a: IUser, b: IUser) => {
-  //           if (a.rol < b.rol) {
-  //             return -1;
-  //           }
-  //           if (a.rol > b.rol) {
-  //             return 1;
-  //           }
-  //           // a debe ser igual b
-  //           return 0;
-  //         });
-  //       }
-  //     }
-  //     setUsersFilter(filteredUsers);
-  //   };
-  //   checkToken();
-  // }, [searchTerm, filterColumn, Users]);
-
-  useEffect(() => {
-    const filteredUsers = Users.filter((userData) =>
-      `${userData.name} ${userData.lastName} ${userData.document} ${userData.email}`
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase())
-    );
-
-    const sortFunctions = {
-      Empleados: (a: IUser, b: IUser) => (filterColumn.order ? b.name.localeCompare(a.name) : a.name.localeCompare(b.name)),
-      Ingreso: (a: IUser, b: IUser) => {
-        const dateA = a.registrations[0]?.entryDate ? new Date(a.registrations[0].entryDate).getTime() : 0;
-        const dateB = b.registrations[0]?.entryDate ? new Date(b.registrations[0].entryDate).getTime() : 0;
-        return filterColumn.order ? dateB - dateA : dateA - dateB;
-      },
-      Estado: (a: IUser, b: IUser) => {
-        const priority = { present: 1, idle: 2, absent: 3 };
-        const validatedA = a.registrations[0]?.validated || "absent";
-        const validatedB = b.registrations[0]?.validated || "absent";
-        return filterColumn.order ? priority[validatedA] - priority[validatedB] : priority[validatedB] - priority[validatedA];
-      },
-      Documento: (a: IUser, b: IUser) => (filterColumn.order ? a.document - b.document : b.document - a.document),
-      Rol: (a: IUser, b: IUser) => (filterColumn.order ? b.rol.localeCompare(a.rol) : a.rol.localeCompare(b.rol)),
-    };
-
-    filteredUsers.sort(sortFunctions[filterColumn.type] || (() => 0));
-
-    setUsersFilter(filteredUsers);
-  }, [searchTerm, filterColumn, Users]);
+  }, [BACK_API_URL, dispatch]);
 
   const renderUserButton = (user: IUser) => {
     return (
@@ -339,10 +125,10 @@ const RegistrationTable = () => {
         </td>
         <td className="hidden lg:table-cell p-4 border-b border-[#cfd8dc]">
           <div className="flex flex-col">
-            <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">{user.cellphone}</p>
+            {/* <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">{user.cellphone}</p> */}
             <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900 opacity-70">
               {user?.registrations.length > 0 && user.registrations[0].exitCapture ? (
-                <img className="w-[100px]" src={`${BACK_API_URL}/uploads/${user.registrations[0].exitCapture}`}></img>
+                <img className="w-[100px]" src={`${user.registrations[0].exitCapture}`}></img>
               ) : (
                 "No"
               )}
@@ -352,7 +138,7 @@ const RegistrationTable = () => {
         <td className="hidden lg:table-cell p-4 border-b border-[#cfd8dc]">
           <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
             {user?.registrations.length > 0 && user.registrations[0].entryCapture ? (
-              <img className="w-[100px]" src={`${BACK_API_URL}/uploads/${user.registrations[0].entryCapture}`}></img>
+              <img className="w-[100px]" src={`${user.registrations[0].entryCapture}`}></img>
             ) : (
               "No"
             )}
@@ -401,12 +187,17 @@ const RegistrationTable = () => {
               : null}
           </p>
         </td>
-        <td className="hidden lg:table-cell lg:flex lg:flex-row items-center p-4 border-b border-[#cfd8dc]">
+        <td className="hidden w-[130px] lg:table-cell lg:flex lg:flex-row items-center p-4 border-b border-[#cfd8dc]">
           <div className="flex flex-row items-center justify-around ">
-            <BsFillPersonLinesFill className="w-7 h-7 cursor-pointer" />
+            <BsFillPersonLinesFill
+              className="w-7 h-7 cursor-pointer"
+              onClick={(e) => handleOpenModal(user, e)}
+              id="userDetails"
+            />
             <BsReverseLayoutTextWindowReverse
               className="w-6 h-6 cursor-pointer "
-              onClick={() => handleOpenModalRegister(user.id)}
+              onClick={(e) => handleOpenModal(user, e)}
+              id="userRegisters"
             />
           </div>
           <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900"></p>
@@ -417,19 +208,20 @@ const RegistrationTable = () => {
   };
 
   const onClickName = (event: React.MouseEvent<HTMLElement>) => {
+    type SortType = "Empleados" | "Ingreso" | "Estado" | "Documento" | "Rol";
     const target = event.target as HTMLButtonElement;
-    const innerText = target.innerText;
+    const innerText = target.innerText as SortType;
 
     if (filterColumn.order) {
-      setFilterColumn({ type: innerText, order: false });
+      dispatch(setFilterColumn({ ...filterColumn, type: innerText, order: false }));
     } else {
-      setFilterColumn({ type: innerText, order: true });
+      dispatch(setFilterColumn({ ...filterColumn, type: innerText, order: true }));
     }
   };
   //!-----------------------------------------------------------
   return (
     <section className="2xl:w-[1500px] lg:w-[1200px] md:w-[900px]">
-      <h2 className="notificationsext-2xl font-bold flex  items-start">Listado de Empleados</h2>
+      <h2 className="notificationsext-2xl ml-5  text-2xl flex  items-start">Listado de Empleados</h2>
       <div className="xs:w-4/5 m-auto my-2 relative flex flex-col w-full h-full text-gray-700 bg-white shadow-md rounded-xl bg-clip-border">
         <div className="relative mx-4 mt-4 overflow-hidden text-gray-700 bg-white rounded-none bg-clip-border">
           <div className="flex flex-col justify-between gap-8 mb-4 md:flex-row md:items-center">
@@ -441,6 +233,7 @@ const RegistrationTable = () => {
                 These are details about the last transactions
               </p>
             </div> */}
+
             <div className="flex w-full gap-2 shrink-0 md:w-max">
               <div className="w-full md:w-72">
                 <div className="my-3 relative h-10 w-full min-w-[200px]">
@@ -464,7 +257,7 @@ const RegistrationTable = () => {
                   <input
                     className="peer h-full w-full rounded-[7px] border border-[#E2E8F0] border-t-transparent bg-transparent px-3 py-2.5 !pr-9 font-sans text-sm font-normal text-[#2B4B5B] outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-[#E2E8F0] placeholder-shown:border-t-[#E2E8F0] focus:border-2 focus:border-gray-900 focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-[#F8FAFC]"
                     placeholder=" "
-                    onChange={(e) => setSearchTerm(e.target.value)}
+                    onChange={(e) => dispatch(setSearchTerm(e.target.value))}
                   />
                   <label className="before:content[' '] after:content[' '] pointer-events-none absolute left-0 -top-1.5 flex h-full w-full select-none !overflow-visible truncate text-[11px] font-normal leading-tight text-gray-500 transition-all before:pointer-events-none before:mt-[6.5px] before:mr-1 before:box-border before:block before:h-1.5 before:w-2.5 before:rounded-tl-md before:border-t before:border-l before:border-[#E2E8F0] before:transition-all after:pointer-events-none after:mt-[6.5px] after:ml-1 after:box-border after:block after:h-1.5 after:w-2.5 after:flex-grow after:rounded-tr-md after:border-t after:border-r after:border-[#E2E8F0] after:transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[3.75] peer-placeholder-shown:text-blue-gray-500 peer-placeholder-shown:before:border-transparent peer-placeholder-shown:after:border-transparent peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-gray-900 peer-focus:before:border-t-2 peer-focus:before:border-l-2 peer-focus:before:!border-gray-900 peer-focus:after:border-t-2 peer-focus:after:border-r-2 peer-focus:after:!border-gray-900 peer-disabled:text-transparent peer-disabled:before:border-transparent peer-disabled:after:border-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
                     Buscar
@@ -472,6 +265,14 @@ const RegistrationTable = () => {
                 </div>
               </div>
             </div>
+            {/* <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Agregar empleado</button> */}
+            <button
+              className="rounded-md bg-blue-600 py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-blue-700 focus:shadow-none active:bg-blue-700 hover:bg-blue-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none ml-2"
+              id="createEmployee"
+              onClick={(e) => handleOpenModal(null, e)}
+            >
+              Agregar empleado
+            </button>
           </div>
         </div>
         {/* Tabla */}
@@ -531,9 +332,11 @@ const RegistrationTable = () => {
         </div>
       </div>
       {/* Modal */}
-      {isModalOpen && userDetails && <ModalRegistration isVisible={isModalOpen} onClose={setIsModalOpen} data={userDetails} />}
+      {isModalOpen && (
+        <ModalGeneric isVisible={isModalOpen} onClose={setIsModalOpen} data={userDetails} typeModal={isTypeModal} />
+      )}
     </section>
   );
 };
 
-export default RegistrationTable;
+export default RegistrationTableR;

@@ -96,7 +96,7 @@ const LoginU = () => {
       })}
       <Buttonn
         disabled={userDataInputs.username.length === 0 || Object.keys(errors).some((e) => errors[e as keyof typeof errors])}
-        text="Continuar"
+        text="Ingresar"
       />
       {/* <button
         // type="submit"
