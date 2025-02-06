@@ -14,7 +14,7 @@ const Menu = () => {
   };
   return (
     <nav className="bg-white w-full h-[70px] shadow-md  bg-clip-border flex flex-row justify-center items-center">
-      <div className="flex flex-row justify-end items-center w-[1600px] h-full gap-4">
+      <div className="flex flex-row justify-end items-center w-[1600px] h-full gap-4 mr-3">
         <img src={user?.image ? user.image : ""} className="  h-[45px] w-[45px] !rounded-full object-cover object-center" />
         <div>
           <h2 className="font-sans text-[18px] antialiased font-normal leading-normal text-blue-gray-900">

@@ -143,13 +143,13 @@ const CreateUser = ({ onCloseModal }: { onCloseModal?: (isVisible: boolean) => v
           </div>
         </div>
         <div className="w-[1024px] h-[600px] ">
-          <form onSubmit={handleSubmit} className="flex  flex-col justify-center items-center">
+          <form onSubmit={handleSubmit} className="flex  flex-col justify-center items-center ">
             <main className="w-[1024px] ">
-              <section className="">
+              <section className="w-full h-full">
                 <div className=" w-full">
-                  <h3 className="text-start text-[20px]">Datos Personales</h3> <hr className="border-t border-gray-300 my-1" />
+                  <h3 className="text-start text-[20px]">Datos Personales</h3> <hr className="border-t border-gray-300 my-3" />
                 </div>
-                <div className="my-2 flex flex-row gap-4 ">
+                <div className="my-3 h-[120px] flex flex-col xl:flex-row xl:h-auto gap-4 ">
                   <div className=" relative  w-[500px]   flex flex-col justify-start items-start">
                     <label className="form-title-md" htmlFor="">
                       {" "}
@@ -181,7 +181,7 @@ const CreateUser = ({ onCloseModal }: { onCloseModal?: (isVisible: boolean) => v
                     />
                   </div>
                 </div>
-                <div className="my-2 flex flex-row  items-start justify-start gap-4 ">
+                <div className="my-3 flex flex-row  items-start justify-start gap-4 ">
                   <div className=" relative  w-[200px] min-w-[200px] flex flex-col justify-start items-start">
                     <label className="form-title-md" htmlFor="">
                       {" "}
@@ -230,7 +230,7 @@ const CreateUser = ({ onCloseModal }: { onCloseModal?: (isVisible: boolean) => v
                     </div>
                   </div>
                 </div>
-                <div className="my-2 flex flex-row  items-start justify-start gap-4 ">
+                <div className="my-3 flex flex-row  items-start justify-start gap-4 ">
                   <div className=" relative  w-[200px] min-w-[200px] flex flex-col justify-start items-start">
                     <label className="form-title-md" htmlFor="">
                       {" "}
@@ -288,7 +288,7 @@ const CreateUser = ({ onCloseModal }: { onCloseModal?: (isVisible: boolean) => v
                     /> */}
                   </div>
                 </div>
-                <div className="my-2 flex flex-row  items-start justify-start gap-4 ">
+                <div className="my-3 flex flex-row  items-start justify-start gap-4 ">
                   <div className=" relative w-[200px]  flex flex-col justify-start items-start">
                     <label className="form-title-md" htmlFor="">
                       Nivel de Estudio
@@ -323,7 +323,7 @@ const CreateUser = ({ onCloseModal }: { onCloseModal?: (isVisible: boolean) => v
                     />
                   </div>
                 </div>
-                <div className="my-2 flex flex-row  items-start justify-start gap-4 ">
+                <div className="my-3 flex flex-row  items-start justify-start gap-4 ">
                   <div className=" relative  w-full flex flex-col justify-start items-start">
                     <label className="form-title-md" htmlFor="">
                       {" "}
@@ -343,9 +343,9 @@ const CreateUser = ({ onCloseModal }: { onCloseModal?: (isVisible: boolean) => v
               </section>
               <section>
                 <div className=" w-full">
-                  <h3 className="text-start text-[20px]">Datos Laborales</h3> <hr className="border-t border-gray-300 my-1" />
+                  <h3 className="text-start text-[20px]">Datos Laborales</h3> <hr className="border-t border-gray-300 my-3" />
                 </div>
-                <div className="my-2 flex flex-row gap-4 ">
+                <div className="my-3 flex flex-row gap-4 ">
                   <div className=" relative  w-[500px]   flex flex-col justify-start items-start">
                     <label className="form-title-md" htmlFor="">
                       {" "}
@@ -377,7 +377,7 @@ const CreateUser = ({ onCloseModal }: { onCloseModal?: (isVisible: boolean) => v
                     />
                   </div>
                 </div>
-                <div className="my-2 flex flex-row gap-4 ">
+                <div className="my-3 flex flex-row gap-4 ">
                   <div className=" relative  w-[395px]   flex flex-col justify-start items-start">
                     <label className="form-title-md" htmlFor="">
                       {" "}

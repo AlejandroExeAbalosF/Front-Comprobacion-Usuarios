@@ -23,14 +23,14 @@ const UserDetails: React.FC<{ userInfo?: IUser | null; onCloseModal?: (isVisible
             <img src={userInfo?.image} className=" w-[252px] h-[252px] rounded-[50%]" />
           </div>
         </div>
-        <div className="w-[1024px] h-[600px] ">
+        <div className="w-[1024px] h-full flex flex-col  ">
           <form action="" className="flex  flex-col justify-center items-center">
             <main className="w-[1024px] ">
               <section className="">
                 <div className=" w-full">
-                  <h3 className="text-start text-[20px]">Datos Personales</h3> <hr className="border-t border-gray-300 my-1" />
+                  <h3 className="text-start text-[20px]">Datos Personales</h3> <hr className="border-t border-gray-300 my-3" />
                 </div>
-                <div className="my-2 flex flex-row gap-4 ">
+                <div className="my-3 flex flex-row gap-4 ">
                   <div className=" relative  w-[500px]   flex flex-col justify-center items-start">
                     <label className="form-title-md"> Nombres</label>
                     <p className="px-2 h-[35px] w-[500px] text-start flex items-center ">
@@ -44,7 +44,7 @@ const UserDetails: React.FC<{ userInfo?: IUser | null; onCloseModal?: (isVisible
                     </p>
                   </div>
                 </div>
-                <div className="my-2 flex flex-row  items-start justify-start gap-4 ">
+                <div className="my-3 flex flex-row  items-start justify-start gap-4 ">
                   <div className=" relative  w-[200px] min-w-[200px] flex flex-col justify-start items-start">
                     <label className="form-title-md"> Documento</label>
                     <p className="px-2 h-[35px] w-[200px] text-start flex items-center ">
@@ -64,7 +64,7 @@ const UserDetails: React.FC<{ userInfo?: IUser | null; onCloseModal?: (isVisible
                     </p>
                   </div>
                 </div>
-                <div className="my-2 flex flex-row  items-start justify-start gap-4 ">
+                <div className="my-3 flex flex-row  items-start justify-start gap-4 ">
                   <div className=" relative  w-[200px] min-w-[200px] flex flex-col justify-start items-start">
                     <label className="form-title-md"> Celular</label>
                     <p className="px-2 h-[35px] w-[200px] text-start flex items-center ">
@@ -84,7 +84,7 @@ const UserDetails: React.FC<{ userInfo?: IUser | null; onCloseModal?: (isVisible
                     </p>
                   </div>
                 </div>
-                <div className="my-2 flex flex-row  items-start justify-start gap-4 ">
+                <div className="my-3 flex flex-row  items-start justify-start gap-4 ">
                   <div className=" relative w-[200px]  flex flex-col justify-start items-start">
                     <label className="form-title-md">Nivel de Estudio</label>
                     <p className="px-2 h-[35px] w-[200px] text-start flex items-center ">
@@ -98,7 +98,7 @@ const UserDetails: React.FC<{ userInfo?: IUser | null; onCloseModal?: (isVisible
                     </p>
                   </div>
                 </div>
-                <div className="my-2 flex flex-row  items-start justify-start gap-4 ">
+                <div className="my-3 flex flex-row  items-start justify-start gap-4 ">
                   <div className=" relative  w-full flex flex-col justify-start items-start">
                     <label className="form-title-md"> Domicilio</label>
                     <p className="px-2 h-[35px]  text-start flex items-center ">
@@ -109,9 +109,9 @@ const UserDetails: React.FC<{ userInfo?: IUser | null; onCloseModal?: (isVisible
               </section>
               <section>
                 <div className=" w-full">
-                  <h3 className="text-start text-[20px]">Datos Laborales</h3> <hr className="border-t border-gray-300 my-1" />
+                  <h3 className="text-start text-[20px]">Datos Laborales</h3> <hr className="border-t border-gray-300 my-3" />
                 </div>
-                <div className="my-2 flex flex-row gap-4 ">
+                <div className="my-3 flex flex-row gap-4 ">
                   <div className=" relative  w-[500px]   flex flex-col justify-start items-start">
                     <label className="form-title-md"> Ministerio</label>
                     <p className="px-2 h-[35px] w-[500px] text-start flex items-center ">
@@ -125,7 +125,7 @@ const UserDetails: React.FC<{ userInfo?: IUser | null; onCloseModal?: (isVisible
                     </p>
                   </div>
                 </div>
-                <div className="my-2 flex flex-row gap-4 ">
+                <div className="my-3 flex flex-row gap-4 ">
                   <div className=" relative  w-[395px]   flex flex-col justify-start items-start">
                     <label className="form-title-md"> Funcion</label>
                     <p className="px-2 h-[35px] w-[395px] text-start flex items-center ">
