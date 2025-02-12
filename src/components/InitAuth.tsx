@@ -16,20 +16,28 @@ const InitAuth = () => {
     }
     const checkAuth = async () => {
       dispatch(setLoading());
+      try {
+        await axios
+          .get(`${BACK_API_URL}/auth/validate-token`, {
+            withCredentials: true,
+          })
+          .then(({ data }) => {
+            dispatch(loginSuccess({ user: data.user }));
+            localStorage.setItem("validateUserArGobSal_user", JSON.stringify(data.user));
+          })
+          .catch((error) => {
+            dispatch(logout()); // Desloguea si el token no es válido
+            dispatch(setError({ error: error.response.data.message }));
+            console.log(error.response.data);
+            localStorage.removeItem("validateUserArGobSal_user");
+          });
+      } catch (error) {
+        console.log("Asdd", error);
+        if (error === "TypeError: Cannot read properties of undefined (reading 'data')") {
+          console.log("verdadero");
+        }
+      }
 
-      await axios
-        .get(`${BACK_API_URL}/auth/validate-token`, {
-          withCredentials: true,
-        })
-        .then(({ data }) => {
-          dispatch(loginSuccess({ user: data.user }));
-          localStorage.setItem("validateUserArGobSal_user", JSON.stringify(data.user));
-        })
-        .catch((error) => {
-          dispatch(logout()); // Desloguea si el token no es válido
-          dispatch(setError({ error: error.response.data.message }));
-          localStorage.removeItem("validateUserArGobSal_user");
-        });
       // try {
       //   const response = await axios.get(`${BACK_API_URL}/auth/validate-token`, {
       //     withCredentials: true,

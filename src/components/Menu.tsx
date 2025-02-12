@@ -2,15 +2,18 @@ import { toast } from "sonner";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { logout, setError } from "../redux/slices/authSlice";
 import { formatName } from "../utils/formatName";
+import { useNavigate } from "react-router-dom";
 
 const Menu = () => {
   const dispatch = useAppDispatch();
+  const navegate = useNavigate();
   const user = useAppSelector((state) => state.auth.user);
   console.log("user", user);
   const handleClose = () => {
     dispatch(logout()); // Desloguea si el token no es válido
     localStorage.removeItem("validateUserArGobSal_user");
     toast.success("Sesión cerrada");
+    navegate("/");
   };
   return (
     <nav className="bg-white w-full h-[70px] shadow-md  bg-clip-border flex flex-row justify-center items-center">

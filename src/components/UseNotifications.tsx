@@ -10,7 +10,7 @@ const BACK_API_URL = import.meta.env.VITE_LOCAL_API_URL;
 const socket = io(BACK_API_URL); // Asegúrate de que la URL es la correcta
 
 export function useNotifications() {
-  const [notifications, setNotifications] = useState<INotificaciónData>();
+  const [notifications, setNotifications] = useState<INotificaciónData[]>([]);
 
   useEffect(() => {
     socket.on("employeeValidated", (data) => {
@@ -30,13 +30,15 @@ export function useNotifications() {
           icon: <BsFillRecordFill className="icon-notification w-6 h-6 text-red-500" />,
         });
       }
-      console.log("Empleado validado:", data);
-      setNotifications(data);
+      // console.log("Empleado validado:", data);
+      setNotifications((prev) => [...prev, data]); // Acumular en el array
     });
     return () => {
       socket.off("employeeValidated");
     };
   }, []);
+  // Función para limpiar las notificaciones
+  const clearNotifications = () => setNotifications([]);
 
-  return notifications;
+  return { notifications, clearNotifications };
 }

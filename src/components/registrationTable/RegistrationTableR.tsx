@@ -1,6 +1,6 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
-import { IRegistration, IUser } from "../../helpers/types";
+import { useEffect, useRef, useState } from "react";
+import { INotificaciónData, IRegistration, IUser } from "../../helpers/types";
 import { toast } from "sonner";
 import { useNotifications } from "../UseNotifications";
 import dayjs from "dayjs";
@@ -11,9 +11,9 @@ import ModalRegistration from "../modalRegistration/ModalRegistration";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { setFilterColumn, setSearchTerm, setUsers, updateUserFromNotification } from "../../redux/slices/usersEmpSlice";
 import ModalGeneric from "../ModalGeneric";
+import { PhotoProvider, PhotoView } from "react-photo-view";
 
 const RegistrationTableR = () => {
-  const notifications = useNotifications();
   const BACK_API_URL = import.meta.env.VITE_LOCAL_API_URL;
   //   const [Users, setUsers] = useState<IUser[]>([]);
   //   const [usersFilter, setUsersFilter] = useState<IUser[]>([]); // [usersFilter]
@@ -25,6 +25,7 @@ const RegistrationTableR = () => {
 
   const dispatch = useAppDispatch();
   const { usersFilter, searchTerm, filterColumn } = useAppSelector((state) => state.usersEmp);
+  const { user } = useAppSelector((state) => state.auth);
   //----------
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [userDetails, setUserDetails] = useState<IUser | null>();
@@ -40,12 +41,31 @@ const RegistrationTableR = () => {
   };
 
   //-----------
+  const { notifications, clearNotifications } = useNotifications();
+  const queueRef = useRef<INotificaciónData[]>([]); // Cola de notificaciones pendientes
+  const isProcessing = useRef(false); // Evita bucles infinitos
   useEffect(() => {
-    // console.log("notifications", notifications);
-    if (notifications) {
-      dispatch(updateUserFromNotification(notifications));
+    if (notifications.length > 0) {
+      queueRef.current = [...queueRef.current, ...notifications]; // Agregar nuevas notificaciones a la cola
+      clearNotifications(); // Limpiar el estado original para evitar bucles
     }
-    // console.log("userN", userN);
+
+    if (!isProcessing.current && queueRef.current.length > 0) {
+      isProcessing.current = true;
+
+      const processQueue = async () => {
+        while (queueRef.current.length > 0) {
+          const batch = queueRef.current.splice(0, queueRef.current.length); // Tomar todas las notificaciones acumuladas
+          console.log("Procesando lote de notificaciones:", batch);
+          dispatch(updateUserFromNotification(batch)); // Enviar al reducer
+          await new Promise((resolve) => setTimeout(resolve, 50)); // Pequeño delay para evitar saturación
+        }
+
+        isProcessing.current = false;
+      };
+
+      processQueue();
+    }
   }, [notifications, dispatch]);
   useEffect(() => {
     const fetchUsers = async () => {
@@ -78,72 +98,105 @@ const RegistrationTableR = () => {
     fetchUsers();
   }, [BACK_API_URL, dispatch]);
 
-  const renderUserButton = (user: IUser) => {
+  const handleButtonValidateAssistance = () => {
+    console.log("user auth", user);
+    const data = {
+      secretariatName: user?.secretariat,
+    };
+    axios
+      .post(`${BACK_API_URL}/registrations/validationsRegistrationsToday`, data, { withCredentials: true })
+      .then((response) => {
+        console.log("response", response);
+      })
+      .catch((error) => {
+        console.log("error", error);
+      });
+  };
+
+  const renderUserTable = (user: IUser) => {
     return (
       <tr key={user.id} className="hover:bg-slate-50">
-        <td className="p-4 border-b border-[#cfd8dc] ">
-          <div className="flex items-center gap-3 ">
-            <img
-              src={user.image}
-              alt={user.name || "user img"}
-              className="relative inline-block h-9 w-9 !rounded-full object-cover object-center"
-            />
-            <div className="flex flex-col w-[150px] sm:w-[250px]  lg:w-full">
-              <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900 overflow-hidden text-ellipsis">
-                {formatName(user.name, user.lastName)}
-              </p>
-              <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900 opacity-70  truncate">
-                {user.email}
-              </p>
-              <dl className="sm:hidden">
-                <dt className="sr-only">Estado</dt>
-                <dd className="">
-                  {user?.registrations.length > 0 ? (
-                    user.registrations[0].validated ? (
-                      <div className="ml-14 inline-block  text-center px-2 py-1 font-sans text-xs font-bold text-green-900 uppercase rounded-md select-none whitespace-nowrap bg-green-500/20">
-                        <span className="">Presente</span>
-                      </div>
+        <PhotoProvider
+          maskOpacity={0.5}
+          key={`${user.id}-${
+            user?.registrations.length > 0 && user.registrations[0].entryCapture ? user.registrations[0].entryCapture : 0
+          }-${user?.registrations.length > 0 && user.registrations[0].exitCapture ? user.registrations[0].exitCapture : 0}`}
+        >
+          <td className="p-4 border-b border-[#cfd8dc] ">
+            <div className="flex items-center gap-3 ">
+              <PhotoView src={`${user.image}`}>
+                <img
+                  src={user.image}
+                  alt={user.name || "user"}
+                  className="relative inline-block h-12 w-12 !rounded-full object-cover object-center cursor-pointer"
+                />
+              </PhotoView>
+              <div className="flex flex-col w-[150px] sm:w-[250px]  lg:w-full">
+                <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900 overflow-hidden text-ellipsis">
+                  {formatName(user.name, user.lastName)}
+                </p>
+                <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900 opacity-70  truncate">
+                  {user.email}
+                </p>
+                <dl className="sm:hidden">
+                  <dt className="sr-only">Estado</dt>
+                  <dd className="">
+                    {user?.registrations.length > 0 ? (
+                      user.registrations[0].validated ? (
+                        <div className="ml-14 inline-block  text-center px-2 py-1 font-sans text-xs font-bold text-green-900 uppercase rounded-md select-none whitespace-nowrap bg-green-500/20">
+                          <span className="">Presente</span>
+                        </div>
+                      ) : (
+                        <div className="ml-14 inline-block  text-center px-2 py-1 font-sans text-xs font-bold text-blue-900 uppercase rounded-md select-none whitespace-nowrap bg-blue-500/20">
+                          <span className="">Inactivo</span>
+                        </div>
+                      )
                     ) : (
-                      <div className="ml-14 inline-block  text-center px-2 py-1 font-sans text-xs font-bold text-blue-900 uppercase rounded-md select-none whitespace-nowrap bg-blue-500/20">
-                        <span className="">Inactivo</span>
+                      <div className="ml-14 inline-block  text-center px-2 py-1 font-sans text-xs font-bold uppercase rounded-md select-none whitespace-nowrap bg-blue-gray-500/20 text-blue-gray-900">
+                        <span className="">No Estado</span>
                       </div>
-                    )
-                  ) : (
-                    <div className="ml-14 inline-block  text-center px-2 py-1 font-sans text-xs font-bold uppercase rounded-md select-none whitespace-nowrap bg-blue-gray-500/20 text-blue-gray-900">
-                      <span className="">No Estado</span>
-                    </div>
-                  )}
-                </dd>
-              </dl>
+                    )}
+                  </dd>
+                </dl>
+              </div>
             </div>
-          </div>
-        </td>
-        <td className="hidden lg:table-cell p-4 border-b border-[#cfd8dc]">
-          <p className=" font-sans text-sm  flex flex-col items-center lg:items-start antialiased font-normal leading-normal text-blue-gray-900">
-            {user.document}
-          </p>
-        </td>
-        <td className="hidden lg:table-cell p-4 border-b border-[#cfd8dc]">
-          <div className="flex flex-col">
-            {/* <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">{user.cellphone}</p> */}
-            <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900 opacity-70">
-              {user?.registrations.length > 0 && user.registrations[0].exitCapture ? (
-                <img className="w-[100px]" src={`${user.registrations[0].exitCapture}`}></img>
-              ) : (
-                "No"
-              )}
+          </td>
+          <td className="hidden lg:table-cell p-4 border-b border-[#cfd8dc]">
+            <p className=" font-sans text-sm  flex flex-col items-center lg:items-start antialiased font-normal leading-normal text-blue-gray-900">
+              {user.document}
             </p>
-          </div>
-        </td>
-        <td className="hidden lg:table-cell p-4 border-b border-[#cfd8dc]">
-          <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-            {user?.registrations.length > 0 && user.registrations[0].entryCapture ? (
-              <img className="w-[100px]" src={`${user.registrations[0].entryCapture}`}></img>
-            ) : (
-              "No"
-            )}
-          </p>
-        </td>
+          </td>
+
+          <td className="hidden lg:table-cell p-4 border-b border-[#cfd8dc]">
+            {/* <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">{user.cellphone}</p> */}
+            <div className="w-[100px] h-[50px] flex items-center justify-center">
+              {user?.registrations.length > 0 && user.registrations[0].exitCapture ? (
+                <PhotoView src={`${user.registrations[0].exitCapture}`}>
+                  <img
+                    className="max-w-full max-h-full object-contain cursor-pointer"
+                    src={`${user.registrations[0].exitCapture}`}
+                  ></img>
+                </PhotoView>
+              ) : (
+                "-"
+              )}
+            </div>
+          </td>
+          <td className="hidden lg:table-cell p-4 border-b border-[#cfd8dc]">
+            <div className="w-[100px] h-[50px] flex items-center justify-center">
+              {user?.registrations.length > 0 && user.registrations[0].entryCapture ? (
+                <PhotoView src={`${user.registrations[0].entryCapture}`}>
+                  <img
+                    className="max-w-full max-h-full object-contain cursor-pointer"
+                    src={`${user.registrations[0].entryCapture}`}
+                  ></img>
+                </PhotoView>
+              ) : (
+                "-"
+              )}
+            </div>
+          </td>
+        </PhotoProvider>
         <td className="hidden sm:table-cell w-[100px] text-center p-4 border-b border-[#cfd8dc]">
           <div className="w-max">
             {user?.registrations.length > 0 ? (
@@ -155,11 +208,11 @@ const RegistrationTableR = () => {
                 <div className="relative grid items-center px-2 py-1 font-sans text-xs font-bold text-blue-900 uppercase rounded-md select-none whitespace-nowrap bg-blue-500/20">
                   <span className="">Inactivo</span>
                 </div>
-              ) : (
-                <div className="relative grid items-center px-2 py-1 font-sans text-xs font-bold uppercase rounded-md select-none whitespace-nowrap bg-blue-gray-500/20 text-blue-gray-900">
-                  <span className="">No Estado</span>
+              ) : user.registrations[0].validated === "absent" ? (
+                <div className="relative grid items-center px-2 py-1 font-sans text-xs font-bold text-amber-900 uppercase rounded-md select-none whitespace-nowrap bg-blue-gray-500/20 bg-amber-500/20">
+                  <span className="">Ausente</span>
                 </div>
-              )
+              ) : null
             ) : null}
           </div>
         </td>
@@ -171,7 +224,9 @@ const RegistrationTableR = () => {
           </p>
           <p className="lg:w-auto  block font-sans text-sm text-center antialiased font-normal leading-normal text-blue-gray-900">
             {user?.registrations.length > 0 && user.registrations[0].entryDate
-              ? dayjs(user.registrations[0].entryDate).format("HH:mm")
+              ? user.registrations[0].validated !== "absent"
+                ? dayjs(user.registrations[0].entryDate).format("HH:mm")
+                : "-"
               : null}
           </p>
         </td>
@@ -264,6 +319,14 @@ const RegistrationTableR = () => {
                   </label>
                 </div>
               </div>
+              <div className=" flex items-center justify-center">
+                <button
+                  className="  rounded-md bg-green-600 py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-green-700 focus:shadow-none active:bg-green-700 hover:bg-green-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none ml-2"
+                  onClick={handleButtonValidateAssistance}
+                >
+                  Validar Asistencia
+                </button>
+              </div>
             </div>
             {/* <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Agregar empleado</button> */}
             <button
@@ -293,13 +356,10 @@ const RegistrationTableR = () => {
                   <p className=" font-sans text-sm text-center lg:text-start  antialiased font-bold  leading-none ">Documento</p>
                 </th>
                 <th className="hidden lg:table-cell p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50">
-                  <p className=" font-sans text-sm antialiased font-bold  leading-none ">Contactos</p>
+                  <p className=" font-sans text-sm antialiased font-bold  leading-none ">Captura de Salida</p>
                 </th>
-                <th
-                  className="hidden lg:table-cell cursor-pointer p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
-                  onClick={onClickName}
-                >
-                  <p className=" block font-sans text-sm antialiased font-bold  leading-none ">Funcion</p>
+                <th className="hidden lg:table-cell  p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50" onClick={onClickName}>
+                  <p className=" block font-sans text-sm antialiased font-bold  leading-none ">Captura de Ingreso</p>
                 </th>
                 <th
                   className="hidden sm:table-cell cursor-pointer p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
@@ -326,7 +386,7 @@ const RegistrationTableR = () => {
             </thead>
             <tbody>
               {/*  */}
-              {usersFilter.map((userData) => renderUserButton(userData))}
+              {usersFilter.map((userData) => renderUserTable(userData))}
             </tbody>
           </table>
         </div>

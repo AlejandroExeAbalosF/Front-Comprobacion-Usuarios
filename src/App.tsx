@@ -13,6 +13,7 @@ import Proof from "./views/Proof";
 import { Toaster } from "sonner";
 import InitAuth from "./components/InitAuth";
 import ProtectedRoute from "./components/ProtectedRoute";
+import "react-photo-view/dist/react-photo-view.css";
 
 function App() {
   const location = useLocation();
@@ -31,7 +32,7 @@ function App() {
           <Route path="/inicio" element={<Start />} />
         </Route>
       </Routes>
-      <Toaster expand={true} />
+      <Toaster expand={true} visibleToasts={9} closeButton />
     </>
   );
 }

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "sonner";
 import dayjs from "dayjs";
+import { PhotoProvider, PhotoView } from "react-photo-view";
 
 const BACK_API_URL = import.meta.env.VITE_LOCAL_API_URL;
 const RegistersTable: React.FC<{ userInfo?: IUser | null }> = ({ userInfo }) => {
@@ -29,8 +30,8 @@ const RegistersTable: React.FC<{ userInfo?: IUser | null }> = ({ userInfo }) => 
         Registros del Empleado : {userInfo && formatName(userInfo?.name, userInfo?.lastName)}{" "}
       </h2>
       {/* <h3 className="ml-6 text-start w-[400px]"></h3> */}
-      <div className="p-6 px-0 overflow-scroll overflow-x-hidden h-[600px]">
-        <table className="w-full mt-4 text-left table-auto min-w-max">
+      <div className="p-6 px-0 overflow-scroll overflow-x-hidden h-[750px] ">
+        <table className="w-full  mt-4 text-left table-auto min-w-max min-h-max">
           <thead>
             <tr className="bg-[#F5F7F8]">
               <th
@@ -83,23 +84,48 @@ const RegistersTable: React.FC<{ userInfo?: IUser | null }> = ({ userInfo }) => 
             {/*  */}
             {registers.map((register) => (
               <tr key={register.id} className="hover:bg-slate-50">
-                <td className="p-4 border-b border-[#cfd8dc] ">
-                  {userInfo?.image ? <img src={userInfo?.image} alt={userInfo?.name || "user img"} className="w-[100px]" /> : "-"}
-                </td>
-                <td className="p-4 border-b border-[#cfd8dc] ">
-                  {register?.entryCapture ? (
-                    <img src={`${register?.entryCapture}`} alt={userInfo?.name || "user img"} className="w-[100px]" />
-                  ) : (
-                    "-"
-                  )}
-                </td>
-                <td className="p-4 border-b border-[#cfd8dc] ">
-                  {register?.exitCapture ? (
-                    <img src={`${register?.exitCapture}`} alt={userInfo?.name || "user img"} className="w-[100px]" />
-                  ) : (
-                    "-"
-                  )}
-                </td>
+                <PhotoProvider
+                  maskOpacity={0.5}
+                  key={`${userInfo?.id}-${
+                    userInfo?.registrations && userInfo?.registrations?.length > 0 && userInfo.registrations[0].entryCapture
+                      ? userInfo.registrations[0].entryCapture
+                      : 0
+                  }-${
+                    userInfo?.registrations && userInfo?.registrations.length > 0 && userInfo.registrations[0].exitCapture
+                      ? userInfo.registrations[0].exitCapture
+                      : 0
+                  }`}
+                >
+                  <>
+                    <td className="p-4 border-b border-[#cfd8dc] ">
+                      {userInfo?.image ? (
+                        <PhotoView src={`${userInfo?.image}`}>
+                          <img src={userInfo?.image} alt={userInfo?.name || "user img"} className="w-[100px]" />
+                        </PhotoView>
+                      ) : (
+                        "-"
+                      )}
+                    </td>
+                    <td className="p-4 border-b border-[#cfd8dc] ">
+                      {register?.entryCapture ? (
+                        <PhotoView src={`${register?.entryCapture}`}>
+                          <img src={`${register?.entryCapture}`} alt={userInfo?.name || "user img"} className="w-[100px]" />
+                        </PhotoView>
+                      ) : (
+                        "-"
+                      )}
+                    </td>
+                    <td className="p-4 border-b border-[#cfd8dc] ">
+                      {register?.exitCapture ? (
+                        <PhotoView src={`${register?.exitCapture}`}>
+                          <img src={`${register?.exitCapture}`} alt={userInfo?.name || "user img"} className="w-[100px]" />
+                        </PhotoView>
+                      ) : (
+                        "-"
+                      )}
+                    </td>
+                  </>
+                </PhotoProvider>
                 <td className="p-4 border-b border-[#cfd8dc] ">
                   <p className="lg:w-auto block font-sans text-sm text-center antialiased font-normal leading-normal text-blue-gray-900">
                     {register?.entryDate ? dayjs(register.entryDate).format("DD/MM/YYYY") : "-"}
@@ -126,6 +152,10 @@ const RegistersTable: React.FC<{ userInfo?: IUser | null }> = ({ userInfo }) => 
                       ) : register.validated === "idle" ? (
                         <div className="relative grid items-center px-2 py-1 font-sans text-xs font-bold text-blue-900 uppercase rounded-md select-none whitespace-nowrap bg-blue-500/20">
                           <span className="">Inactivo</span>
+                        </div>
+                      ) : register.validated === "absent" ? (
+                        <div className="relative grid items-center px-2 py-1 font-sans text-xs font-bold text-amber-900 uppercase rounded-md select-none whitespace-nowrap bg-blue-gray-500/20 bg-amber-500/20">
+                          <span className="">Ausente</span>
                         </div>
                       ) : (
                         <div className="relative grid items-center px-2 py-1 font-sans text-xs font-bold uppercase rounded-md select-none whitespace-nowrap bg-blue-gray-500/20 text-blue-gray-900">
