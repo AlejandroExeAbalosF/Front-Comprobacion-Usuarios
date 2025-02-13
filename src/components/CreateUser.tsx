@@ -21,28 +21,28 @@ const CreateUser: React.FC<CreateUserProps> = ({ onCloseModal, userInfo, setIsEd
   // const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   // Calcular la fecha máxima permitida (hace 18 años desde hoy)
   const initialState = {
-    name: "",
-    lastName: "",
-    document: "",
-    email: "",
-    sex: "",
-    birthDate: "",
-    phone: "",
-    cellphone: "",
-    privateAddress: "",
-    studyLevel: "",
-    profession: "",
-    function: "",
+    name: userInfo?.name ? userInfo.name : "",
+    lastName: userInfo?.lastName ? userInfo.lastName : "",
+    document: userInfo?.document ? userInfo.document : "",
+    email: userInfo?.email ? userInfo.email : "",
+    sex: userInfo?.sex ? userInfo.sex : "",
+    birthDate: userInfo?.birthDate ? userInfo.birthDate : "",
+    phone: userInfo?.phone ? userInfo.phone : "",
+    cellphone: userInfo?.cellphone ? userInfo.cellphone : "",
+    privateAddress: userInfo?.privateAddress ? userInfo.privateAddress : "",
+    studyLevel: userInfo?.studyLevel ? userInfo.studyLevel : "",
+    profession: userInfo?.profession ? userInfo.profession : "",
+    function: userInfo?.function ? userInfo.function : "",
     // asset: "",
-    situation: "",
-    ministry: "",
-    incomeDate: "",
-    secretariat: "",
+    situation: userInfo?.situation ? userInfo.situation : "",
+    ministry: userInfo?.ministry ? userInfo.ministry : "",
+    incomeDate: userInfo?.incomeDate ? userInfo.incomeDate : "",
+    secretariat: userInfo?.secretariat ? userInfo.secretariat : "",
   };
-  const [userDataInputs, setUserDataInputs] = useState(userInfo ? userInfo : initialState);
+  const [userDataInputs, setUserDataInputs] = useState(initialState);
   const [errors, setErrors] = useState(initialState);
   const [birthDate, setBirthDate] = useState("");
-  const [ImagePrevius, setImagePrevious] = useState<string | null>(null);
+  const [ImagePrevius, setImagePrevious] = useState<string | null>(userInfo?.image || null);
   const [userDataImage, setUserDataImage] = useState<File | null>(null);
   const today = dayjs();
   const minDate = today.subtract(18, "years").format("YYYY-MM-DD"); // Formato YYYY-MM-DD
@@ -50,7 +50,7 @@ const CreateUser: React.FC<CreateUserProps> = ({ onCloseModal, userInfo, setIsEd
 
   const handleModal = () => {
     // console.log(isVisible);
-    if (userInfo && setIsEditing) {
+    if (userInfo && setIsEditing && onCloseModal) {
       setIsEditing(false);
     } else if (onCloseModal) {
       onCloseModal(false);
@@ -74,7 +74,31 @@ const CreateUser: React.FC<CreateUserProps> = ({ onCloseModal, userInfo, setIsEd
       console.log("cleanObject", cleanObject(userDataInputs as Record<string, unknown>));
 
       const data = cleanObject(userDataInputs as Record<string, unknown>);
-      // console.log("formData", data);
+      const formData = new FormData();
+      if (userDataImage) formData.append("file", userDataImage);
+      Object.entries(data).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          formData.append(key, value.toString());
+        }
+      });
+      console.log("formDataUpdate", formData);
+      axios
+        .put(`${BACK_API_URL}/users/update/${userInfo.id}`, formData, { withCredentials: true })
+        .then(({ data }) => {
+          console.log("data", data);
+          toast.success("Empleado actualizado exitosamente");
+          if (onCloseModal) onCloseModal(false);
+          const user: IUser = {
+            ...data.user,
+            registrations: userInfo.registrations,
+          };
+          console.log("userActuualizado", user);
+          dispatch(addUser(user));
+        })
+        .catch((error) => {
+          console.error("Error al iniciar sesión:", error.response.data.message);
+          toast.error(error.response.data.message);
+        });
     } else {
       console.log("cleanObject", cleanObject(userDataInputs as Record<string, unknown>));
 
@@ -241,7 +265,7 @@ const CreateUser: React.FC<CreateUserProps> = ({ onCloseModal, userInfo, setIsEd
                       <label className="flex items-center gap-2">
                         <input
                           type="radio"
-                          checked={userInfo ? userInfo.sex === "M" : undefined}
+                          checked={userDataInputs.sex === "M"}
                           name="sex"
                           onChange={handleChange}
                           value="M"
@@ -252,7 +276,7 @@ const CreateUser: React.FC<CreateUserProps> = ({ onCloseModal, userInfo, setIsEd
                       <label className="flex items-center gap-2">
                         <input
                           type="radio"
-                          checked={userInfo ? userInfo.sex === "F" : undefined}
+                          checked={userDataInputs.sex === "F"}
                           name="sex"
                           onChange={handleChange}
                           value="F"

@@ -20,7 +20,7 @@ const UserDetails: React.FC<{ userInfo?: IUser | null; onCloseModal?: (isVisible
     <>
       {isEditing ? (
         <>
-          <CreateUser setIsEditing={setIsEditing} userInfo={userInfo} />
+          <CreateUser setIsEditing={setIsEditing} userInfo={userInfo} onCloseModal={onCloseModal} />
         </>
       ) : (
         <div className="w-[1500px] h-200">

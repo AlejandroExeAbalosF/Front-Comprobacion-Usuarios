@@ -125,7 +125,7 @@ const RegistersTable: React.FC<{ userInfo?: IUser | null }> = ({ userInfo }) => 
                     setSelectedYear(e.target.value);
                     setSelectedMonth(""); // Resetear mes cuando cambia el año
                   }}
-                  className=" bg-gray-50  border-[#196cd9] text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-[7.5px]  dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  className=" bg-gray-50  border-[#d6dadf] border-1 text-gray-900 text-sm rounded-lg focus:border-1 focus:ring-blue-500 focus:border-blue-500 block p-[7.5px]   outline-none"
                 >
                   <option value="">Todos los años</option>
                   {years.map((year) => (
@@ -139,7 +139,7 @@ const RegistersTable: React.FC<{ userInfo?: IUser | null }> = ({ userInfo }) => 
                 <select
                   value={selectedMonth}
                   onChange={(e) => setSelectedMonth(e.target.value)}
-                  className=" border p-2 rounded"
+                  className="bg-gray-50  border-[#d6dadf] border-1 text-gray-900 text-sm rounded-lg focus:border-1 focus:ring-blue-500 focus:border-blue-500 block p-[7.5px]   outline-none"
                   disabled={!selectedYear} // Deshabilitar si no hay un año seleccionado
                 >
                   <option value="">Todos los meses</option>
@@ -175,12 +175,10 @@ const RegistersTable: React.FC<{ userInfo?: IUser | null }> = ({ userInfo }) => 
                   className=" hidden lg:table-cell  cursor-pointer p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
                   // onClick={onClickName}
                 >
-                  <p className=" font-sans text-sm text-center lg:text-start  antialiased font-bold  leading-none ">
-                    Captura de Ingreso
-                  </p>
+                  <p className="  font-sans text-sm text-center  antialiased font-bold  leading-none">Captura de Ingreso</p>
                 </th>
                 <th className="hidden lg:table-cell p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50">
-                  <p className=" font-sans text-sm antialiased font-bold  leading-none ">Captura de Salida</p>
+                  <p className=" font-sans text-sm text-center  antialiased font-bold  leading-none ">Captura de Salida</p>
                 </th>
                 <th
                   className="hidden lg:table-cell cursor-pointer p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
@@ -241,23 +239,35 @@ const RegistersTable: React.FC<{ userInfo?: IUser | null }> = ({ userInfo }) => 
                           "-"
                         )}
                       </td>
-                      <td className="p-4 border-b border-[#cfd8dc] ">
-                        {register?.entryCapture ? (
-                          <PhotoView src={`${register?.entryCapture}`}>
-                            <img src={`${register?.entryCapture}`} alt={userInfo?.name || "user img"} className="w-[100px]" />
-                          </PhotoView>
-                        ) : (
-                          "-"
-                        )}
+                      <td className="p-4 border-b border-[#cfd8dc] w-[150px]">
+                        <div className="w-[150px] h-[100px] flex items-center justify-center">
+                          {register?.entryCapture ? (
+                            <PhotoView src={`${register?.entryCapture}`}>
+                              <img
+                                src={`${register?.entryCapture}`}
+                                alt={userInfo?.name || "user img"}
+                                className="max-w-full max-h-full object-contain  cursor-pointer"
+                              />
+                            </PhotoView>
+                          ) : (
+                            "-"
+                          )}
+                        </div>
                       </td>
-                      <td className="p-4 border-b border-[#cfd8dc] ">
-                        {register?.exitCapture ? (
-                          <PhotoView src={`${register?.exitCapture}`}>
-                            <img src={`${register?.exitCapture}`} alt={userInfo?.name || "user img"} className="w-[100px]" />
-                          </PhotoView>
-                        ) : (
-                          "-"
-                        )}
+                      <td className="p-4 border-b border-[#cfd8dc] w-[150px]">
+                        <div className="w-[150px] h-[100px] flex items-center justify-center">
+                          {register?.exitCapture ? (
+                            <PhotoView src={`${register?.exitCapture}`}>
+                              <img
+                                src={`${register?.exitCapture}`}
+                                alt={userInfo?.name || "user img"}
+                                className="max-w-full max-h-full object-contain  cursor-pointer"
+                              />
+                            </PhotoView>
+                          ) : (
+                            "-"
+                          )}
+                        </div>
                       </td>
                     </>
                   </PhotoProvider>
@@ -278,27 +288,25 @@ const RegistersTable: React.FC<{ userInfo?: IUser | null }> = ({ userInfo }) => 
                     </p>
                   </td>
                   <td className="hidden sm:table-cell w-[100px] text-center p-4 border-b border-[#cfd8dc]">
-                    <div className="w-max">
-                      {register?.validated ? (
-                        register.validated === "present" ? (
-                          <div className=" grid items-center px-2 py-1 font-sans text-xs font-bold text-green-900 uppercase rounded-md select-none whitespace-nowrap bg-green-500/20">
-                            <span className="">Presente</span>
-                          </div>
-                        ) : register.validated === "idle" ? (
-                          <div className=" grid items-center px-2 py-1 font-sans text-xs font-bold text-blue-900 uppercase rounded-md select-none whitespace-nowrap bg-blue-500/20">
-                            <span className="">Inactivo</span>
-                          </div>
-                        ) : register.validated === "absent" ? (
-                          <div className=" grid items-center px-2 py-1 font-sans text-xs font-bold text-amber-900 uppercase rounded-md select-none whitespace-nowrap bg-blue-gray-500/20 bg-amber-500/20">
-                            <span className="">Ausente</span>
-                          </div>
-                        ) : (
-                          <div className=" grid items-center px-2 py-1 font-sans text-xs font-bold uppercase rounded-md select-none whitespace-nowrap bg-blue-gray-500/20 text-blue-gray-900">
-                            <span className="">No Estado</span>
-                          </div>
-                        )
-                      ) : null}
-                    </div>
+                    {register?.validated ? (
+                      register.validated === "working" ? (
+                        <div className=" grid items-center px-2 py-1 font-sans text-xs font-bold text-green-900 uppercase rounded-md select-none whitespace-nowrap bg-green-500/20">
+                          <span className="">Trabajando</span>
+                        </div>
+                      ) : register.validated === "present" ? (
+                        <div className=" grid items-center px-2 py-1 font-sans text-xs font-bold text-blue-900 uppercase rounded-md select-none whitespace-nowrap bg-blue-500/20">
+                          <span className="">Presente</span>
+                        </div>
+                      ) : register.validated === "absent" ? (
+                        <div className=" grid items-center px-2 py-1 font-sans text-xs font-bold text-amber-900 uppercase rounded-md select-none whitespace-nowrap bg-blue-gray-500/20 bg-amber-500/20">
+                          <span className="">Ausente</span>
+                        </div>
+                      ) : (
+                        <div className=" grid items-center px-2 py-1 font-sans text-xs font-bold uppercase rounded-md select-none whitespace-nowrap bg-blue-gray-500/20 text-blue-gray-900">
+                          <span className="">No Estado</span>
+                        </div>
+                      )
+                    ) : null}
                   </td>
                   <td className="p-4 border-b border-[#cfd8dc] ">
                     <p className="lg:w-auto block font-sans text-sm text-center antialiased font-normal leading-normal text-blue-gray-900">

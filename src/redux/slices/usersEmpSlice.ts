@@ -13,6 +13,7 @@ interface UsersState {
   usersFilter: IUser[];
   searchTerm: string;
   filterColumn: IFilterColumn;
+  highlightedUserId: string;
 }
 
 const initialState: UsersState = {
@@ -20,6 +21,7 @@ const initialState: UsersState = {
   usersFilter: [],
   searchTerm: "",
   filterColumn: { type: "Empleados", order: false },
+  highlightedUserId: "",
 };
 
 const usersEmpSlice = createSlice({
@@ -33,10 +35,14 @@ const usersEmpSlice = createSlice({
     },
     addUser(state, action: PayloadAction<IUser>) {
       const newUser = action.payload;
-    
-      // Agregar el nuevo usuario al inicio del array
-      state.users = [newUser, ...state.users];
-      state.usersFilter = [newUser, ...state.usersFilter];
+
+      // Filtrar la lista para eliminar el usuario viejo si existe
+      // Elimina la versión anterior del usuario (si existe) y agrega el nuevo al inicio
+      state.users = [newUser, ...state.users.filter(user => user.id !== newUser.id)];
+      state.usersFilter = [newUser, ...state.usersFilter.filter(user => user.id !== newUser.id)];
+
+        // Guardamos el ID del usuario resaltado
+      state.highlightedUserId = newUser.id;
     },
     setSearchTerm(state, action: PayloadAction<string>) {
       state.searchTerm = action.payload;
@@ -115,7 +121,8 @@ const usersEmpSlice = createSlice({
   // Si el filtro actual es "Ingreso", mover los usuarios actualizados al inicio
   if (state.filterColumn.type === "Ingreso") {
     const updatedUserIds = new Set(notifications.map(n => n.id));
-
+ // Guardamos el ID del usuario resaltado
+ state.highlightedUserId = notifications[0].id;
     updatedUsers = [
       ...updatedUsers.filter(user => updatedUserIds.has(user.id)), // Usuarios actualizados primero
       ...updatedUsers.filter(user => !updatedUserIds.has(user.id)), // Luego los demás
@@ -125,6 +132,7 @@ const usersEmpSlice = createSlice({
   // Aplicar nuevamente el ordenamiento sin perder el filtro
   state.users = updatedUsers;
   state.usersFilter = sortUsers(state.filterColumn, updatedUsers);
+    
     },
   },
 });

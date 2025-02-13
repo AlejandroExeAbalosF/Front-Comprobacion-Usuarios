@@ -12,6 +12,7 @@ import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { setFilterColumn, setSearchTerm, setUsers, updateUserFromNotification } from "../../redux/slices/usersEmpSlice";
 import ModalGeneric from "../ModalGeneric";
 import { PhotoProvider, PhotoView } from "react-photo-view";
+import { motion } from "framer-motion";
 
 const RegistrationTableR = () => {
   const BACK_API_URL = import.meta.env.VITE_LOCAL_API_URL;
@@ -24,7 +25,7 @@ const RegistrationTableR = () => {
   //   });
 
   const dispatch = useAppDispatch();
-  const { usersFilter, searchTerm, filterColumn } = useAppSelector((state) => state.usersEmp);
+  const { usersFilter, searchTerm, filterColumn, highlightedUserId } = useAppSelector((state) => state.usersEmp);
   const { user } = useAppSelector((state) => state.auth);
   //----------
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
@@ -115,7 +116,7 @@ const RegistrationTableR = () => {
 
   const renderUserTable = (user: IUser) => {
     return (
-      <tr key={user.id} className="hover:bg-slate-50">
+      <motion.tr key={user.id} className={`hover:bg-slate-50 ${user.id === highlightedUserId ? "highlighted" : ""}`}>
         <PhotoProvider
           maskOpacity={0.5}
           key={`${user.id}-${
@@ -257,7 +258,7 @@ const RegistrationTableR = () => {
           <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900"></p>
           <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900"></p>
         </td>
-      </tr>
+      </motion.tr>
     );
   };
 

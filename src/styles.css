@@ -79,3 +79,16 @@ body {
 .edit_profile_input_hover:hover ~ .edit_profile_img_hover {
   background-color: rgba(80, 80, 80, 0.185);
 }
+
+@keyframes highlight {
+  0% {
+    background-color: rgba(79, 119, 178, 0.696);
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
+.highlighted {
+  animation: highlight 2s ease-in-out;
+}

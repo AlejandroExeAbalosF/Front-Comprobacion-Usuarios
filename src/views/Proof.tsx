@@ -1,3 +1,5 @@
+import { motion } from "framer-motion";
+
 export default function Proof() {
   return (
     <main className="inset-0 flex justify-center items-center  p-4 ">
