@@ -108,6 +108,7 @@ const RegistrationTableR = () => {
       .post(`${BACK_API_URL}/registrations/validationsRegistrationsToday`, data, { withCredentials: true })
       .then((response) => {
         console.log("response", response);
+        toast.success(response.data.message);
       })
       .catch((error) => {
         console.log("error", error);
