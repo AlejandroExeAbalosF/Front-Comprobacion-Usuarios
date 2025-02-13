@@ -136,29 +136,29 @@ const updateRegistrations = (registrations: IRegistration[], notification: any) 
           ? {
               ...reg,
               validated: notification.validated,
-              entryDate: reg.entryDate || (notification.validated === "present" || notification.validated === "absent" ? notification.date : undefined),
-              entryCapture: reg.entryCapture || (notification.validated === "present"  ? notification.capture : undefined),
-              exitDate: notification.validated === "idle" ? notification.date : reg.exitDate,
-              exitCapture: notification.validated === "idle" ? notification.capture : reg.exitCapture,
+              entryDate: reg.entryDate || (notification.validated === "working" || notification.validated === "absent" ? notification.date : undefined),
+              entryCapture: reg.entryCapture || (notification.validated === "working"  ? notification.capture : undefined),
+              exitDate: notification.validated === "present" ? notification.date : reg.exitDate,
+              exitCapture: notification.validated === "present" ? notification.capture : reg.exitCapture,
             }
           : {
             ...reg, // Mantenemos los campos originales ?
             id: notification.idR,
             validated: notification.validated,
-            entryDate: notification.validated === "present" || notification.validated === "absent" ? notification.date : undefined,
-            entryCapture: notification.validated === "present" ? notification.capture : undefined,
-            exitDate: notification.validated === "idle" ? notification.date : undefined,
-            exitCapture: notification.validated === "idle" ? notification.capture : undefined,
+            entryDate: notification.validated === "working" || notification.validated === "absent" ? notification.date : undefined,
+            entryCapture: notification.validated === "working" ? notification.capture : undefined,
+            exitDate: notification.validated === "present" ? notification.date : undefined,
+            exitCapture: notification.validated === "present" ? notification.capture : undefined,
           }
       )
     : [
         {
           id: notification.idR,
           validated: notification.validated,
-          entryDate: notification.validated === "present" || notification.validated === "absent" ? notification.date : undefined,
-          entryCapture: notification.validated === "present" ? notification.capture : undefined,
-          exitDate: notification.validated === "idle" ? notification.date : undefined,
-          exitCapture: notification.validated === "idle" ? notification.capture : undefined,
+          entryDate: notification.validated === "working" || notification.validated === "absent" ? notification.date : undefined,
+          entryCapture: notification.validated === "working" ? notification.capture : undefined,
+          exitDate: notification.validated === "present" ? notification.date : undefined,
+          exitCapture: notification.validated === "present" ? notification.capture : undefined,
         },
       ];
 };
@@ -173,7 +173,7 @@ const sortUsers = (filterColumn: IFilterColumn, users: IUser[]) => {
         const dateB = b.registrations[0]?.entryDate ? new Date(b.registrations[0].entryDate).getTime() : 0;
         return filterColumn.order ? dateB - dateA : dateA - dateB;
       case "Estado":
-        const priority = { present: 1, idle: 2, absent: 3 };
+        const priority = { working: 1, present: 2, absent: 3 };
         const validatedA = a.registrations[0]?.validated || "absent";
         const validatedB = b.registrations[0]?.validated || "absent";
         return filterColumn.order ? priority[validatedA] - priority[validatedB] : priority[validatedB] - priority[validatedA];

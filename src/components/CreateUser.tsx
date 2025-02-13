@@ -7,9 +7,16 @@ import axios from "axios";
 import { useAppDispatch } from "../redux/hooks";
 import { addUser } from "../redux/slices/usersEmpSlice";
 import { toast } from "sonner";
+import { formatName } from "../utils/formatName";
 
 const BACK_API_URL = import.meta.env.VITE_LOCAL_API_URL;
-const CreateUser = ({ onCloseModal }: { onCloseModal?: (isVisible: boolean) => void }) => {
+
+interface CreateUserProps {
+  onCloseModal?: (isVisible: boolean) => void;
+  userInfo?: IUser | null;
+  setIsEditing?: (isEditing: boolean) => void;
+}
+const CreateUser: React.FC<CreateUserProps> = ({ onCloseModal, userInfo, setIsEditing }) => {
   const dispatch = useAppDispatch();
   // const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   // Calcular la fecha máxima permitida (hace 18 años desde hoy)
@@ -29,9 +36,10 @@ const CreateUser = ({ onCloseModal }: { onCloseModal?: (isVisible: boolean) => v
     // asset: "",
     situation: "",
     ministry: "",
+    incomeDate: "",
     secretariat: "",
   };
-  const [userDataInputs, setUserDataInputs] = useState(initialState);
+  const [userDataInputs, setUserDataInputs] = useState(userInfo ? userInfo : initialState);
   const [errors, setErrors] = useState(initialState);
   const [birthDate, setBirthDate] = useState("");
   const [ImagePrevius, setImagePrevious] = useState<string | null>(null);
@@ -42,7 +50,9 @@ const CreateUser = ({ onCloseModal }: { onCloseModal?: (isVisible: boolean) => v
 
   const handleModal = () => {
     // console.log(isVisible);
-    if (onCloseModal) {
+    if (userInfo && setIsEditing) {
+      setIsEditing(false);
+    } else if (onCloseModal) {
       onCloseModal(false);
     }
   };
@@ -60,34 +70,41 @@ const CreateUser = ({ onCloseModal }: { onCloseModal?: (isVisible: boolean) => v
   const handleSubmit = (e: React.MouseEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log(userDataInputs);
-    console.log("cleanObject", cleanObject(userDataInputs));
+    if (userInfo) {
+      console.log("cleanObject", cleanObject(userDataInputs as Record<string, unknown>));
 
-    const data = cleanObject(userDataInputs);
-    const formData = new FormData();
-    if (userDataImage) formData.append("file", userDataImage);
-    Object.entries(data).forEach(([key, value]) => {
-      if (value !== undefined && value !== null) {
-        formData.append(key, value.toString());
-      }
-    });
-    console.log("formData", formData);
-    // formData.append("data", data);
-    axios
-      .post(`${BACK_API_URL}/users/createEmployee`, formData, { withCredentials: true })
-      .then(({ data }) => {
-        console.log("data", data);
-        toast.success("Empleado creado exitosamente");
-        handleModal();
-        const user: IUser = {
-          ...data.user,
-          registrations: [],
-        };
-        dispatch(addUser(user));
-      })
-      .catch((error) => {
-        console.error("Error al iniciar sesión:", error.response.data.message);
-        toast.error(error.response.data.message);
+      const data = cleanObject(userDataInputs as Record<string, unknown>);
+      // console.log("formData", data);
+    } else {
+      console.log("cleanObject", cleanObject(userDataInputs as Record<string, unknown>));
+
+      const data = cleanObject(userDataInputs as Record<string, unknown>);
+      const formData = new FormData();
+      if (userDataImage) formData.append("file", userDataImage);
+      Object.entries(data).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          formData.append(key, value.toString());
+        }
       });
+      console.log("formData", formData);
+      // formData.append("data", data);
+      axios
+        .post(`${BACK_API_URL}/users/createEmployee`, formData, { withCredentials: true })
+        .then(({ data }) => {
+          console.log("data", data);
+          toast.success("Empleado creado exitosamente");
+          handleModal();
+          const user: IUser = {
+            ...data.user,
+            registrations: [],
+          };
+          dispatch(addUser(user));
+        })
+        .catch((error) => {
+          console.error("Error al iniciar sesión:", error.response.data.message);
+          toast.error(error.response.data.message);
+        });
+    }
   };
 
   const cleanObject = <T extends Record<string, unknown>>(obj: T): Partial<T> => {
@@ -112,7 +129,9 @@ const CreateUser = ({ onCloseModal }: { onCloseModal?: (isVisible: boolean) => v
   };
   return (
     <div className="w-[1500px] h-200">
-      <h2 className="mt-4  text-center font-[500] text-[30px]">Creacion de Empleado</h2>
+      <h2 className="mt-4  text-center font-[500] text-[30px]">
+        {userInfo ? `Editar Empleado: ${formatName(userInfo?.name, userInfo?.lastName)}` : "Crear Empleado"}
+      </h2>
       <div className="flex flex-row w-auto p-6 ">
         <div className="w-[380px] h-[300px] flex flex-col justify-center items-center">
           <div className="flex relative justify-center items-center  mt-1 bg-gray-400 hover:bg-[#69696965] w-[252px] h-[252px] rounded-[50%] shadow-md ">
@@ -128,7 +147,7 @@ const CreateUser = ({ onCloseModal }: { onCloseModal?: (isVisible: boolean) => v
             />
             {ImagePrevius ? (
               <>
-                <img src={ImagePrevius} className=" w-[252px] h-[252px] rounded-[50%]" />
+                <img src={ImagePrevius} className=" w-[252px] h-[252px] rounded-[50%] object-cover " />
                 <div className="edit_profile_img_hover absolute inset-0 w-full h-full group hover:bg-[#69696965] rounded-[50%]"></div>
               </>
             ) : (
@@ -159,7 +178,7 @@ const CreateUser = ({ onCloseModal }: { onCloseModal?: (isVisible: boolean) => v
                       // id={name}
                       type="text"
                       name="name"
-                      // value={userDataInputs[name as keyof typeof userDataInputs]}
+                      value={userDataInputs.name}
                       className={` px-2 h-[35px]  text-black py-2.5  w-[500px]  input-form-create`}
                       placeholder=" "
                       onChange={handleChange}
@@ -174,7 +193,7 @@ const CreateUser = ({ onCloseModal }: { onCloseModal?: (isVisible: boolean) => v
                       // id={name}
                       type="text"
                       name="lastName"
-                      // value={userDataInputs[name as keyof typeof userDataInputs]}
+                      value={userDataInputs.lastName}
                       className={` block px-2 h-[35px]  text-black py-2.5  w-[500px] input-form-create`}
                       placeholder=" "
                       onChange={handleChange}
@@ -191,7 +210,7 @@ const CreateUser = ({ onCloseModal }: { onCloseModal?: (isVisible: boolean) => v
                       // id={name}
                       type="text"
                       name="document"
-                      // value={userDataInputs[name as keyof typeof userDataInputs]}
+                      value={userDataInputs.document}
                       className={` block px-2 h-[35px]  text-black py-2.5  w-[200px] input-form-create`}
                       placeholder=" "
                       onChange={handleChange}
@@ -206,7 +225,7 @@ const CreateUser = ({ onCloseModal }: { onCloseModal?: (isVisible: boolean) => v
                       // id={name}
                       type="text"
                       name="email"
-                      // value={userDataInputs[name as keyof typeof userDataInputs]}
+                      value={userDataInputs.email}
                       className={` block px-2 h-[35px]  text-black py-2.5  w-[500px]
                          input-form-create`}
                       placeholder=" "
@@ -220,11 +239,25 @@ const CreateUser = ({ onCloseModal }: { onCloseModal?: (isVisible: boolean) => v
                     </label>
                     <div className="flex gap-4 h-full">
                       <label className="flex items-center gap-2">
-                        <input type="radio" name="sex" onChange={handleChange} value="M" className="w-4 h-4" />
+                        <input
+                          type="radio"
+                          checked={userInfo ? userInfo.sex === "M" : undefined}
+                          name="sex"
+                          onChange={handleChange}
+                          value="M"
+                          className="w-4 h-4"
+                        />
                         Masculino
                       </label>
                       <label className="flex items-center gap-2">
-                        <input type="radio" name="sex" onChange={handleChange} value="F" className="w-4 h-4" />
+                        <input
+                          type="radio"
+                          checked={userInfo ? userInfo.sex === "F" : undefined}
+                          name="sex"
+                          onChange={handleChange}
+                          value="F"
+                          className="w-4 h-4"
+                        />
                         Femenino
                       </label>
                     </div>
@@ -240,7 +273,7 @@ const CreateUser = ({ onCloseModal }: { onCloseModal?: (isVisible: boolean) => v
                       // id={name}
                       type="text"
                       name="cellphone"
-                      // value={userDataInputs[name as keyof typeof userDataInputs]}
+                      value={userDataInputs.cellphone}
                       className={` block px-2 h-[35px]  text-black py-2.5  w-[200px] input-form-create`}
                       placeholder=" "
                       onChange={handleChange}
@@ -255,7 +288,7 @@ const CreateUser = ({ onCloseModal }: { onCloseModal?: (isVisible: boolean) => v
                       // id={name}
                       type="text"
                       name="phone"
-                      // value={userDataInputs[name as keyof typeof userDataInputs]}
+                      value={userDataInputs.phone}
                       className={` block px-2 h-[35px]  text-black py-2.5  w-[200px] input-form-create`}
                       placeholder=" "
                       onChange={handleChange}
@@ -269,7 +302,7 @@ const CreateUser = ({ onCloseModal }: { onCloseModal?: (isVisible: boolean) => v
                       id="dob"
                       type="date"
                       name="birthDate"
-                      // value={birthDate}
+                      value={userDataInputs.birthDate}
                       onChange={handleChange}
                       // onChange={(e) => setBirthDate(e.target.value)}
                       max={minDate} // Restringe la fecha máxima a hace 18 años
@@ -297,6 +330,7 @@ const CreateUser = ({ onCloseModal }: { onCloseModal?: (isVisible: boolean) => v
                       id="countries"
                       name="studyLevel"
                       onChange={handleChange}
+                      value={userDataInputs.studyLevel}
                       className="w-[200px] bg-gray-50  border-[#E2E8F0] text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-[7.5px]  dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
                       // className="w-[200px] p-[7.5px]  input-form-create"
                     >
@@ -316,7 +350,7 @@ const CreateUser = ({ onCloseModal }: { onCloseModal?: (isVisible: boolean) => v
                       // id={name}
                       type="text"
                       name="profession"
-                      // value={userDataInputs[name as keyof typeof userDataInputs]}
+                      value={userDataInputs.profession}
                       className={` block px-2 h-[35px]  text-black py-2.5  w-[500px] input-form-create`}
                       placeholder=" "
                       onChange={handleChange}
@@ -333,7 +367,7 @@ const CreateUser = ({ onCloseModal }: { onCloseModal?: (isVisible: boolean) => v
                       // id={name}
                       type="text"
                       name="privateAddress"
-                      // value={userDataInputs[name as keyof typeof userDataInputs]}
+                      value={userDataInputs.privateAddress}
                       className={` block px-2 h-[35px]  text-black py-2.5  w-full input-form-create`}
                       placeholder=" "
                       onChange={handleChange}
@@ -355,7 +389,7 @@ const CreateUser = ({ onCloseModal }: { onCloseModal?: (isVisible: boolean) => v
                       // id={name}
                       type="text"
                       name="ministry"
-                      // value={userDataInputs[name as keyof typeof userDataInputs]}
+                      value={userDataInputs.ministry}
                       className={` px-2 h-[35px]  text-black py-2.5  w-[500px]  input-form-create`}
                       placeholder=" "
                       onChange={handleChange}
@@ -370,7 +404,7 @@ const CreateUser = ({ onCloseModal }: { onCloseModal?: (isVisible: boolean) => v
                       // id={name}
                       type="text"
                       name="secretariat"
-                      // value={userDataInputs[name as keyof typeof userDataInputs]}
+                      value={userDataInputs.secretariat}
                       className={` block px-2 h-[35px]  text-black py-2.5  w-[500px] input-form-create`}
                       placeholder=" "
                       onChange={handleChange}
@@ -387,7 +421,7 @@ const CreateUser = ({ onCloseModal }: { onCloseModal?: (isVisible: boolean) => v
                       // id={name}
                       type="text"
                       name="function"
-                      // value={userDataInputs[name as keyof typeof userDataInputs]}
+                      value={userDataInputs.function}
                       className={` px-2 h-[35px]  text-black py-2.5  w-[395px]  input-form-create`}
                       placeholder=" "
                       onChange={handleChange}
@@ -402,7 +436,7 @@ const CreateUser = ({ onCloseModal }: { onCloseModal?: (isVisible: boolean) => v
                       // id={name}
                       type="text"
                       name="situation"
-                      // value={userDataInputs[name as keyof typeof userDataInputs]}
+                      value={userDataInputs.situation}
                       className={` block px-2 h-[35px]  text-black py-2.5  w-[395px] input-form-create`}
                       placeholder=" "
                       onChange={handleChange}
@@ -415,6 +449,7 @@ const CreateUser = ({ onCloseModal }: { onCloseModal?: (isVisible: boolean) => v
                     <input
                       id="dob"
                       type="date"
+                      value={userDataInputs.incomeDate}
                       name="incomeDate"
                       onChange={handleChange}
                       className="block px-2 h-[35px] text-black py-2.5 w-[200px]

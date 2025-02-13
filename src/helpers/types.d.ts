@@ -41,7 +41,6 @@ export interface IRegistration {
     exitDate: string;
     description?: string;
     createdAt?: string;
-    createdAt: string;
     user?: IUser
 }
 

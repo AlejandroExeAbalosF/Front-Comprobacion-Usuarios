@@ -313,15 +313,19 @@ const RegistrationTable = () => {
                 <dt className="sr-only">Estado</dt>
                 <dd className="">
                   {user?.registrations.length > 0 ? (
-                    user.registrations[0].validated ? (
+                    user.registrations[0].validated === "working" ? (
                       <div className="ml-14 inline-block  text-center px-2 py-1 font-sans text-xs font-bold text-green-900 uppercase rounded-md select-none whitespace-nowrap bg-green-500/20">
+                        <span className="">Trabajando</span>
+                      </div>
+                    ) : user.registrations[0].validated === "present" ? (
+                      <div className="ml-14 inline-block  text-center px-2 py-1 font-sans text-xs font-bold text-blue-900 uppercase rounded-md select-none whitespace-nowrap bg-blue-500/20">
                         <span className="">Presente</span>
                       </div>
-                    ) : (
-                      <div className="ml-14 inline-block  text-center px-2 py-1 font-sans text-xs font-bold text-blue-900 uppercase rounded-md select-none whitespace-nowrap bg-blue-500/20">
-                        <span className="">Inactivo</span>
+                    ) : user.registrations[0].validated === "absent" ? (
+                      <div className=" grid items-center px-2 py-1 font-sans text-xs font-bold text-amber-900 uppercase rounded-md select-none whitespace-nowrap bg-blue-gray-500/20 bg-amber-500/20">
+                        <span className="">Ausente</span>
                       </div>
-                    )
+                    ) : null
                   ) : (
                     <div className="ml-14 inline-block  text-center px-2 py-1 font-sans text-xs font-bold uppercase rounded-md select-none whitespace-nowrap bg-blue-gray-500/20 text-blue-gray-900">
                       <span className="">No Estado</span>

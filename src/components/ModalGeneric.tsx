@@ -34,7 +34,7 @@ const ModalGeneric: React.FC<ModalProps> = ({ isVisible, onClose, data, typeModa
       id="modal_main"
       onClick={handleModal}
       className={`fixed z-10  inset-0 flex justify-center items-center transition-colors  ${
-        isVisible ? "visible bg-black/55  inset-0  backdrop-blur-md  " : "invisible"
+        isVisible ? "visible bg-black/55  inset-0  backdrop-blur-xs  " : "invisible"
       }  `}
     >
       <div

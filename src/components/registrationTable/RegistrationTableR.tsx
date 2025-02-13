@@ -128,19 +128,20 @@ const RegistrationTableR = () => {
                 <img
                   src={user.image}
                   alt={user.name || "user"}
-                  className="relative inline-block h-12 w-12 !rounded-full object-cover object-center cursor-pointer"
+                  className=" inline-block h-12 w-12 !rounded-full object-cover  object-center  cursor-pointer"
                 />
               </PhotoView>
               <div className="flex flex-col w-[150px] sm:w-[250px]  lg:w-full">
                 <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900 overflow-hidden text-ellipsis">
                   {formatName(user.name, user.lastName)}
                 </p>
-                <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900 opacity-70  truncate">
+                <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900 ">
+                  {/* opacity-70  truncate */}
                   {user.email}
                 </p>
                 <dl className="sm:hidden">
                   <dt className="sr-only">Estado</dt>
-                  <dd className="">
+                  <dd className="flex items-center justify-center">
                     {user?.registrations.length > 0 ? (
                       user.registrations[0].validated ? (
                         <div className="ml-14 inline-block  text-center px-2 py-1 font-sans text-xs font-bold text-green-900 uppercase rounded-md select-none whitespace-nowrap bg-green-500/20">
@@ -198,23 +199,21 @@ const RegistrationTableR = () => {
           </td>
         </PhotoProvider>
         <td className="hidden sm:table-cell w-[100px] text-center p-4 border-b border-[#cfd8dc]">
-          <div className="w-max">
-            {user?.registrations.length > 0 ? (
-              user.registrations[0].validated === "present" ? (
-                <div className="relative grid items-center px-2 py-1 font-sans text-xs font-bold text-green-900 uppercase rounded-md select-none whitespace-nowrap bg-green-500/20">
-                  <span className="">Presente</span>
-                </div>
-              ) : user.registrations[0].validated === "idle" ? (
-                <div className="relative grid items-center px-2 py-1 font-sans text-xs font-bold text-blue-900 uppercase rounded-md select-none whitespace-nowrap bg-blue-500/20">
-                  <span className="">Inactivo</span>
-                </div>
-              ) : user.registrations[0].validated === "absent" ? (
-                <div className="relative grid items-center px-2 py-1 font-sans text-xs font-bold text-amber-900 uppercase rounded-md select-none whitespace-nowrap bg-blue-gray-500/20 bg-amber-500/20">
-                  <span className="">Ausente</span>
-                </div>
-              ) : null
-            ) : null}
-          </div>
+          {user?.registrations.length > 0 ? (
+            user.registrations[0].validated === "working" ? (
+              <div className="  items-center px-2 py-1 font-sans text-xs font-bold text-green-900 uppercase rounded-md select-none whitespace-nowrap bg-green-500/20">
+                <span className="">Trabajando</span>
+              </div>
+            ) : user.registrations[0].validated === "present" ? (
+              <div className="  items-center px-2 py-1 font-sans text-xs font-bold text-blue-900 uppercase rounded-md select-none whitespace-nowrap bg-blue-500/20">
+                <span className="">Presente</span>
+              </div>
+            ) : user.registrations[0].validated === "absent" ? (
+              <div className="  items-center px-2 py-1 font-sans text-xs font-bold text-amber-900 uppercase rounded-md select-none whitespace-nowrap bg-blue-gray-500/20 bg-amber-500/20">
+                <span className="">Ausente</span>
+              </div>
+            ) : null
+          ) : null}
         </td>
         <td className=" sm:table-cell w-[100px] text-center flex flex-col items-center p-4 border-b border-[#cfd8dc]">
           <p className="lg:w-auto block font-sans text-sm text-center antialiased font-normal leading-normal text-blue-gray-900">
@@ -275,7 +274,7 @@ const RegistrationTableR = () => {
   };
   //!-----------------------------------------------------------
   return (
-    <section className="2xl:w-[1500px] lg:w-[1200px] md:w-[900px]">
+    <section className="2xl:w-[1500px] lg:w-[1200px] md:w-[900px]  h-[700px]">
       <h2 className="notificationsext-2xl ml-5  text-2xl flex  items-start">Listado de Empleados</h2>
       <div className="xs:w-4/5 m-auto my-2 relative flex flex-col w-full h-full text-gray-700 bg-white shadow-md rounded-xl bg-clip-border">
         <div className="relative mx-4 mt-4 overflow-hidden text-gray-700 bg-white rounded-none bg-clip-border">
@@ -339,9 +338,9 @@ const RegistrationTableR = () => {
           </div>
         </div>
         {/* Tabla */}
-        <div className="p-6 px-0 overflow-scroll overflow-x-hidden h-[600px]">
-          <table className="w-full mt-4 text-left table-auto min-w-max">
-            <thead>
+        <div className=" overflow-auto overflow-x-hidden  h-full p-0 m-0">
+          <table className="w-full  text-left table-auto min-w-max min-h-max border-collapse">
+            <thead className="sticky top-0 bg-white shadow-md" style={{ top: "-0.5px" }}>
               <tr className="bg-[#F5F7F8]">
                 <th
                   className="cursor-pointer w-[250px] sm:w-[350px] p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"

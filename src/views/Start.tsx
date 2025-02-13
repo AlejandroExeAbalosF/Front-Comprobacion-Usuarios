@@ -11,11 +11,11 @@ export default function Start() {
     <>
       {/* <SideBar /> */}
       <Menu />
-      <main className=" w-auto h-auto text-center   flex flex-col items-center justify-start bg-white shadow-xlrounded-md  m-4">
+      <main className=" w-auto h-[830px] text-center   flex flex-col items-center justify-start bg-white shadow-xlrounded-md  m-4">
         <section className="">
           <h1 className="text-3xl   mt-5">Bienvenido</h1>
 
-          <div className="mt-4">
+          <div className="mt-4 ">
             {/* <RegistrationTable /> */}
             <RegistrationTableR />
           </div>

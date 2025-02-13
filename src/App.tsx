@@ -14,6 +14,9 @@ import { Toaster } from "sonner";
 import InitAuth from "./components/InitAuth";
 import ProtectedRoute from "./components/ProtectedRoute";
 import "react-photo-view/dist/react-photo-view.css";
+import "dayjs/locale/es";
+import dayjs from "dayjs";
+dayjs.locale("es");
 
 function App() {
   const location = useLocation();

@@ -3,6 +3,7 @@ import { IUser } from "../helpers/types";
 import { formatName } from "../utils/formatName";
 import { useState } from "react";
 import CreateUser from "./CreateUser";
+import { PhotoProvider, PhotoView } from "react-photo-view";
 
 const UserDetails: React.FC<{ userInfo?: IUser | null; onCloseModal?: (isVisible: boolean) => void }> = ({
   userInfo,
@@ -18,7 +19,9 @@ const UserDetails: React.FC<{ userInfo?: IUser | null; onCloseModal?: (isVisible
   return (
     <>
       {isEditing ? (
-        <CreateUser onCloseModal={onCloseModal} />
+        <>
+          <CreateUser setIsEditing={setIsEditing} userInfo={userInfo} />
+        </>
       ) : (
         <div className="w-[1500px] h-200">
           <h2 className="mt-4  text-center font-[500] text-[30px]">
@@ -27,7 +30,11 @@ const UserDetails: React.FC<{ userInfo?: IUser | null; onCloseModal?: (isVisible
           <div className="flex flex-row w-auto p-6 ">
             <div className="w-[380px] h-[300px] flex flex-col justify-center items-center">
               <div className="flex justify-center items-center  mt-1 bg-[#fff8f2] w-[252px] h-[252px] rounded-[50%] shadow-md ">
-                <img src={userInfo?.image} className=" w-[252px] h-[252px] rounded-[50%]" />
+                <PhotoProvider maskOpacity={0.5}>
+                  <PhotoView src={`${userInfo?.image}`}>
+                    <img src={userInfo?.image} className=" w-[252px] h-[252px] rounded-[50%] object-cover " />
+                  </PhotoView>
+                </PhotoProvider>
               </div>
             </div>
             <div className="w-[1024px] h-full flex flex-col  ">
