@@ -5,6 +5,7 @@ import axios from "axios";
 import { toast } from "sonner";
 import dayjs from "dayjs";
 import { PhotoProvider, PhotoView } from "react-photo-view";
+import { FiEdit } from "react-icons/fi";
 
 const BACK_API_URL = import.meta.env.VITE_LOCAL_API_URL;
 const RegistersTable: React.FC<{ userInfo?: IUser | null }> = ({ userInfo }) => {
@@ -88,7 +89,6 @@ const RegistersTable: React.FC<{ userInfo?: IUser | null }> = ({ userInfo }) => 
   };
 
   const handleReport = (e) => {
-    console.log("hola papi");
     if (selectedMonth && selectedYear && userInfo) {
       const data = {
         id: userInfo?.id,
@@ -116,7 +116,8 @@ const RegistersTable: React.FC<{ userInfo?: IUser | null }> = ({ userInfo }) => 
           document.body.removeChild(link);
         })
         .catch((error) => {
-          console.error("Error al descargar el PDF", error);
+          if(error.response.data.message === "Error al descargar el PDF"){ toast.error(error.response.data.message); }
+          console.error("asd", error);
         });
     } else {
       toast.info("Seleccione un año y un mes");
@@ -125,9 +126,9 @@ const RegistersTable: React.FC<{ userInfo?: IUser | null }> = ({ userInfo }) => 
 
   return (
     <div className="w-[1500px] h-[900px]">
-      <div className="xs:w-4/5 m-auto my-2 relative flex flex-col w-full h-full text-gray-700 bg-white shadow-md rounded-xl bg-clip-border">
+      <div className="xs:w-4/5 m-auto my-2 relative flex flex-col w-full h-[800px] text-gray-700 bg-white shadow-md rounded-xl bg-clip-border">
         {/* <h3 className="ml-6 text-start w-[400px]"></h3> */}
-        <h2 className="mt-4  text-center font-[500] text-[30px]">
+        <h2 className="mt-4   text-center font-[500] text-[30px]">
           Registros del Empleado : {userInfo && formatName(userInfo?.name, userInfo?.lastName)}{" "}
         </h2>
         <div className="relative h-[110px] mx-4 mt-4 overflow-hidden  text-gray-700 bg-white rounded-none bg-clip-border">
@@ -253,28 +254,28 @@ const RegistersTable: React.FC<{ userInfo?: IUser | null }> = ({ userInfo }) => 
             <thead className="sticky top-0 bg-white shadow-md" style={{ top: "-0.5px" }}>
               <tr className="bg-[#F5F7F8]">
                 <th
-                  className="cursor-pointer w-[250px] sm:w-[350px] p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
+                  className="cursor-pointer w-[250px] sm:w-[100px] p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
                   // onClick={onClickName}
                 >
-                  <p className="block font-sans text-sm antialiased font-bold leading-none ">Foto de Empleado</p>
+                  <p className="block font-sans text-sm text-center antialiased font-bold leading-none ">Foto de Empleado</p>
                 </th>
                 <th
                   className=" hidden lg:table-cell  cursor-pointer p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
                   // onClick={onClickName}
                 >
-                  <p className="  font-sans text-sm text-center  antialiased font-bold  leading-none">Captura de Ingreso</p>
+                  <p className="  font-sans text-sm text-center  antialiased font-bold  leading-none">Captura de Salida</p>
                 </th>
                 <th className="hidden lg:table-cell p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50">
-                  <p className=" font-sans text-sm text-center  antialiased font-bold  leading-none ">Captura de Salida</p>
+                  <p className=" font-sans text-sm text-center  antialiased font-bold  leading-none ">Captura de Ingreso</p>
                 </th>
                 <th
-                  className="hidden lg:table-cell cursor-pointer p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
+                  className="hidden lg:table-cell w-[100px] cursor-pointer p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
                   // onClick={onClickName}
                 >
                   <p className=" block font-sans text-sm text-center antialiased font-bold  leading-none ">Ingreso</p>
                 </th>
                 <th
-                  className="hidden sm:table-cell cursor-pointer p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
+                  className="hidden sm:table-cell w-[100px] cursor-pointer p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
                   // onClick={onClickName}
                 >
                   <p className="block font-sans text-sm text-center antialiased font-bold  leading-none">Salida</p>
@@ -289,7 +290,7 @@ const RegistersTable: React.FC<{ userInfo?: IUser | null }> = ({ userInfo }) => 
                   className=" sm:table-cell cursor-pointer  p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
                   // onClick={onClickName}
                 >
-                  <p className="block font-sans text-sm text-center antialiased font-bold  leading-none">Comentario?</p>
+                  <p className="block font-sans text-sm text-center antialiased font-bold  leading-none">Justificación</p>
                 </th>
                 <th className="hidden lg:table-cell p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50">
                   <p className="block font-sans text-sm antialiased font-bold  leading-none"></p>
@@ -299,7 +300,7 @@ const RegistersTable: React.FC<{ userInfo?: IUser | null }> = ({ userInfo }) => 
             <tbody className="">
               {/*  */}
               {registerFilter.map((register) => (
-                <tr key={register.id} className="hover:bg-slate-50 h-[100px]">
+                <tr key={register.id} className="hover:bg-slate-50 ">
                   <PhotoProvider
                     maskOpacity={0.5}
                     key={`${userInfo?.id}-${
@@ -314,26 +315,29 @@ const RegistersTable: React.FC<{ userInfo?: IUser | null }> = ({ userInfo }) => 
                   >
                     <>
                       <td className="p-4 border-b border-[#cfd8dc] ">
+                        <div className="h-[50px] flex items-center justify-center">
                         {userInfo?.image ? (
                           <PhotoView src={`${userInfo?.image}`}>
                             <img
                               src={userInfo?.image}
                               alt={userInfo?.name || "user img"}
-                              className="w-[100px] h-[100px]  rounded-[50%] object-cover"
+                              className="h-12 w-12  rounded-[50%] object-cover"
                             />
                           </PhotoView>
                         ) : (
                           "-"
                         )}
+                        </div>
+                        
                       </td>
-                      <td className="p-4 border-b border-[#cfd8dc] w-[150px]">
-                        <div className="w-[150px] h-[100px] flex items-center justify-center">
-                          {register?.entryCapture ? (
-                            <PhotoView src={`${register?.entryCapture}`}>
+                      <td className="p-4 border-b border-[#cfd8dc] w-[150px] ">
+                        <div className=" h-[50px] flex items-center justify-center">
+                          {register?.exitCapture ? (
+                            <PhotoView src={`${register?.exitCapture}`}>
                               <img
-                                src={`${register?.entryCapture}`}
+                                src={`${register?.exitCapture}`}
                                 alt={userInfo?.name || "user img"}
-                                className="max-w-full max-h-full object-contain  cursor-pointer"
+                                className="max-w-full max-h-full object-contain cursor-pointer"
                               />
                             </PhotoView>
                           ) : (
@@ -342,13 +346,13 @@ const RegistersTable: React.FC<{ userInfo?: IUser | null }> = ({ userInfo }) => 
                         </div>
                       </td>
                       <td className="p-4 border-b border-[#cfd8dc] w-[150px]">
-                        <div className="w-[150px] h-[100px] flex items-center justify-center">
-                          {register?.exitCapture ? (
-                            <PhotoView src={`${register?.exitCapture}`}>
+                        <div className=" h-[50px] flex items-center justify-center">
+                          {register?.entryCapture ? (
+                            <PhotoView src={`${register?.entryCapture}`}>
                               <img
-                                src={`${register?.exitCapture}`}
+                                src={`${register?.entryCapture}`}
                                 alt={userInfo?.name || "user img"}
-                                className="max-w-full max-h-full object-contain  cursor-pointer"
+                                className="max-w-full max-h-full object-contain cursor-pointer"
                               />
                             </PhotoView>
                           ) : (
@@ -400,7 +404,7 @@ const RegistersTable: React.FC<{ userInfo?: IUser | null }> = ({ userInfo }) => 
                       -
                     </p>
                   </td>
-                  <td className="p-4 border-b border-[#cfd8dc] "></td>
+                  <td className="p-4 border-b border-[#cfd8dc] "><FiEdit className="w-7 h-7 cursor-pointer" /></td>
                 </tr>
               ))}
             </tbody>
