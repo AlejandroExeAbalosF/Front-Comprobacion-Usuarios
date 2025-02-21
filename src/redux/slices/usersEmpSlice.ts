@@ -96,7 +96,7 @@ const usersEmpSlice = createSlice({
   //     // console.log("updatedUsers", updatedUsers);
       
   //      // Si el filtro actual es "Ingreso" y la notificación es "present"
-  // if (state.filterColumn.type === "Ingreso" && notification?.validated === "present") {
+  // if (state.filterColumn.type === "Ingreso" && notification?.type === "present") {
   //   const updatedUserIndex = updatedUsers.findIndex(user => user.id === notification?.id);
   //   if (updatedUserIndex !== -1) {
   //     const updatedUser = updatedUsers[updatedUserIndex]; // Obtener el usuario sin eliminarlo
@@ -143,30 +143,30 @@ const updateRegistrations = (registrations: IRegistration[], notification: any) 
         reg.id === notification.idR
           ? {
               ...reg,
-              validated: notification.validated,
-              entryDate: reg.entryDate || (notification.validated === "working" || notification.validated === "absent" ? notification.date : undefined),
-              entryCapture: reg.entryCapture || (notification.validated === "working"  ? notification.capture : undefined),
-              exitDate: notification.validated === "present" ? notification.date : reg.exitDate,
-              exitCapture: notification.validated === "present" ? notification.capture : reg.exitCapture,
+              type: notification.type,
+              entryDate: reg.entryDate || (notification.type === "working" || notification.type === "absent" ? notification.date : undefined),
+              entryCapture: reg.entryCapture || (notification.type === "working"  ? notification.capture : undefined),
+              exitDate: notification.type === "present" ? notification.date : reg.exitDate,
+              exitCapture: notification.type === "present" ? notification.capture : reg.exitCapture,
             }
           : {
             ...reg, // Mantenemos los campos originales ?
             id: notification.idR,
-            validated: notification.validated,
-            entryDate: notification.validated === "working" || notification.validated === "absent" ? notification.date : undefined,
-            entryCapture: notification.validated === "working" ? notification.capture : undefined,
-            exitDate: notification.validated === "present" ? notification.date : undefined,
-            exitCapture: notification.validated === "present" ? notification.capture : undefined,
+            type: notification.type,
+            entryDate: notification.type === "working" || notification.type === "absent" ? notification.date : undefined,
+            entryCapture: notification.type === "working" ? notification.capture : undefined,
+            exitDate: notification.type === "present" ? notification.date : undefined,
+            exitCapture: notification.type === "present" ? notification.capture : undefined,
           }
       )
     : [
         {
           id: notification.idR,
-          validated: notification.validated,
-          entryDate: notification.validated === "working" || notification.validated === "absent" ? notification.date : undefined,
-          entryCapture: notification.validated === "working" ? notification.capture : undefined,
-          exitDate: notification.validated === "present" ? notification.date : undefined,
-          exitCapture: notification.validated === "present" ? notification.capture : undefined,
+          type: notification.type,
+          entryDate: notification.type === "working" || notification.type === "absent" ? notification.date : undefined,
+          entryCapture: notification.type === "working" ? notification.capture : undefined,
+          exitDate: notification.type === "present" ? notification.date : undefined,
+          exitCapture: notification.type === "present" ? notification.capture : undefined,
         },
       ];
 };
@@ -182,9 +182,9 @@ const sortUsers = (filterColumn: IFilterColumn, users: IUser[]) => {
         return filterColumn.order ? dateB - dateA : dateA - dateB;
       case "Estado":
         const priority = { working: 1, present: 2, absent: 3 };
-        const validatedA = a.registrations[0]?.validated || "absent";
-        const validatedB = b.registrations[0]?.validated || "absent";
-        return filterColumn.order ? priority[validatedA] - priority[validatedB] : priority[validatedB] - priority[validatedA];
+        const typeA = a.registrations[0]?.type || "absent";
+        const typeB = b.registrations[0]?.type || "absent";
+        return filterColumn.order ? priority[typeA] - priority[typeB] : priority[typeB] - priority[typeA];
       case "Documento":
         return filterColumn.order ? a.document - b.document : b.document - a.document;
       case "Rol":

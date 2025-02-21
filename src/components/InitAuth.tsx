@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import axios from "axios";
 import { useAppDispatch } from "../redux/hooks";
 import { loginSuccess, logout, setError, setLoading } from "../redux/slices/authSlice";
+import { toast } from "sonner";
 
 const BACK_API_URL = import.meta.env.VITE_LOCAL_API_URL;
 
@@ -29,11 +30,13 @@ const InitAuth = () => {
             dispatch(logout()); // Desloguea si el token no es válido
             dispatch(setError({ error: error.response.data.message }));
             console.log(error.response.data);
+            toast.error(error.response.data.message);
             localStorage.removeItem("validateUserArGobSal_user");
           });
       } catch (error) {
-        console.log("Asdd", error);
-        if (error === "TypeError: Cannot read properties of undefined (reading 'data')") {
+        // console.log("Asdd", error);
+
+        if (error) {
           console.log("verdadero");
         }
       }

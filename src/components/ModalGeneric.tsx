@@ -3,7 +3,7 @@ import { IUser } from "../helpers/types";
 import { formatName } from "../utils/formatName";
 import CreateUser from "./CreateUser";
 import RegistersTable from "./RegistersTable";
-import UserDetails from "./UserDetails";
+import DetailsUser from "./DetailsUser";
 
 interface ModalProps {
   isVisible?: boolean;
@@ -45,7 +45,7 @@ const ModalGeneric: React.FC<ModalProps> = ({ isVisible, onClose, data, typeModa
         {typeModal === "userRegisters" ? (
           <RegistersTable userInfo={data ?? null} />
         ) : typeModal === "userDetails" ? (
-          <UserDetails userInfo={data ?? null} onCloseModal={onClose} />
+          <DetailsUser userInfo={data ?? null} onCloseModal={onClose} />
         ) : typeModal === "createEmployee" ? (
           <CreateUser onCloseModal={onClose} />
         ) : null}

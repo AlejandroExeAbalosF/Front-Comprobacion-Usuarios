@@ -5,7 +5,7 @@ import { useState } from "react";
 import CreateUser from "./CreateUser";
 import { PhotoProvider, PhotoView } from "react-photo-view";
 
-const UserDetails: React.FC<{ userInfo?: IUser | null; onCloseModal?: (isVisible: boolean) => void }> = ({
+const DetailsUser: React.FC<{ userInfo?: IUser | null; onCloseModal?: (isVisible: boolean) => void }> = ({
   userInfo,
   onCloseModal,
 }) => {
@@ -16,6 +16,7 @@ const UserDetails: React.FC<{ userInfo?: IUser | null; onCloseModal?: (isVisible
       onCloseModal(false);
     }
   };
+  // console.log("userInfo", userInfo);
   return (
     <>
       {isEditing ? (
@@ -130,13 +131,13 @@ const UserDetails: React.FC<{ userInfo?: IUser | null; onCloseModal?: (isVisible
                       <div className=" relative  w-[500px]   flex flex-col justify-start items-start">
                         <label className="form-title-md"> Ministerio</label>
                         <p className="px-2 h-[35px] w-[500px] text-start flex items-center ">
-                          {userInfo?.ministry ? userInfo?.ministry : "-"}
+                          {userInfo?.secretariat ? userInfo?.secretariat.ministry?.name : "-"}
                         </p>
                       </div>
                       <div className=" relative  w-[500px]  flex flex-col justify-start items-start">
                         <label className="form-title-md"> Secretaria</label>
                         <p className="px-2 h-[35px] w-[500px] text-start flex items-center ">
-                          {userInfo?.secretariat ? userInfo?.secretariat : "-"}
+                          {userInfo?.secretariat ? userInfo?.secretariat.name : "-"}
                         </p>
                       </div>
                     </div>
@@ -187,4 +188,4 @@ const UserDetails: React.FC<{ userInfo?: IUser | null; onCloseModal?: (isVisible
   );
 };
 
-export default UserDetails;
+export default DetailsUser;

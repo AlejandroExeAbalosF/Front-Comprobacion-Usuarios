@@ -68,6 +68,13 @@ body {
 }
 
 /* input form create */
+
+.required::after {
+  content: "*";
+  margin-left: 2px;
+  color: red;
+}
+
 .input-form-create {
   @apply transition-all text-sm bg-transparent  border border-[#E2E8F0] placeholder-shown:border placeholder-shown:border-[#E2E8F0] placeholder-shown:border-t-[#E2E8F0]  dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-[#4151cada] rounded-[7px];
 }
@@ -104,13 +111,13 @@ body {
   display: inline-block;
   box-sizing: border-box;
   animation: rotation 1s linear infinite;
-  }
+}
 
-  @keyframes rotation {
+@keyframes rotation {
   0% {
-      transform: rotate(0deg);
+    transform: rotate(0deg);
   }
   100% {
-      transform: rotate(360deg);
+    transform: rotate(360deg);
   }
-  } 
+}

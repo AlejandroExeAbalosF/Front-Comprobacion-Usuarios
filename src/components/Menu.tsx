@@ -8,7 +8,6 @@ const Menu = () => {
   const dispatch = useAppDispatch();
   const navegate = useNavigate();
   const user = useAppSelector((state) => state.auth.user);
-  console.log("user", user);
   const handleClose = () => {
     dispatch(logout()); // Desloguea si el token no es válido
     localStorage.removeItem("validateUserArGobSal_user");
@@ -17,13 +16,12 @@ const Menu = () => {
   };
   return (
     <nav className="bg-white w-full h-[70px] shadow-md  bg-clip-border flex flex-row justify-center items-center">
-    
       <div className="flex flex-row justify-between items-center w-[1600px] h-full gap-4 mr-3">
-      <div className="w-[200px]">
-        <img src="https://www.salta.gob.ar/public/images/logo-gobierno-salta-2023.svg" alt="" className=" w-full h-full " />
-      </div  >
-      <div className="flex flex-row justify-end items-center  h-full gap-4 mr-3">
-        <img src={user?.image ? user.image : ""} className="  h-[45px] w-[45px] !rounded-full object-cover object-center" />
+        <div className="w-[200px] ml-3">
+          <img src="https://www.salta.gob.ar/public/images/logo-gobierno-salta-2023.svg" alt="" className=" w-full h-full " />
+        </div>
+        <div className="flex flex-row justify-end items-center  h-full gap-4 mr-3">
+          <img src={user?.image ? user.image : ""} className="  h-[45px] w-[45px] !rounded-full object-cover object-center" />
           <div>
             <h2 className="font-sans text-[18px] antialiased font-normal leading-normal text-blue-gray-900">
               {user?.name && user?.lastName ? formatName(user.name, user.lastName) : "Usuario"}
@@ -35,9 +33,7 @@ const Menu = () => {
               Cerrar Sesión
             </h2>
           </div>
-        
-      </div>
-       
+        </div>
       </div>
     </nav>
   );

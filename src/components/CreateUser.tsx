@@ -1,10 +1,10 @@
 import dayjs from "dayjs";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css"; // Importa los estilos predeterminados
 import { IUser } from "../helpers/types";
 import axios from "axios";
-import { useAppDispatch } from "../redux/hooks";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { addUser } from "../redux/slices/usersEmpSlice";
 import { toast } from "sonner";
 import { formatName } from "../utils/formatName";
@@ -35,19 +35,38 @@ const CreateUser: React.FC<CreateUserProps> = ({ onCloseModal, userInfo, setIsEd
     function: userInfo?.function ? userInfo.function : "",
     // asset: "",
     situation: userInfo?.situation ? userInfo.situation : "",
-    ministry: userInfo?.ministry ? userInfo.ministry : "",
+    ministry: userInfo?.secretariat ? userInfo?.secretariat.ministry?.name : "",
     incomeDate: userInfo?.incomeDate ? userInfo.incomeDate : "",
-    secretariat: userInfo?.secretariat ? userInfo.secretariat : "",
+    secretariat: userInfo?.secretariat ? userInfo.secretariat.name : "",
   };
   const [userDataInputs, setUserDataInputs] = useState(initialState);
   const [errors, setErrors] = useState(initialState);
   const [birthDate, setBirthDate] = useState("");
   const [ImagePrevius, setImagePrevious] = useState<string | null>(userInfo?.image || null);
   const [userDataImage, setUserDataImage] = useState<File | null>(null);
+  const [secretariatsInfo, setSecretariatsInfo] = useState<[]>([]);
+  const { user } = useAppSelector((state) => state.auth);
   const today = dayjs();
   const minDate = today.subtract(18, "years").format("YYYY-MM-DD"); // Formato YYYY-MM-DD
   // const minDate = today.subtract(18, "years").toDate();
 
+  useEffect(() => {
+    const infoSecretaria = async () => {
+      await axios
+        .get(`${BACK_API_URL}/ministries/${user?.nameMinistry}`, { withCredentials: true })
+        .then(({ data }) => {
+          console.log("data", data.secretariats);
+          setSecretariatsInfo(data.secretariats);
+          console.log("secretariats", secretariatsInfo);
+        })
+        .catch((error) => {
+          console.error("Error al obtener secretarias", error.response.data.message);
+          toast.error(error.response.data.message);
+        });
+    };
+
+    infoSecretaria();
+  }, []);
   const handleModal = () => {
     // console.log(isVisible);
     if (userInfo && setIsEditing && onCloseModal) {
@@ -70,65 +89,65 @@ const CreateUser: React.FC<CreateUserProps> = ({ onCloseModal, userInfo, setIsEd
   const handleSubmit = (e: React.MouseEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log(userDataInputs);
-    if (userInfo) {
-      console.log("cleanObject", cleanObject(userDataInputs as Record<string, unknown>));
+    // if (userInfo) {
+    //   console.log("cleanObject", cleanObject(userDataInputs as Record<string, unknown>));
 
-      const data = cleanObject(userDataInputs as Record<string, unknown>);
-      const formData = new FormData();
-      if (userDataImage) formData.append("file", userDataImage);
-      Object.entries(data).forEach(([key, value]) => {
-        if (value !== undefined && value !== null) {
-          formData.append(key, value.toString());
-        }
-      });
-      console.log("formDataUpdate", formData);
-      axios
-        .put(`${BACK_API_URL}/users/update/${userInfo.id}`, formData, { withCredentials: true })
-        .then(({ data }) => {
-          console.log("data", data);
-          toast.success("Empleado actualizado exitosamente");
-          if (onCloseModal) onCloseModal(false);
-          const user: IUser = {
-            ...data.user,
-            registrations: userInfo.registrations,
-          };
-          console.log("userActuualizado", user);
-          dispatch(addUser(user));
-        })
-        .catch((error) => {
-          console.error("Error al iniciar sesión:", error.response.data.message);
-          toast.error(error.response.data.message);
-        });
-    } else {
-      console.log("cleanObject", cleanObject(userDataInputs as Record<string, unknown>));
+    //   const data = cleanObject(userDataInputs as Record<string, unknown>);
+    //   const formData = new FormData();
+    //   if (userDataImage) formData.append("file", userDataImage);
+    //   Object.entries(data).forEach(([key, value]) => {
+    //     if (value !== undefined && value !== null) {
+    //       formData.append(key, value.toString());
+    //     }
+    //   });
+    //   console.log("formDataUpdate", formData);
+    //   axios
+    //     .put(`${BACK_API_URL}/users/update/${userInfo.id}`, formData, { withCredentials: true })
+    //     .then(({ data }) => {
+    //       console.log("data", data);
+    //       toast.success("Empleado actualizado exitosamente");
+    //       if (onCloseModal) onCloseModal(false);
+    //       const user: IUser = {
+    //         ...data.user,
+    //         registrations: userInfo.registrations,
+    //       };
+    //       console.log("userActuualizado", user);
+    //       dispatch(addUser(user));
+    //     })
+    //     .catch((error) => {
+    //       console.error("Error al iniciar sesión:", error.response.data.message);
+    //       toast.error(error.response.data.message);
+    //     });
+    // } else {
+    //   console.log("cleanObject", cleanObject(userDataInputs as Record<string, unknown>));
 
-      const data = cleanObject(userDataInputs as Record<string, unknown>);
-      const formData = new FormData();
-      if (userDataImage) formData.append("file", userDataImage);
-      Object.entries(data).forEach(([key, value]) => {
-        if (value !== undefined && value !== null) {
-          formData.append(key, value.toString());
-        }
-      });
-      console.log("formData", formData);
-      // formData.append("data", data);
-      axios
-        .post(`${BACK_API_URL}/users/createEmployee`, formData, { withCredentials: true })
-        .then(({ data }) => {
-          console.log("data", data);
-          toast.success("Empleado creado exitosamente");
-          handleModal();
-          const user: IUser = {
-            ...data.user,
-            registrations: [],
-          };
-          dispatch(addUser(user));
-        })
-        .catch((error) => {
-          console.error("Error al iniciar sesión:", error.response.data.message);
-          toast.error(error.response.data.message);
-        });
-    }
+    //   const data = cleanObject(userDataInputs as Record<string, unknown>);
+    //   const formData = new FormData();
+    //   if (userDataImage) formData.append("file", userDataImage);
+    //   Object.entries(data).forEach(([key, value]) => {
+    //     if (value !== undefined && value !== null) {
+    //       formData.append(key, value.toString());
+    //     }
+    //   });
+    //   console.log("formData", formData);
+    //   // formData.append("data", data);
+    //   axios
+    //     .post(`${BACK_API_URL}/users/createEmployee`, formData, { withCredentials: true })
+    //     .then(({ data }) => {
+    //       console.log("data", data);
+    //       toast.success("Empleado creado exitosamente");
+    //       handleModal();
+    //       const user: IUser = {
+    //         ...data.user,
+    //         registrations: [],
+    //       };
+    //       dispatch(addUser(user));
+    //     })
+    //     .catch((error) => {
+    //       console.error("Error al iniciar sesión:", error.response.data.message);
+    //       toast.error(error.response.data.message);
+    //     });
+    // }
   };
 
   const cleanObject = <T extends Record<string, unknown>>(obj: T): Partial<T> => {
@@ -226,7 +245,7 @@ const CreateUser: React.FC<CreateUserProps> = ({ onCloseModal, userInfo, setIsEd
                 </div>
                 <div className="my-3 flex flex-row  items-start justify-start gap-4 ">
                   <div className=" relative  w-[200px] min-w-[200px] flex flex-col justify-start items-start">
-                    <label className="form-title-md" htmlFor="">
+                    <label className="form-title-md required" htmlFor="">
                       {" "}
                       Documento
                     </label>
@@ -241,7 +260,7 @@ const CreateUser: React.FC<CreateUserProps> = ({ onCloseModal, userInfo, setIsEd
                     />
                   </div>
                   <div className=" relative   flex flex-col justify-start items-start">
-                    <label className="form-title-md" htmlFor="">
+                    <label className="form-title-md required" htmlFor="">
                       {" "}
                       Correo Electronico
                     </label>
@@ -413,8 +432,9 @@ const CreateUser: React.FC<CreateUserProps> = ({ onCloseModal, userInfo, setIsEd
                       // id={name}
                       type="text"
                       name="ministry"
-                      value={userDataInputs.ministry}
-                      className={` px-2 h-[35px]  text-black py-2.5  w-[500px]  input-form-create`}
+                      value={userDataInputs.ministry || user?.nameMinistry}
+                      disabled={true}
+                      className={` px-2 h-[35px]  text-black py-2.5  w-[500px]  input-form-create opacity-50 cursor-not-allowed`}
                       placeholder=" "
                       onChange={handleChange}
                     />
@@ -424,7 +444,27 @@ const CreateUser: React.FC<CreateUserProps> = ({ onCloseModal, userInfo, setIsEd
                       {" "}
                       Secretaria
                     </label>
-                    <input
+                    <select
+                      name="secretariat"
+                      value={userDataInputs.secretariat}
+                      className="bg-gray-50 w-[500px]  border-[#d6dadf] border-1 text-gray-900 text-sm rounded-lg focus:border-1 focus:ring-blue-500 focus:border-blue-500 block p-[7.5px]   outline-none"
+                      onChange={handleChange}
+                    >
+                      <option value="" disabled hidden>
+                        Selecciona una secretaría
+                      </option>
+
+                      {userInfo ? (
+                        <option value={userInfo?.secretariat?.id}>{userDataInputs.secretariat}</option>
+                      ) : (
+                        secretariatsInfo?.map((secretariat) => (
+                          <option key={secretariat.id} value={secretariat.id}>
+                            {secretariat.name}
+                          </option>
+                        ))
+                      )}
+                    </select>
+                    {/* <input
                       // id={name}
                       type="text"
                       name="secretariat"
@@ -432,7 +472,7 @@ const CreateUser: React.FC<CreateUserProps> = ({ onCloseModal, userInfo, setIsEd
                       className={` block px-2 h-[35px]  text-black py-2.5  w-[500px] input-form-create`}
                       placeholder=" "
                       onChange={handleChange}
-                    />
+                    /> */}
                   </div>
                 </div>
                 <div className="my-3 flex flex-row gap-4 ">

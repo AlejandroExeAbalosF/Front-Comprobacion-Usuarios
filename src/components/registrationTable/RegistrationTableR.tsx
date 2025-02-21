@@ -27,6 +27,7 @@ const RegistrationTableR = () => {
   const dispatch = useAppDispatch();
   const { usersFilter, searchTerm, filterColumn, highlightedUserId } = useAppSelector((state) => state.usersEmp);
   const { user } = useAppSelector((state) => state.auth);
+  // console.log("user", user);
   //----------
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [userDetails, setUserDetails] = useState<IUser | null>();
@@ -35,7 +36,6 @@ const RegistrationTableR = () => {
 
   // Función para abrir el modal y cargar datos
   const handleOpenModal = (userId: IUser | null, event: React.SyntheticEvent) => {
-    console.log("event", event.currentTarget.id);
     setIsTypeModal(event.currentTarget.id);
     setUserDetails(userId);
     setIsModalOpen(true);
@@ -57,7 +57,6 @@ const RegistrationTableR = () => {
       const processQueue = async () => {
         while (queueRef.current.length > 0) {
           const batch = queueRef.current.splice(0, queueRef.current.length); // Tomar todas las notificaciones acumuladas
-          console.log("Procesando lote de notificaciones:", batch);
           dispatch(updateUserFromNotification(batch)); // Enviar al reducer
           await new Promise((resolve) => setTimeout(resolve, 50)); // Pequeño delay para evitar saturación
         }
@@ -68,6 +67,7 @@ const RegistrationTableR = () => {
       processQueue();
     }
   }, [notifications, dispatch]);
+
   useEffect(() => {
     const fetchUsers = async () => {
       const storedToken = await localStorage.getItem("token");
@@ -77,8 +77,8 @@ const RegistrationTableR = () => {
         const response = await axios.get(`${BACK_API_URL}/users/users_with_last_registration`, {
           withCredentials: true, // Envia la cookie HTTPOnly automáticamente
         });
-        // console.log(response.data);
         if (response.data) {
+          console.log("response.data", response.data);
           dispatch(setUsers(response.data));
           dispatch(setFilterColumn({ type: "Empleados", order: false }));
           //   setUsers(response.data);
@@ -100,9 +100,8 @@ const RegistrationTableR = () => {
   }, [BACK_API_URL, dispatch]);
 
   const handleButtonValidateAssistance = () => {
-    console.log("user auth", user);
     const data = {
-      secretariatName: user?.secretariat,
+      secretariatName: user?.nameSecretariat,
     };
     axios
       .post(`${BACK_API_URL}/registrations/validationsRegistrationsToday`, data, { withCredentials: true })
@@ -145,7 +144,7 @@ const RegistrationTableR = () => {
                   <dt className="sr-only">Estado</dt>
                   <dd className="flex items-center justify-center">
                     {user?.registrations.length > 0 ? (
-                      user.registrations[0].validated ? (
+                      user.registrations[0].type ? (
                         <div className="ml-14 inline-block  text-center px-2 py-1 font-sans text-xs font-bold text-green-900 uppercase rounded-md select-none whitespace-nowrap bg-green-500/20">
                           <span className="">Presente</span>
                         </div>
@@ -202,15 +201,15 @@ const RegistrationTableR = () => {
         </PhotoProvider>
         <td className="hidden sm:table-cell w-[100px] text-center p-4 border-b border-[#cfd8dc]">
           {user?.registrations.length > 0 ? (
-            user.registrations[0].validated === "working" ? (
+            user.registrations[0].type === "working" ? (
               <div className="  items-center px-2 py-1 font-sans text-xs font-bold text-green-900 uppercase rounded-md select-none whitespace-nowrap bg-green-500/20">
                 <span className="">Trabajando</span>
               </div>
-            ) : user.registrations[0].validated === "present" ? (
+            ) : user.registrations[0].type === "present" ? (
               <div className="  items-center px-2 py-1 font-sans text-xs font-bold text-blue-900 uppercase rounded-md select-none whitespace-nowrap bg-blue-500/20">
                 <span className="">Presente</span>
               </div>
-            ) : user.registrations[0].validated === "absent" ? (
+            ) : user.registrations[0].type === "absent" ? (
               <div className="  items-center px-2 py-1 font-sans text-xs font-bold text-amber-900 uppercase rounded-md select-none whitespace-nowrap bg-blue-gray-500/20 bg-amber-500/20">
                 <span className="">Ausente</span>
               </div>
@@ -225,7 +224,7 @@ const RegistrationTableR = () => {
           </p>
           <p className="lg:w-auto  block font-sans text-sm text-center antialiased font-normal leading-normal text-blue-gray-900">
             {user?.registrations.length > 0 && user.registrations[0].entryDate
-              ? user.registrations[0].validated !== "absent"
+              ? user.registrations[0].type !== "absent"
                 ? dayjs(user.registrations[0].entryDate).format("HH:mm")
                 : "-"
               : null}

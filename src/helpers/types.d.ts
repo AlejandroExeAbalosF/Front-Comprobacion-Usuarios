@@ -21,7 +21,10 @@ export interface IUser {
     legalInstrument?: string;
     laborAddress?: string;
     ministry?: string;
-    secretariat?: string;
+    secretariat?: ISecretariat;
+    secretariatId?: string;
+    nameSecretariat?: string;
+    nameMinistry?: string;
     rol:
       | "superadmin"
       | "admin"
@@ -33,7 +36,8 @@ export interface IUser {
   }
 export interface IRegistration {
     id: string;
-    validated: string;
+    validated?: string;
+    type: string;
     state: boolean;
     entryCapture?: string;
     exitCapture?: string;
@@ -48,4 +52,22 @@ export interface INotificaciónData extends IUser, IRegistration {
   idR: string;
   date: string;
   capture: string;
+}
+
+export interface ISecretariat {
+  id: string;
+  name: string;
+  privateAddress?: string;
+  function?: string;
+  createdAt?: string;
+  ministry?: IMinistry
+}
+
+export interface IMinistry {
+  id: string;
+  name: string;
+  privateAddress?: string;
+  function?: string;
+  createdAt?: string;
+
 }

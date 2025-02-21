@@ -82,6 +82,47 @@ const RegistersTable: React.FC<{ userInfo?: IUser | null }> = ({ userInfo }) => 
     }
   }, [selectedYear, months]);
 
+  const handleSelectedMonth = (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => {
+    setSelectedMonth(e.target.value);
+    console.log("selectedMonthx", selectedMonth);
+  };
+
+  const handleReport = (e) => {
+    console.log("hola papi");
+    if (selectedMonth && selectedYear && userInfo) {
+      const data = {
+        id: userInfo?.id,
+        month: selectedMonth,
+        year: selectedYear,
+      };
+      console.log("data", data);
+      axios
+        .get(`${BACK_API_URL}/reports/pdf/planilla-mes`, {
+          params: { year: selectedYear, month: selectedMonth, id: userInfo?.id },
+          // responseType: "blob", // Para recibir el PDF correctamente
+          withCredentials: true,
+          responseType: "arraybuffer",
+        })
+        .then(({ data }) => {
+          console.log("data", data);
+          const blob = new Blob([data], { type: "application/pdf" });
+
+          const link = document.createElement("a");
+          link.href = window.URL.createObjectURL(blob);
+          link.download = `expense.pdf`;
+          document.body.appendChild(link);
+          link.click();
+
+          document.body.removeChild(link);
+        })
+        .catch((error) => {
+          console.error("Error al descargar el PDF", error);
+        });
+    } else {
+      toast.info("Seleccione un año y un mes");
+    }
+  };
+
   return (
     <div className="w-[1500px] h-[900px]">
       <div className="xs:w-4/5 m-auto my-2 relative flex flex-col w-full h-full text-gray-700 bg-white shadow-md rounded-xl bg-clip-border">
@@ -89,7 +130,7 @@ const RegistersTable: React.FC<{ userInfo?: IUser | null }> = ({ userInfo }) => 
         <h2 className="mt-4  text-center font-[500] text-[30px]">
           Registros del Empleado : {userInfo && formatName(userInfo?.name, userInfo?.lastName)}{" "}
         </h2>
-        <div className="relative mx-4 mt-4 overflow-hidden text-gray-700 bg-white rounded-none bg-clip-border">
+        <div className="relative h-[110px] mx-4 mt-4 overflow-hidden  text-gray-700 bg-white rounded-none bg-clip-border">
           <div className="flex flex-col justify-between gap-8 mb-4 md:flex-row md:items-center">
             <div className="flex w-full gap-2 shrink-0 md:w-max">
               <div className="w-full md:w-[360px] ">
@@ -138,7 +179,7 @@ const RegistersTable: React.FC<{ userInfo?: IUser | null }> = ({ userInfo }) => 
                 {/* Select para Mes */}
                 <select
                   value={selectedMonth}
-                  onChange={(e) => setSelectedMonth(e.target.value)}
+                  onChange={handleSelectedMonth}
                   className="bg-gray-50  border-[#d6dadf] border-1 text-gray-900 text-sm rounded-lg focus:border-1 focus:ring-blue-500 focus:border-blue-500 block p-[7.5px]   outline-none"
                   disabled={!selectedYear} // Deshabilitar si no hay un año seleccionado
                 >
@@ -151,14 +192,60 @@ const RegistersTable: React.FC<{ userInfo?: IUser | null }> = ({ userInfo }) => 
                 </select>
               </div>
             </div>
-            {/* <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Agregar empleado</button> */}
-            {/* <button
-              className="rounded-md bg-blue-600 py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-blue-700 focus:shadow-none active:bg-blue-700 hover:bg-blue-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none ml-2"
-              id="createEmployee"
-              // onClick={(e) => handleOpenModal(null, e)}
-            >
-              Agregar empleado
-            </button> */}
+            <div className="flex flex-row items-center justify-between  ">
+              <div className="flex flex-col items-center justify-between  ">
+                <h3 className="text-center font-[400] text-[16px] h-[35px] w-[190px] leading-4 mb-1">
+                  Descargar reporte mensual planilla:
+                </h3>
+
+                <div className="flex gap-2 items-center justify-center">
+                  <button onClick={handleReport} className="relative h-[35px] max-h-[35px] w-[35px] max-w-[35px]">
+                    <img
+                      src="/icons/pdf-document-svgrepo-com (1).svg"
+                      alt="icono"
+                      className={`shadow-md hover:shadow-lg focus:shadow-none ${
+                        selectedMonth && selectedYear ? "cursor-pointer" : "opacity-50"
+                      }`}
+                    />
+                  </button>
+                  <button className="relative h-[35px] max-h-[35px] w-[35px] max-w-[35px]">
+                    <img
+                      src="/icons/excel-document-svgrepo-com.svg"
+                      alt="icono"
+                      className={`shadow-md hover:shadow-lg focus:shadow-none ${
+                        selectedMonth && selectedYear ? "cursor-pointer" : "opacity-50"
+                      }`}
+                    />
+                  </button>
+                </div>
+              </div>
+              <div className="flex flex-col items-center justify-between  ">
+                <h3 className="text-center font-[400] text-[16px] h-[35px] w-[190px] leading-4 mb-1">
+                  Descargar reporte mensual porcentajes:
+                </h3>
+
+                <div className="flex gap-2 items-center justify-center">
+                  <button className="relative h-[35px] max-h-[35px] w-[35px] max-w-[35px]">
+                    <img
+                      src="/icons/pdf-document-svgrepo-com (1).svg"
+                      alt="icono"
+                      className={`shadow-md hover:shadow-lg focus:shadow-none ${
+                        selectedMonth && selectedYear ? "cursor-pointer" : "opacity-50"
+                      }`}
+                    />
+                  </button>
+                  <button className="relative h-[35px] max-h-[35px] w-[35px] max-w-[35px]">
+                    <img
+                      src="/icons/excel-document-svgrepo-com.svg"
+                      alt="icono"
+                      className={`shadow-md hover:shadow-lg focus:shadow-none ${
+                        selectedMonth && selectedYear ? "cursor-pointer" : "opacity-50"
+                      }`}
+                    />
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
         <div className=" h-full  overflow-auto p-0 m-0 " style={{ scrollbarGutter: "stable" }}>
@@ -288,16 +375,16 @@ const RegistersTable: React.FC<{ userInfo?: IUser | null }> = ({ userInfo }) => 
                     </p>
                   </td>
                   <td className="hidden sm:table-cell w-[100px] text-center p-4 border-b border-[#cfd8dc]">
-                    {register?.validated ? (
-                      register.validated === "working" ? (
+                    {register?.type ? (
+                      register.type === "working" ? (
                         <div className=" grid items-center px-2 py-1 font-sans text-xs font-bold text-green-900 uppercase rounded-md select-none whitespace-nowrap bg-green-500/20">
                           <span className="">Trabajando</span>
                         </div>
-                      ) : register.validated === "present" ? (
+                      ) : register.type === "present" ? (
                         <div className=" grid items-center px-2 py-1 font-sans text-xs font-bold text-blue-900 uppercase rounded-md select-none whitespace-nowrap bg-blue-500/20">
                           <span className="">Presente</span>
                         </div>
-                      ) : register.validated === "absent" ? (
+                      ) : register.type === "absent" ? (
                         <div className=" grid items-center px-2 py-1 font-sans text-xs font-bold text-amber-900 uppercase rounded-md select-none whitespace-nowrap bg-blue-gray-500/20 bg-amber-500/20">
                           <span className="">Ausente</span>
                         </div>
