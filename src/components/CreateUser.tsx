@@ -1,8 +1,8 @@
 import dayjs from "dayjs";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css"; // Importa los estilos predeterminados
-import { IUser } from "../helpers/types";
+import { ISecretariat, IUser } from "../helpers/types";
 import axios from "axios";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { addUser } from "../redux/slices/usersEmpSlice";
@@ -37,14 +37,17 @@ const CreateUser: React.FC<CreateUserProps> = ({ onCloseModal, userInfo, setIsEd
     situation: userInfo?.situation ? userInfo.situation : "",
     ministry: userInfo?.secretariat ? userInfo?.secretariat.ministry?.name : "",
     incomeDate: userInfo?.incomeDate ? userInfo.incomeDate : "",
-    secretariat: userInfo?.secretariat ? userInfo.secretariat.name : "",
+    secretariatId: userInfo?.secretariat ? userInfo.secretariat.name : "",
   };
+
+  const selectRef = useRef(null);
+
   const [userDataInputs, setUserDataInputs] = useState(initialState);
   const [errors, setErrors] = useState(initialState);
   const [birthDate, setBirthDate] = useState("");
   const [ImagePrevius, setImagePrevious] = useState<string | null>(userInfo?.image || null);
   const [userDataImage, setUserDataImage] = useState<File | null>(null);
-  const [secretariatsInfo, setSecretariatsInfo] = useState<[]>([]);
+  const [secretariatsInfo, setSecretariatsInfo] = useState<ISecretariat[]>([]);
   const { user } = useAppSelector((state) => state.auth);
   const today = dayjs();
   const minDate = today.subtract(18, "years").format("YYYY-MM-DD"); // Formato YYYY-MM-DD
@@ -57,7 +60,6 @@ const CreateUser: React.FC<CreateUserProps> = ({ onCloseModal, userInfo, setIsEd
         .then(({ data }) => {
           console.log("data", data.secretariats);
           setSecretariatsInfo(data.secretariats);
-          console.log("secretariats", secretariatsInfo);
         })
         .catch((error) => {
           console.error("Error al obtener secretarias", error.response.data.message);
@@ -88,66 +90,77 @@ const CreateUser: React.FC<CreateUserProps> = ({ onCloseModal, userInfo, setIsEd
 
   const handleSubmit = (e: React.MouseEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(userDataInputs);
-    // if (userInfo) {
-    //   console.log("cleanObject", cleanObject(userDataInputs as Record<string, unknown>));
+    // setUserDataInputs({ ...userDataInputs, secretariat: user && user?.secretariat ? user?.secretariat.id : "a" });
+    // const data = cleanObject(userDataInputs as Record<string, unknown>);
+    // console.log("data", data);
+    // console.log("data secretariatsInfo", !data.secretariat);
+    // const dataWithSecretariat = { ...data, secretariat: secretariatsInfo && !data.secretariat ? secretariatsInfo[0].id : data.secretariat };
+    // // console.log("Valor seleccionado:", user?.secretariat.id);
+    // const datA = { ...data, secretariat: user && user?.secretariat ? user?.secretariat.id : "ad" };
+    // console.log(user);
+    if (userInfo) {
+      const data = cleanObject(userDataInputs as Record<string, unknown>);
+      const dataWithSecretariat = {
+        ...data,
+        secretariatId: secretariatsInfo && !data.secretariat ? secretariatsInfo[0].id : data.secretariatId,
+      };
+      const formData = new FormData();
+      if (userDataImage) formData.append("file", userDataImage);
+      Object.entries(dataWithSecretariat).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          formData.append(key, value.toString());
+        }
+      });
+      axios
+        .put(`${BACK_API_URL}/users/update/${userInfo.id}`, formData, { withCredentials: true })
+        .then(({ data }) => {
+          console.log("data", data);
+          toast.success("Empleado actualizado exitosamente");
+          if (onCloseModal) onCloseModal(false);
+          const user: IUser = {
+            ...data.user,
+            registrations: userInfo.registrations,
+          };
+          console.log("userActuualizado", user);
+          dispatch(addUser(user));
+        })
+        .catch((error) => {
+          console.error("Error al iniciar sesión:", error.response.data.message);
+          toast.error(error.response.data.message);
+        });
+    } else {
+      console.log("cleanObject", cleanObject(userDataInputs as Record<string, unknown>));
 
-    //   const data = cleanObject(userDataInputs as Record<string, unknown>);
-    //   const formData = new FormData();
-    //   if (userDataImage) formData.append("file", userDataImage);
-    //   Object.entries(data).forEach(([key, value]) => {
-    //     if (value !== undefined && value !== null) {
-    //       formData.append(key, value.toString());
-    //     }
-    //   });
-    //   console.log("formDataUpdate", formData);
-    //   axios
-    //     .put(`${BACK_API_URL}/users/update/${userInfo.id}`, formData, { withCredentials: true })
-    //     .then(({ data }) => {
-    //       console.log("data", data);
-    //       toast.success("Empleado actualizado exitosamente");
-    //       if (onCloseModal) onCloseModal(false);
-    //       const user: IUser = {
-    //         ...data.user,
-    //         registrations: userInfo.registrations,
-    //       };
-    //       console.log("userActuualizado", user);
-    //       dispatch(addUser(user));
-    //     })
-    //     .catch((error) => {
-    //       console.error("Error al iniciar sesión:", error.response.data.message);
-    //       toast.error(error.response.data.message);
-    //     });
-    // } else {
-    //   console.log("cleanObject", cleanObject(userDataInputs as Record<string, unknown>));
-
-    //   const data = cleanObject(userDataInputs as Record<string, unknown>);
-    //   const formData = new FormData();
-    //   if (userDataImage) formData.append("file", userDataImage);
-    //   Object.entries(data).forEach(([key, value]) => {
-    //     if (value !== undefined && value !== null) {
-    //       formData.append(key, value.toString());
-    //     }
-    //   });
-    //   console.log("formData", formData);
-    //   // formData.append("data", data);
-    //   axios
-    //     .post(`${BACK_API_URL}/users/createEmployee`, formData, { withCredentials: true })
-    //     .then(({ data }) => {
-    //       console.log("data", data);
-    //       toast.success("Empleado creado exitosamente");
-    //       handleModal();
-    //       const user: IUser = {
-    //         ...data.user,
-    //         registrations: [],
-    //       };
-    //       dispatch(addUser(user));
-    //     })
-    //     .catch((error) => {
-    //       console.error("Error al iniciar sesión:", error.response.data.message);
-    //       toast.error(error.response.data.message);
-    //     });
-    // }
+      const data = cleanObject(userDataInputs as Record<string, unknown>);
+      const dataWithSecretariat = {
+        ...data,
+        secretariatId: secretariatsInfo && !data.secretariat ? secretariatsInfo[0].id : data.secretariatId,
+      };
+      const formData = new FormData();
+      if (userDataImage) formData.append("file", userDataImage);
+      Object.entries(dataWithSecretariat).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          formData.append(key, value.toString());
+        }
+      });
+      // formData.append("data", data);
+      axios
+        .post(`${BACK_API_URL}/users/createEmployee`, formData, { withCredentials: true })
+        .then(({ data }) => {
+          console.log("data", data);
+          toast.success("Empleado creado exitosamente");
+          handleModal();
+          const user: IUser = {
+            ...data.user,
+            registrations: [],
+          };
+          dispatch(addUser(user));
+        })
+        .catch((error) => {
+          console.error("Error al iniciar sesión:", error.response.data.message);
+          toast.error(error.response.data.message);
+        });
+    }
   };
 
   const cleanObject = <T extends Record<string, unknown>>(obj: T): Partial<T> => {
@@ -446,16 +459,17 @@ const CreateUser: React.FC<CreateUserProps> = ({ onCloseModal, userInfo, setIsEd
                     </label>
                     <select
                       name="secretariat"
-                      value={userDataInputs.secretariat}
+                      value={userDataInputs.secretariatId}
                       className="bg-gray-50 w-[500px]  border-[#d6dadf] border-1 text-gray-900 text-sm rounded-lg focus:border-1 focus:ring-blue-500 focus:border-blue-500 block p-[7.5px]   outline-none"
                       onChange={handleChange}
+                      ref={selectRef}
                     >
                       <option value="" disabled hidden>
-                        Selecciona una secretaría
+                        {`${user?.nameSecretariat || "Secretaria"}`}
                       </option>
-
+                      {/* {`${console.log("ddd", secretariatsInfo)}`} */}
                       {userInfo ? (
-                        <option value={userInfo?.secretariat?.id}>{userDataInputs.secretariat}</option>
+                        <option value={userInfo?.secretariat?.id}>{userDataInputs.secretariatId}</option>
                       ) : (
                         secretariatsInfo?.map((secretariat) => (
                           <option key={secretariat.id} value={secretariat.id}>

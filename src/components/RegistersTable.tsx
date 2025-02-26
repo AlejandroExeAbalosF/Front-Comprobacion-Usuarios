@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import dayjs from "dayjs";
 import { PhotoProvider, PhotoView } from "react-photo-view";
 import { FiEdit } from "react-icons/fi";
+import ModalGeneric from "./ModalGeneric";
 
 const BACK_API_URL = import.meta.env.VITE_LOCAL_API_URL;
 const RegistersTable: React.FC<{ userInfo?: IUser | null }> = ({ userInfo }) => {
@@ -18,6 +19,17 @@ const RegistersTable: React.FC<{ userInfo?: IUser | null }> = ({ userInfo }) => 
     type: "Ingreso",
     order: false,
   });
+
+  const [details, setDetails] = useState<IRegistration | null>();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isTypeModal, setIsTypeModal] = useState("");
+
+  const handleOpenModal = (register: IRegistration | null, event: React.SyntheticEvent) => {
+    setIsTypeModal(event.currentTarget.id);
+    setDetails(register);
+    setIsModalOpen(true);
+  };
+
   useEffect(() => {
     if (userInfo) {
       axios
@@ -116,7 +128,9 @@ const RegistersTable: React.FC<{ userInfo?: IUser | null }> = ({ userInfo }) => 
           document.body.removeChild(link);
         })
         .catch((error) => {
-          if(error.response.data.message === "Error al descargar el PDF"){ toast.error(error.response.data.message); }
+          if (error.response.data.message === "Error al descargar el PDF") {
+            toast.error(error.response.data.message);
+          }
           console.error("asd", error);
         });
     } else {
@@ -281,16 +295,23 @@ const RegistersTable: React.FC<{ userInfo?: IUser | null }> = ({ userInfo }) => 
                   <p className="block font-sans text-sm text-center antialiased font-bold  leading-none">Salida</p>
                 </th>
                 <th
-                  className=" sm:table-cell cursor-pointer  p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
+                  className=" sm:table-cell w-[150px] cursor-pointer  p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
                   // onClick={onClickName}
                 >
                   <p className="block font-sans text-sm text-center antialiased font-bold  leading-none">Estado</p>
                 </th>
+
                 <th
-                  className=" sm:table-cell cursor-pointer  p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
+                  className=" sm:table-cell w-[200px] cursor-pointer  p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
                   // onClick={onClickName}
                 >
                   <p className="block font-sans text-sm text-center antialiased font-bold  leading-none">Justificación</p>
+                </th>
+                <th
+                  className=" sm:table-cell  w-[400px]  cursor-pointer  p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
+                  // onClick={onClickName}
+                >
+                  <p className="block font-sans text-sm text-center antialiased font-bold  leading-none">Descripción</p>
                 </th>
                 <th className="hidden lg:table-cell p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50">
                   <p className="block font-sans text-sm antialiased font-bold  leading-none"></p>
@@ -316,19 +337,18 @@ const RegistersTable: React.FC<{ userInfo?: IUser | null }> = ({ userInfo }) => 
                     <>
                       <td className="p-4 border-b border-[#cfd8dc] ">
                         <div className="h-[50px] flex items-center justify-center">
-                        {userInfo?.image ? (
-                          <PhotoView src={`${userInfo?.image}`}>
-                            <img
-                              src={userInfo?.image}
-                              alt={userInfo?.name || "user img"}
-                              className="h-12 w-12  rounded-[50%] object-cover"
-                            />
-                          </PhotoView>
-                        ) : (
-                          "-"
-                        )}
+                          {userInfo?.image ? (
+                            <PhotoView src={`${userInfo?.image}`}>
+                              <img
+                                src={userInfo?.image}
+                                alt={userInfo?.name || "user img"}
+                                className="h-12 w-12  rounded-[50%] object-cover"
+                              />
+                            </PhotoView>
+                          ) : (
+                            "-"
+                          )}
                         </div>
-                        
                       </td>
                       <td className="p-4 border-b border-[#cfd8dc] w-[150px] ">
                         <div className=" h-[50px] flex items-center justify-center">
@@ -366,9 +386,11 @@ const RegistersTable: React.FC<{ userInfo?: IUser | null }> = ({ userInfo }) => 
                     <p className="lg:w-auto block font-sans text-sm text-center antialiased font-normal leading-normal text-blue-gray-900">
                       {register?.entryDate ? dayjs(register.entryDate).format("DD/MM/YYYY") : "-"}
                     </p>
-                    <p className="lg:w-auto block font-sans text-sm text-center antialiased font-normal leading-normal text-blue-gray-900">
-                      {register?.entryDate ? dayjs(register.entryDate).format("HH:mm") : "-"}
-                    </p>
+                    {register?.status !== "AUSENTE" ? (
+                      <p className="lg:w-auto block font-sans text-sm text-center antialiased font-normal leading-normal text-blue-gray-900">
+                        {register?.entryDate ? dayjs(register.entryDate).format("HH:mm") : "-"}
+                      </p>
+                    ) : null}
                   </td>
                   <td className="p-4 border-b border-[#cfd8dc] ">
                     <p className="lg:w-auto block font-sans text-sm text-center antialiased font-normal leading-normal text-blue-gray-900">
@@ -379,18 +401,27 @@ const RegistersTable: React.FC<{ userInfo?: IUser | null }> = ({ userInfo }) => 
                     </p>
                   </td>
                   <td className="hidden sm:table-cell w-[100px] text-center p-4 border-b border-[#cfd8dc]">
-                    {register?.type ? (
-                      register.type === "working" ? (
+                    {register?.status ? (
+                      register.status === "TRABAJANDO" ? (
                         <div className=" grid items-center px-2 py-1 font-sans text-xs font-bold text-green-900 uppercase rounded-md select-none whitespace-nowrap bg-green-500/20">
                           <span className="">Trabajando</span>
                         </div>
-                      ) : register.type === "present" ? (
-                        <div className=" grid items-center px-2 py-1 font-sans text-xs font-bold text-blue-900 uppercase rounded-md select-none whitespace-nowrap bg-blue-500/20">
+                      ) : register.status === "PRESENTE" ? (
+                        <div
+                          className={`grid items-center px-2 py-1 font-sans text-xs font-bold text-blue-900 uppercase rounded-md select-none whitespace-nowrap ${
+                            register?.type === "LLEGADA_TARDE" ? "bg-red-500/20" : "bg-blue-500/20"
+                          }`}
+                          title={register?.type === "LLEGADA_TARDE" ? "Llegada tarde" : ""}
+                        >
                           <span className="">Presente</span>
                         </div>
-                      ) : register.type === "absent" ? (
+                      ) : register.status === "AUSENTE" ? (
                         <div className=" grid items-center px-2 py-1 font-sans text-xs font-bold text-amber-900 uppercase rounded-md select-none whitespace-nowrap bg-blue-gray-500/20 bg-amber-500/20">
                           <span className="">Ausente</span>
+                        </div>
+                      ) : register.status === "NO_LABORABLE" ? (
+                        <div className=" grid items-center px-2 py-1 font-sans text-xs font-bold uppercase rounded-md select-none whitespace-nowrap bg-blue-gray-500/20 text-blue-gray-900">
+                          <span className="">Día No Laboral</span>
                         </div>
                       ) : (
                         <div className=" grid items-center px-2 py-1 font-sans text-xs font-bold uppercase rounded-md select-none whitespace-nowrap bg-blue-gray-500/20 text-blue-gray-900">
@@ -401,15 +432,37 @@ const RegistersTable: React.FC<{ userInfo?: IUser | null }> = ({ userInfo }) => 
                   </td>
                   <td className="p-4 border-b border-[#cfd8dc] ">
                     <p className="lg:w-auto block font-sans text-sm text-center antialiased font-normal leading-normal text-blue-gray-900">
-                      -
+                      {register?.type
+                        ? register.type === "ARTICULO"
+                          ? "Art. " + register?.articulo
+                          : register.type === "FERIADO"
+                          ? "Feriado"
+                          : register.type === "LLEGADA_TARDE"
+                          ? "Llegada tarde"
+                          : register.type
+                        : "-"}
                     </p>
                   </td>
-                  <td className="p-4 border-b border-[#cfd8dc] "><FiEdit className="w-7 h-7 cursor-pointer" /></td>
+                  <td className="p-4 border-b border-[#cfd8dc] ">
+                    <div className="w-full h-[40px] overflow-hidden flex items-center">
+                      <p
+                        className="w-full text-sm text-center font-normal leading-normal text-blue-gray-900 break-words line-clamp-2"
+                        title={register?.description || ""}
+                      >
+                        {register?.description || "-"}
+                      </p>
+                    </div>
+                  </td>
+                  <td className="p-4 border-b border-[#cfd8dc] ">
+                    <FiEdit className="w-7 h-7 cursor-pointer" onClick={(e) => handleOpenModal(register, e)} id="editRegister" />
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
+        {/* Modal */}
+        {isModalOpen && <ModalGeneric isVisible={isModalOpen} onClose={setIsModalOpen} data={details} typeModal={isTypeModal} />}
       </div>
     </div>
   );

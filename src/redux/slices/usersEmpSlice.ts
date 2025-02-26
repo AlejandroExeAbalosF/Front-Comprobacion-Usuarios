@@ -143,30 +143,30 @@ const updateRegistrations = (registrations: IRegistration[], notification: any) 
         reg.id === notification.idR
           ? {
               ...reg,
-              type: notification.type,
-              entryDate: reg.entryDate || (notification.type === "working" || notification.type === "absent" ? notification.date : undefined),
-              entryCapture: reg.entryCapture || (notification.type === "working"  ? notification.capture : undefined),
-              exitDate: notification.type === "present" ? notification.date : reg.exitDate,
-              exitCapture: notification.type === "present" ? notification.capture : reg.exitCapture,
+              status: notification.status,
+              entryDate: reg.entryDate || (notification.status === "TRABAJANDO" || notification.status === "AUSENTE" ? notification.date : undefined),
+              entryCapture: reg.entryCapture || (notification.status === "TRABAJANDO"  ? notification.capture : undefined),
+              exitDate: notification.status === "PRESENTE" ? notification.date : reg.exitDate,
+              exitCapture: notification.status === "PRESENTE" ? notification.capture : reg.exitCapture,
             }
           : {
             ...reg, // Mantenemos los campos originales ?
             id: notification.idR,
-            type: notification.type,
-            entryDate: notification.type === "working" || notification.type === "absent" ? notification.date : undefined,
-            entryCapture: notification.type === "working" ? notification.capture : undefined,
-            exitDate: notification.type === "present" ? notification.date : undefined,
-            exitCapture: notification.type === "present" ? notification.capture : undefined,
+            status: notification.status,
+            entryDate: notification.status === "TRABAJANDO" || notification.status === "AUSENTE" ? notification.date : undefined,
+            entryCapture: notification.status === "TRABAJANDO" ? notification.capture : undefined,
+            exitDate: notification.status === "PRESENTE" ? notification.date : undefined,
+            exitCapture: notification.status === "PRESENTE" ? notification.capture : undefined,
           }
       )
     : [
         {
           id: notification.idR,
-          type: notification.type,
-          entryDate: notification.type === "working" || notification.type === "absent" ? notification.date : undefined,
-          entryCapture: notification.type === "working" ? notification.capture : undefined,
-          exitDate: notification.type === "present" ? notification.date : undefined,
-          exitCapture: notification.type === "present" ? notification.capture : undefined,
+          status: notification.status,
+          entryDate: notification.status === "TRABAJANDO" || notification.status === "AUSENTE" ? notification.date : undefined,
+          entryCapture: notification.status === "TRABAJANDO" ? notification.capture : undefined,
+          exitDate: notification.status === "PRESENTE" ? notification.date : undefined,
+          exitCapture: notification.status === "PRESENTE" ? notification.capture : undefined,
         },
       ];
 };
@@ -181,9 +181,9 @@ const sortUsers = (filterColumn: IFilterColumn, users: IUser[]) => {
         const dateB = b.registrations[0]?.entryDate ? new Date(b.registrations[0].entryDate).getTime() : 0;
         return filterColumn.order ? dateB - dateA : dateA - dateB;
       case "Estado":
-        const priority = { working: 1, present: 2, absent: 3 };
-        const typeA = a.registrations[0]?.type || "absent";
-        const typeB = b.registrations[0]?.type || "absent";
+        const priority = { TRABAJANDO: 1, PRESENTE: 2, AUSENTE: 3 };
+        const typeA = a.registrations[0]?.status || "AUSENTE";
+        const typeB = b.registrations[0]?.status || "AUSENTE";
         return filterColumn.order ? priority[typeA] - priority[typeB] : priority[typeB] - priority[typeA];
       case "Documento":
         return filterColumn.order ? a.document - b.document : b.document - a.document;

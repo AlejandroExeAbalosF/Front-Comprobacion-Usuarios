@@ -35,9 +35,9 @@ const RegistrationTableR = () => {
   const [isTypeModal, setIsTypeModal] = useState("");
 
   // Función para abrir el modal y cargar datos
-  const handleOpenModal = (userId: IUser | null, event: React.SyntheticEvent) => {
+  const handleOpenModal = (user: IUser | null, event: React.SyntheticEvent) => {
     setIsTypeModal(event.currentTarget.id);
-    setUserDetails(userId);
+    setUserDetails(user);
     setIsModalOpen(true);
   };
 
@@ -144,7 +144,7 @@ const RegistrationTableR = () => {
                   <dt className="sr-only">Estado</dt>
                   <dd className="flex items-center justify-center">
                     {user?.registrations.length > 0 ? (
-                      user.registrations[0].type ? (
+                      user.registrations[0].status ? (
                         <div className="ml-14 inline-block  text-center px-2 py-1 font-sans text-xs font-bold text-green-900 uppercase rounded-md select-none whitespace-nowrap bg-green-500/20">
                           <span className="">Presente</span>
                         </div>
@@ -201,15 +201,20 @@ const RegistrationTableR = () => {
         </PhotoProvider>
         <td className="hidden sm:table-cell w-[100px] text-center p-4 border-b border-[#cfd8dc]">
           {user?.registrations.length > 0 ? (
-            user.registrations[0].type === "working" ? (
+            user.registrations[0].status === "TRABAJANDO" ? (
               <div className="  items-center px-2 py-1 font-sans text-xs font-bold text-green-900 uppercase rounded-md select-none whitespace-nowrap bg-green-500/20">
                 <span className="">Trabajando</span>
               </div>
-            ) : user.registrations[0].type === "present" ? (
-              <div className="  items-center px-2 py-1 font-sans text-xs font-bold text-blue-900 uppercase rounded-md select-none whitespace-nowrap bg-blue-500/20">
+            ) : user.registrations[0].status === "PRESENTE" ? (
+              <div
+                className={`grid items-center px-2 py-1 font-sans text-xs font-bold text-blue-900 uppercase rounded-md select-none whitespace-nowrap ${
+                  user.registrations[0].type === "LLEGADA_TARDE" ? "bg-red-500/20" : "bg-blue-500/20"
+                }`}
+                title={user.registrations[0].type === "LLEGADA_TARDE" ? "Llegada tarde" : ""}
+              >
                 <span className="">Presente</span>
               </div>
-            ) : user.registrations[0].type === "absent" ? (
+            ) : user.registrations[0].status === "AUSENTE" ? (
               <div className="  items-center px-2 py-1 font-sans text-xs font-bold text-amber-900 uppercase rounded-md select-none whitespace-nowrap bg-blue-gray-500/20 bg-amber-500/20">
                 <span className="">Ausente</span>
               </div>
@@ -224,7 +229,7 @@ const RegistrationTableR = () => {
           </p>
           <p className="lg:w-auto  block font-sans text-sm text-center antialiased font-normal leading-normal text-blue-gray-900">
             {user?.registrations.length > 0 && user.registrations[0].entryDate
-              ? user.registrations[0].type !== "absent"
+              ? user.registrations[0].status !== "AUSENTE"
                 ? dayjs(user.registrations[0].entryDate).format("HH:mm")
                 : "-"
               : null}
@@ -350,19 +355,22 @@ const RegistrationTableR = () => {
                   <p className="block font-sans text-sm antialiased font-bold leading-none ">Empleados</p>
                 </th>
                 <th
-                  className=" hidden lg:table-cell  cursor-pointer p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
+                  className=" hidden lg:table-cell w-[150px]  cursor-pointer p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
                   onClick={onClickName}
                 >
                   <p className=" font-sans text-sm text-center lg:text-start  antialiased font-bold  leading-none ">Documento</p>
                 </th>
-                <th className="hidden lg:table-cell p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50">
+                <th className="hidden lg:table-cell  w-[200px] p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50">
                   <p className=" font-sans text-sm antialiased font-bold  leading-none ">Captura de Salida</p>
                 </th>
-                <th className="hidden lg:table-cell  p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50" onClick={onClickName}>
+                <th
+                  className="hidden lg:table-cell  w-[200px] p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
+                  onClick={onClickName}
+                >
                   <p className=" block font-sans text-sm antialiased font-bold  leading-none ">Captura de Ingreso</p>
                 </th>
                 <th
-                  className="hidden sm:table-cell cursor-pointer p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
+                  className="hidden sm:table-cell  w-[150px] cursor-pointer p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
                   onClick={onClickName}
                 >
                   <p className="block font-sans text-sm text-center antialiased font-bold  leading-none">Estado</p>

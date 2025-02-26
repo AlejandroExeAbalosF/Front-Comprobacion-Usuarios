@@ -1,54 +1,90 @@
 import { useEffect } from "react";
-import { IUser } from "../helpers/types";
-import { formatName } from "../utils/formatName";
+import { IRegistration, IUser } from "../helpers/types";
 import CreateUser from "./CreateUser";
 import RegistersTable from "./RegistersTable";
 import DetailsUser from "./DetailsUser";
+import EditRegister from "./EditRegister";
 
 interface ModalProps {
   isVisible?: boolean;
-  onClose: (isVisible: boolean) => void;
-  data?: IUser | null;
-  typeModal?: string;
+  onClose: () => void;
+  data?: IUser | IRegistration;
+  typeModal?: "userRegisters" | "userDetails" | "createEmployee" | "editRegister";
+
+  closeOnBackdropClick?: boolean;
 }
 
-const ModalGeneric: React.FC<ModalProps> = ({ isVisible, onClose, data, typeModal }) => {
+const useBodyScrollLock = (isLocked: boolean) => {
   useEffect(() => {
-    if (isVisible) {
-      document.body.style.overflow = "hidden"; // Bloquea el scroll del fondo
-    } else {
-      document.body.style.overflow = ""; // Restaura el scroll
-    }
-
+    document.body.style.overflow = isLocked ? "hidden" : "";
     return () => {
-      document.body.style.overflow = ""; // Asegura que el scroll se restaure al desmontar
+      document.body.style.overflow = "";
     };
-  }, [isVisible]);
+  }, [isLocked]);
+};
 
-  const handleModal = () => {
-    // console.log(isVisible);
-    onClose(!isVisible);
+interface ModalPropsMap {
+  userRegisters: { userInfo: IUser | null };
+  userDetails: { userInfo: IUser | null; onCloseModal?: (isVisible: boolean) => void };
+  createEmployee: { onCloseModal?: (isVisible: boolean) => void };
+  editRegister: { register: IRegistration | null; onCloseModal?: (isVisible: boolean) => void };
+}
+
+// Mapea los componentes a sus props correctas
+const MODAL_COMPONENTS: {
+  [K in keyof ModalPropsMap]: React.FC<ModalPropsMap[K]>;
+} = {
+  userRegisters: RegistersTable,
+  userDetails: DetailsUser,
+  createEmployee: CreateUser,
+  editRegister: EditRegister,
+};
+
+const ModalGeneric: React.FC<ModalProps> = ({ isVisible = false, onClose, data, typeModal, closeOnBackdropClick = true }) => {
+  useBodyScrollLock(isVisible);
+  const ModalContent = typeModal ? MODAL_COMPONENTS[typeModal] : null;
+
+  const handleBackdropClick = () => {
+    if (closeOnBackdropClick) {
+      onClose();
+    }
   };
+
+  const modalProps =
+    typeModal === "editRegister"
+      ? { register: data as IRegistration | null }
+      : typeModal === "userDetails" || typeModal === "userRegisters"
+      ? { userInfo: data as IUser | null }
+      : {};
+
   return (
     <div
       id="modal_main"
-      onClick={handleModal}
-      className={`fixed z-10  inset-0 flex justify-center items-center transition-colors  ${
-        isVisible ? "visible bg-black/55  inset-0  backdrop-blur-xs  " : "invisible"
-      }  `}
+      role="dialog"
+      aria-modal="true"
+      onClick={handleBackdropClick}
+      className={`fixed inset-0 z-10 flex justify-center items-center transition-colors 
+        ${isVisible ? "visible bg-black/55 backdrop-blur-sm" : "invisible"}`}
     >
       <div
         id="modal_container"
-        onClick={(e) => e.stopPropagation()}
-        className={` bg-white rounded-md   shadow transition-all ${isVisible ? "scale-100 opacity-100" : "scale-125 opacity-0"}`}
+        onClick={(e) => e.stopPropagation()} // Evita que el clic dentro del modal lo cierre
+        className={`bg-white rounded-md shadow transition-all 
+          ${isVisible ? "scale-100 opacity-100" : "scale-125 opacity-0"}`}
       >
-        {typeModal === "userRegisters" ? (
-          <RegistersTable userInfo={data ?? null} />
-        ) : typeModal === "userDetails" ? (
-          <DetailsUser userInfo={data ?? null} onCloseModal={onClose} />
-        ) : typeModal === "createEmployee" ? (
-          <CreateUser onCloseModal={onClose} />
-        ) : null}
+        {ModalContent ? (
+          typeModal === "editRegister" ? (
+            <EditRegister register={data as IRegistration | null} onCloseModal={onClose} />
+          ) : typeModal === "userDetails" ? (
+            <DetailsUser userInfo={data as IUser | null} onCloseModal={onClose} />
+          ) : typeModal === "userRegisters" ? (
+            <RegistersTable userInfo={data as IUser | null} />
+          ) : typeModal === "createEmployee" ? (
+            <CreateUser onCloseModal={onClose} />
+          ) : null
+        ) : (
+          "No se encontró el Modal"
+        )}
       </div>
     </div>
   );

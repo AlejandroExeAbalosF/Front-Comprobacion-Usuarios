@@ -1,8 +1,19 @@
 export interface IDni {
     document: string;
 }
+
+export interface IShift{
+   id?: string;
+   name?: string;
+   entryHour?: string;
+   exitHour?: string;
+}
 export interface IUser {
     id: string;
+
+    entryHour?: string;
+
+    exitHour?: string;
     name: string;
     lastName: string;
     document: number;
@@ -33,18 +44,23 @@ export interface IUser {
     state?: boolean;
     createdAt?: string;
     registrations: IRegistrations[];
+
+    shift: IShift;
   }
 export interface IRegistration {
     id: string;
     validated?: string;
-    type: string;
-    state: boolean;
+    type?: string;
+    state?: boolean;
+    status: string;
     entryCapture?: string;
     exitCapture?: string;
     entryDate: string;
     exitDate: string;
+    articulo?: string;
     description?: string;
     createdAt?: string;
+    justification?: string;
     user?: IUser
 }
 
@@ -69,5 +85,6 @@ export interface IMinistry {
   privateAddress?: string;
   function?: string;
   createdAt?: string;
+  secretariats?: ISecretariat[]
 
 }

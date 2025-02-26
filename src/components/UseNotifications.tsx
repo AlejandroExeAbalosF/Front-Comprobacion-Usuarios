@@ -14,7 +14,7 @@ export function useNotifications() {
 
   useEffect(() => {
     socket.on("employeeValidated", (data) => {
-      if (data.type === "working") {
+      if (data.status === "TRABAJANDO") {
         // toast.success(`Empleado ${data.name} ${data.lastName} ha ingresado`);
         toast(` ${formatName(data.name, data.lastName)} ha ingresado`, {
           className: ``,
@@ -22,14 +22,14 @@ export function useNotifications() {
           duration: 10000,
           icon: <BsFillRecordFill className="icon-notification w-6 h-6 text-green-500" />,
         });
-      } else if (data.type === "present") {
+      } else if (data.status === "PRESENTE") {
         toast(` ${formatName(data.name, data.lastName)} ha salido`, {
           className: ``,
           description: `${dayjs(data.exitDate).format("DD/MM/YYYY")} - ${dayjs(data.exitDate).format("HH:mm")}`,
           duration: 10000,
           icon: <BsFillRecordFill className="icon-notification w-6 h-6 text-red-500" />,
         });
-      } else if (data.type === "absent") {
+      } else if (data.status === "AUSENTE") {
         toast(` ${formatName(data.name, data.lastName)} esta ausente`, {
           className: ``,
           description: `${dayjs(data.exitDate).format("DD/MM/YYYY")}`,
