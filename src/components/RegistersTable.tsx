@@ -130,7 +130,9 @@ const RegistersTable: React.FC<{ userInfo?: IUser | null }> = ({ userInfo }) => 
         ? `${BACK_API_URL}/reports/pdf/planilla-mes`
         : idType === "pdfPorcentaje"
         ? `${BACK_API_URL}/reports/pdf/porcentaje-mes`
-        : null;
+        : idType === "excelPlanilla"
+        ? `${BACK_API_URL}/reports/excel/planilla-mes`
+        : "";
     if (selectedMonth && selectedYear && userInfo) {
       const data = {
         id: userInfo?.id,
@@ -146,16 +148,25 @@ const RegistersTable: React.FC<{ userInfo?: IUser | null }> = ({ userInfo }) => 
           responseType: "arraybuffer",
         })
         .then(({ data }) => {
-          console.log("data", data);
-          const blob = new Blob([data], { type: "application/pdf" });
-
-          const link = document.createElement("a");
-          link.href = window.URL.createObjectURL(blob);
-          link.download = `expense.pdf`;
-          document.body.appendChild(link);
-          link.click();
-
-          document.body.removeChild(link);
+          if (idType === "pdfPlanilla" || idType === "pdfPorcentaje") {
+            const blob = new Blob([data], { type: "application/pdf" });
+            const link = document.createElement("a");
+            link.href = window.URL.createObjectURL(blob);
+            link.setAttribute("download", `planillaASDA-${selectedYear}-${selectedMonth}.pdf`);
+            // link.download = `expense.pdf`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+          } else {
+            // Crear un Blob para descargar el archivo
+            const url = window.URL.createObjectURL(new Blob([data]));
+            const link = document.createElement("a");
+            link.href = url;
+            link.setAttribute("download", `planilla-${selectedYear}-${selectedMonth}.xlsx`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+          }
         })
         .catch((error) => {
           if (error.response.data.message === "Error al descargar el PDF") {
@@ -257,7 +268,11 @@ const RegistersTable: React.FC<{ userInfo?: IUser | null }> = ({ userInfo }) => 
                       }`}
                     />
                   </button>
-                  <button className="relative h-[35px] max-h-[35px] w-[35px] max-w-[35px]">
+                  <button
+                    id="excelPlanilla"
+                    onClick={handleReport}
+                    className="relative h-[35px] max-h-[35px] w-[35px] max-w-[35px]"
+                  >
                     <img
                       src="/icons/excel-document-svgrepo-com.svg"
                       alt="icono"
