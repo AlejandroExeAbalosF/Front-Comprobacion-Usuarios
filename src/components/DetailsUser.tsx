@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import { IUser } from "../helpers/types";
-import { formatName } from "../utils/formatName";
+import { formatName, formatTime } from "../utils/format";
 import { useState } from "react";
 import CreateUser from "./CreateUser";
 import { PhotoProvider, PhotoView } from "react-photo-view";
@@ -29,17 +29,61 @@ const DetailsUser: React.FC<{ userInfo?: IUser | null; onCloseModal?: (isVisible
             Detalles del Usuario : {userInfo && formatName(userInfo?.name, userInfo?.lastName)}{" "}
           </h2>
           <div className="flex flex-row w-auto p-6 ">
-            <div className="w-[380px] h-[300px] flex flex-col justify-center items-center">
-              <div className="flex justify-center items-center  mt-1 bg-[#fff8f2] w-[252px] h-[252px] rounded-[50%] shadow-md ">
-                <PhotoProvider maskOpacity={0.5}>
-                  <PhotoView src={`${userInfo?.image}`}>
-                    <img src={userInfo?.image} className=" w-[252px] h-[252px] rounded-[50%] object-cover " />
-                  </PhotoView>
-                </PhotoProvider>
+            <div className="flex flex-col items-center">
+              <div className="w-[380px] h-[300px] flex flex-col justify-center items-center">
+                <div className="flex justify-center items-center  mt-1 bg-[#fff8f2] w-[252px] h-[252px] rounded-[50%] shadow-md ">
+                  <PhotoProvider maskOpacity={0.5}>
+                    <PhotoView src={`${userInfo?.image}`}>
+                      <img src={userInfo?.image} className=" w-[252px] h-[252px] rounded-[50%] object-cover " />
+                    </PhotoView>
+                  </PhotoProvider>
+                </div>
+              </div>
+              <div className="w-[380px] h-[300px] flex flex-col  items-center">
+                <div>
+                  <h3 className="text-start text-[20px]">Horario de Trabajo</h3>
+                  <hr className="border-t border-gray-300 my-1" />
+                </div>
+                <div className="my-1 flex flex-row gap-4 ">
+                  <div className=" relative  w-[150px]   flex flex-col justify-center items-center">
+                    <label className="form-title-md"> Turno</label>
+                    <p className="px-2 h-[35px] w-[150px] text-center flex justify-center  items-center ">
+                      {userInfo?.shift
+                        ? userInfo?.shift.name === "M"
+                          ? "Mañana"
+                          : userInfo?.shift.name === "T"
+                          ? "Tarde"
+                          : userInfo?.shift.name
+                        : "-"}
+                    </p>
+                  </div>
+                </div>
+                <div className="my-1 flex flex-row gap-4 ">
+                  <div className=" relative  w-[150px]   flex flex-col justify-center items-center">
+                    <label className="form-title-md"> Hora de Entrada</label>
+                    <p className="px-2 h-[35px] w-[150px] text-center flex justify-center items-center ">
+                      {userInfo?.entryHour
+                        ? formatTime(userInfo?.entryHour)
+                        : userInfo?.shift.entryHour
+                        ? formatTime(userInfo?.shift.entryHour)
+                        : "-"}
+                    </p>
+                  </div>
+                  <div className=" relative  w-[150px]  flex flex-col justify-center items-center">
+                    <label className="form-title-md"> Hora de Salida</label>
+                    <p className="px-2 h-[35px] w-[150px] text-center flex justify-center items-center ">
+                      {userInfo?.exitHour
+                        ? formatTime(userInfo?.exitHour)
+                        : userInfo?.shift.exitHour
+                        ? formatTime(userInfo?.shift.exitHour)
+                        : "-"}
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
             <div className="w-[1024px] h-full flex flex-col  ">
-              <form action="" className="flex  flex-col justify-center items-center">
+              <div className="flex  flex-col justify-center items-center">
                 <main className="w-[1024px] ">
                   <section className="">
                     <div className=" w-full">
@@ -179,7 +223,7 @@ const DetailsUser: React.FC<{ userInfo?: IUser | null; onCloseModal?: (isVisible
                     Editar Empleado
                   </button>
                 </div>
-              </form>
+              </div>
             </div>
           </div>
         </div>

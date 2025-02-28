@@ -2,12 +2,12 @@ import dayjs from "dayjs";
 import { useEffect, useRef, useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css"; // Importa los estilos predeterminados
-import { ISecretariat, IUser } from "../helpers/types";
+import { ISecretariat, IShift, IUser } from "../helpers/types";
 import axios from "axios";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { addUser } from "../redux/slices/usersEmpSlice";
 import { toast } from "sonner";
-import { formatName } from "../utils/formatName";
+import { formatName, formatTime } from "../utils/format";
 
 const BACK_API_URL = import.meta.env.VITE_LOCAL_API_URL;
 
@@ -38,6 +38,9 @@ const CreateUser: React.FC<CreateUserProps> = ({ onCloseModal, userInfo, setIsEd
     ministry: userInfo?.secretariat ? userInfo?.secretariat.ministry?.name : "",
     incomeDate: userInfo?.incomeDate ? userInfo.incomeDate : "",
     secretariatId: userInfo?.secretariat ? userInfo.secretariat.name : "",
+    shiftId: userInfo?.shift ? userInfo.shift.id : "",
+    entryHour: userInfo?.entryHour ? userInfo?.entryHour : userInfo?.shift ? userInfo.shift.entryHour : "",
+    exitHour: userInfo?.exitHour ? userInfo?.exitHour : userInfo?.shift ? userInfo.shift.exitHour : "",
   };
 
   const selectRef = useRef(null);
@@ -48,26 +51,45 @@ const CreateUser: React.FC<CreateUserProps> = ({ onCloseModal, userInfo, setIsEd
   const [ImagePrevius, setImagePrevious] = useState<string | null>(userInfo?.image || null);
   const [userDataImage, setUserDataImage] = useState<File | null>(null);
   const [secretariatsInfo, setSecretariatsInfo] = useState<ISecretariat[]>([]);
+  const [shiftsInfo, setShiftsInfo] = useState<IShift[]>([]);
   const { user } = useAppSelector((state) => state.auth);
   const today = dayjs();
   const minDate = today.subtract(18, "years").format("YYYY-MM-DD"); // Formato YYYY-MM-DD
   // const minDate = today.subtract(18, "years").toDate();
 
   useEffect(() => {
-    const infoSecretaria = async () => {
+    const info = async () => {
       await axios
         .get(`${BACK_API_URL}/ministries/${user?.nameMinistry}`, { withCredentials: true })
         .then(({ data }) => {
-          console.log("data", data.secretariats);
+          console.log("secretariats", data);
           setSecretariatsInfo(data.secretariats);
         })
         .catch((error) => {
           console.error("Error al obtener secretarias", error.response.data.message);
           toast.error(error.response.data.message);
         });
+      await axios
+        .get(`${BACK_API_URL}/users/shifts`, { withCredentials: true })
+        .then(({ data }) => {
+          console.log("shifts", data);
+          setShiftsInfo(data);
+          if (!userInfo && data.length > 0) {
+            setUserDataInputs((prev) => ({
+              ...prev,
+              shiftId: data[0].id, // Primer turno de la lista
+              entryHour: data[0].entryHour, // Hora de entrada del primer turno
+              exitHour: data[0].exitHour, // Hora de salida del primer turno
+            }));
+          }
+        })
+        .catch((error) => {
+          console.error("Error al obtener turnos", error.response.data.message);
+          toast.error(error.response.data.message);
+        });
     };
 
-    infoSecretaria();
+    info();
   }, []);
   const handleModal = () => {
     // console.log(isVisible);
@@ -80,10 +102,21 @@ const CreateUser: React.FC<CreateUserProps> = ({ onCloseModal, userInfo, setIsEd
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => {
     const { value, name } = e.target;
 
-    setUserDataInputs({
-      ...userDataInputs,
-      [name]: value,
-    });
+    if (name === "shiftId") {
+      const selectedShift = shiftsInfo.find((shift) => shift.id === value);
+
+      setUserDataInputs((prev) => ({
+        ...prev,
+        shiftId: value,
+        entryHour: selectedShift ? selectedShift.entryHour : "",
+        exitHour: selectedShift ? selectedShift.exitHour : "",
+      }));
+    } else {
+      setUserDataInputs({
+        ...userDataInputs,
+        [name]: value,
+      });
+    }
 
     // setErrors(validateInputLoginU({ ...userDataInputs, [name]: value }));
   };
@@ -104,6 +137,7 @@ const CreateUser: React.FC<CreateUserProps> = ({ onCloseModal, userInfo, setIsEd
         ...data,
         secretariatId: secretariatsInfo && !data.secretariat ? secretariatsInfo[0].id : data.secretariatId,
       };
+
       const formData = new FormData();
       if (userDataImage) formData.append("file", userDataImage);
       Object.entries(dataWithSecretariat).forEach(([key, value]) => {
@@ -111,6 +145,7 @@ const CreateUser: React.FC<CreateUserProps> = ({ onCloseModal, userInfo, setIsEd
           formData.append(key, value.toString());
         }
       });
+      console.log("formData udate", formData.get("name"));
       axios
         .put(`${BACK_API_URL}/users/update/${userInfo.id}`, formData, { withCredentials: true })
         .then(({ data }) => {
@@ -121,7 +156,7 @@ const CreateUser: React.FC<CreateUserProps> = ({ onCloseModal, userInfo, setIsEd
             ...data.user,
             registrations: userInfo.registrations,
           };
-          console.log("userActuualizado", user);
+          // console.log("userActuualizado", user);
           dispatch(addUser(user));
         })
         .catch((error) => {
@@ -129,13 +164,12 @@ const CreateUser: React.FC<CreateUserProps> = ({ onCloseModal, userInfo, setIsEd
           toast.error(error.response.data.message);
         });
     } else {
-      console.log("cleanObject", cleanObject(userDataInputs as Record<string, unknown>));
-
       const data = cleanObject(userDataInputs as Record<string, unknown>);
       const dataWithSecretariat = {
         ...data,
         secretariatId: secretariatsInfo && !data.secretariat ? secretariatsInfo[0].id : data.secretariatId,
       };
+      // console.log("dataWithSecretariat", dataWithSecretariat);
       const formData = new FormData();
       if (userDataImage) formData.append("file", userDataImage);
       Object.entries(dataWithSecretariat).forEach(([key, value]) => {
@@ -144,6 +178,7 @@ const CreateUser: React.FC<CreateUserProps> = ({ onCloseModal, userInfo, setIsEd
         }
       });
       // formData.append("data", data);
+      console.log("formData", formData);
       axios
         .post(`${BACK_API_URL}/users/createEmployee`, formData, { withCredentials: true })
         .then(({ data }) => {
@@ -189,32 +224,83 @@ const CreateUser: React.FC<CreateUserProps> = ({ onCloseModal, userInfo, setIsEd
         {userInfo ? `Editar Empleado: ${formatName(userInfo?.name, userInfo?.lastName)}` : "Crear Empleado"}
       </h2>
       <div className="flex flex-row w-auto p-6 ">
-        <div className="w-[380px] h-[300px] flex flex-col justify-center items-center">
-          <div className="flex relative justify-center items-center  mt-1 bg-gray-400 hover:bg-[#69696965] w-[252px] h-[252px] rounded-[50%] shadow-md ">
-            <input
-              type="file"
-              name="userImage"
-              id="uploadImage"
-              className="rounded-[50%] hover:bg-[#69696965] edit_profile_input_hover outline-none absolute m-0 p-0 w-full h-full cursor-pointer opacity-0 z-20"
-              accept="image/*"
-              onChange={(e) => {
-                changeImage(e);
-              }}
-            />
-            {ImagePrevius ? (
-              <>
-                <img src={ImagePrevius} className=" w-[252px] h-[252px] rounded-[50%] object-cover " />
-                <div className="edit_profile_img_hover absolute inset-0 w-full h-full group hover:bg-[#69696965] rounded-[50%]"></div>
-              </>
-            ) : (
-              <>
-                <img
-                  src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
-                  className=" w-[252px] h-[252px] rounded-[50%] hover:bg-[#69696965]"
+        <div className="flex flex-col items-center">
+          <div className="w-[380px] h-[300px] flex flex-col justify-center items-center">
+            <div className="flex relative justify-center items-center  mt-1 bg-gray-400 hover:bg-[#69696965] w-[252px] h-[252px] rounded-[50%] shadow-md ">
+              <input
+                type="file"
+                name="userImage"
+                id="uploadImage"
+                className="rounded-[50%] hover:bg-[#69696965] edit_profile_input_hover outline-none absolute m-0 p-0 w-full h-full cursor-pointer opacity-0 z-20"
+                accept="image/*"
+                onChange={(e) => {
+                  changeImage(e);
+                }}
+              />
+              {ImagePrevius ? (
+                <>
+                  <img src={ImagePrevius} className=" w-[252px] h-[252px] rounded-[50%] object-cover " />
+                  <div className="edit_profile_img_hover absolute inset-0 w-full h-full group hover:bg-[#69696965] rounded-[50%]"></div>
+                </>
+              ) : (
+                <>
+                  <img
+                    src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
+                    className=" w-[252px] h-[252px] rounded-[50%] hover:bg-[#69696965]"
+                  />
+                  <div className="edit_profile_img_hover absolute inset-0 w-full h-full group hover:bg-[#69696965] rounded-[50%]"></div>
+                </>
+              )}
+            </div>
+          </div>
+          <div className="w-[380px] h-[300px] flex flex-col  items-center">
+            <div>
+              <h3 className="text-start text-[20px]">Horario de Trabajo</h3>
+              <hr className="border-t border-gray-300 my-1" />
+            </div>
+            <div className="my-1 flex flex-row gap-4 ">
+              <div className=" relative  w-[150px]   flex flex-col justify-center items-center">
+                <label className="form-title-md"> Turno</label>
+                <select
+                  name="shiftId"
+                  value={userDataInputs.shiftId}
+                  className="bg-gray-50 w-[150px]  border-[#d6dadf] border-1 text-gray-900 text-sm rounded-lg focus:border-1 focus:ring-blue-500 focus:border-blue-500 block p-[7.5px]   outline-none"
+                  onChange={handleChange}
+                >
+                  {shiftsInfo?.map((shift) => (
+                    <option key={shift.id} value={shift.id}>
+                      {shift.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+            <div className="my-1 flex flex-row gap-4 ">
+              <div className=" relative  w-[150px]   flex flex-col justify-center items-center">
+                <label className="form-title-md"> Hora de Entrada</label>
+                <input
+                  // id={name}
+                  type="time"
+                  name="entryHour"
+                  value={userDataInputs.entryHour}
+                  className={` px-2 h-[35px]  text-black py-2.5  w-[150px]  input-form-create`}
+                  placeholder=" "
+                  onChange={handleChange}
                 />
-                <div className="edit_profile_img_hover absolute inset-0 w-full h-full group hover:bg-[#69696965] rounded-[50%]"></div>
-              </>
-            )}
+              </div>
+              <div className=" relative  w-[150px]  flex flex-col justify-center items-center">
+                <label className="form-title-md"> Hora de Salida</label>
+                <input
+                  // id={name}
+                  type="time"
+                  name="exitHour"
+                  value={userDataInputs.exitHour}
+                  className={` px-2 h-[35px]  text-black py-2.5  w-[150px]  input-form-create`}
+                  placeholder=" "
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
           </div>
         </div>
         <div className="w-[1024px] h-[600px] ">

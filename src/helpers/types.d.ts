@@ -88,3 +88,24 @@ export interface IMinistry {
   secretariats?: ISecretariat[]
 
 }
+
+export interface IArticulo {
+  id: string;
+  name: string;
+  description?: string;
+  incisos?: IInciso[];
+}
+
+export interface IInciso{
+  id: string; 
+  name: string;
+  description?: string;
+  subIncisos?: ISubInciso[];
+}
+
+export interface ISubInciso{
+  id: string;
+  name: string;
+  description?: string;
+
+}

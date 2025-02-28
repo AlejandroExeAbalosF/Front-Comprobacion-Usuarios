@@ -7,3 +7,12 @@ export const formatName = (name: string, lastname: string): string => {
   
     return `${capitalize(name)} ${capitalize(lastname)}`;
   };
+
+export  const formatTime = (timeString: string) => {
+    const [hours, minutes] = timeString.split(":");
+    return `${hours}:${minutes}`;
+  };
+
+export  const cleanObject = <T extends Record<string, unknown>>(obj: T): Partial<T> => {
+    return Object.fromEntries(Object.entries(obj).filter(([, value]) => value !== "" && value !== null)) as Partial<T>;
+  };

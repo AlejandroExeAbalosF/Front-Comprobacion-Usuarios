@@ -4,7 +4,7 @@ import { INotificaciónData, IRegistration } from "../helpers/types";
 import { toast } from "sonner";
 import dayjs from "dayjs";
 import { BsFillRecordFill } from "react-icons/bs";
-import { formatName } from "../utils/formatName";
+import { formatName } from "../utils/format";
 
 const BACK_API_URL = import.meta.env.VITE_LOCAL_API_URL;
 const socket = io(BACK_API_URL); // Asegúrate de que la URL es la correcta

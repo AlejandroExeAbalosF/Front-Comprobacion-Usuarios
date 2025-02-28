@@ -4,7 +4,7 @@ import { IRegistration, IUser } from "../../helpers/types";
 import { toast } from "sonner";
 import { useNotifications } from "../UseNotifications";
 import dayjs from "dayjs";
-import { formatName } from "../../utils/formatName";
+import { formatName } from "../../utils/format";
 import { BsFillPersonLinesFill } from "react-icons/bs";
 import { BsReverseLayoutTextWindowReverse } from "react-icons/bs";
 import ModalRegistration from "../modalRegistration/ModalRegistration";

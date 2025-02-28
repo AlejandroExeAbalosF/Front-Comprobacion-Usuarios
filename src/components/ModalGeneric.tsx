@@ -12,6 +12,8 @@ interface ModalProps {
   typeModal?: "userRegisters" | "userDetails" | "createEmployee" | "editRegister";
 
   closeOnBackdropClick?: boolean;
+
+  onUpdate?: (register: IRegistration) => void;
 }
 
 const useBodyScrollLock = (isLocked: boolean) => {
@@ -40,7 +42,14 @@ const MODAL_COMPONENTS: {
   editRegister: EditRegister,
 };
 
-const ModalGeneric: React.FC<ModalProps> = ({ isVisible = false, onClose, data, typeModal, closeOnBackdropClick = true }) => {
+const ModalGeneric: React.FC<ModalProps> = ({
+  isVisible = false,
+  onClose,
+  data,
+  typeModal,
+  closeOnBackdropClick = true,
+  onUpdate,
+}) => {
   useBodyScrollLock(isVisible);
   const ModalContent = typeModal ? MODAL_COMPONENTS[typeModal] : null;
 
@@ -74,7 +83,7 @@ const ModalGeneric: React.FC<ModalProps> = ({ isVisible = false, onClose, data, 
       >
         {ModalContent ? (
           typeModal === "editRegister" ? (
-            <EditRegister register={data as IRegistration | null} onCloseModal={onClose} />
+            <EditRegister register={data as IRegistration | null} onCloseModal={onClose} onUpdate={onUpdate} />
           ) : typeModal === "userDetails" ? (
             <DetailsUser userInfo={data as IUser | null} onCloseModal={onClose} />
           ) : typeModal === "userRegisters" ? (

@@ -1,7 +1,7 @@
 import { toast } from "sonner";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { logout, setError } from "../redux/slices/authSlice";
-import { formatName } from "../utils/formatName";
+import { formatName } from "../utils/format";
 import { useNavigate } from "react-router-dom";
 
 const Menu = () => {

@@ -1,4 +1,4 @@
-import { formatName } from "../utils/formatName";
+import { formatName } from "../utils/format";
 import { IRegistration, IUser } from "../helpers/types";
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -7,9 +7,13 @@ import dayjs from "dayjs";
 import { PhotoProvider, PhotoView } from "react-photo-view";
 import { FiEdit } from "react-icons/fi";
 import ModalGeneric from "./ModalGeneric";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import { updateUserFromNotification, updateUserRegister } from "../redux/slices/usersEmpSlice";
 
 const BACK_API_URL = import.meta.env.VITE_LOCAL_API_URL;
 const RegistersTable: React.FC<{ userInfo?: IUser | null }> = ({ userInfo }) => {
+  const dispatch = useAppDispatch();
+  const { usersFilter } = useAppSelector((state) => state.usersEmp);
   const [registers, setRegisters] = useState<IRegistration[]>([]);
   const [registerFilter, setRegisterFilter] = useState<IRegistration[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>();
@@ -95,12 +99,38 @@ const RegistersTable: React.FC<{ userInfo?: IUser | null }> = ({ userInfo }) => 
     }
   }, [selectedYear, months]);
 
+  const handleUpdateRegistration = (updatedRecord) => {
+    const userUpdated = usersFilter.find((user) => user.id === userInfo?.id);
+    // const updatedRegistrations = {
+
+    // }
+    if (userUpdated && userUpdated.registrations[0].id === updatedRecord.id) {
+      // Nuevo objeto con la propiedad renombrada y la nueva propiedad agregada
+      const { id, ...updatedRecordWithoutId } = updatedRecord;
+      const updatedObject = {
+        idR: id, // Renombrar 'id' a 'idR'
+        id: userInfo?.id, // Agregar nueva propiedad 'id' con otro valor
+        ...updatedRecordWithoutId, // Mantener el resto de las propiedades sin cambios
+      };
+      dispatch(updateUserFromNotification([updatedObject]));
+    }
+    setRegisterFilter((prev) => prev.map((record) => (record.id === updatedRecord.id ? updatedRecord : record)));
+  };
+
   const handleSelectedMonth = (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => {
     setSelectedMonth(e.target.value);
     console.log("selectedMonthx", selectedMonth);
   };
 
-  const handleReport = (e) => {
+  const handleReport = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const idType = e.currentTarget.id; // Obtener el id del botón clickeado
+    console.log("ID del botón:", idType);
+    const urlReport =
+      idType === "pdfPlanilla"
+        ? `${BACK_API_URL}/reports/pdf/planilla-mes`
+        : idType === "pdfPorcentaje"
+        ? `${BACK_API_URL}/reports/pdf/porcentaje-mes`
+        : null;
     if (selectedMonth && selectedYear && userInfo) {
       const data = {
         id: userInfo?.id,
@@ -109,7 +139,7 @@ const RegistersTable: React.FC<{ userInfo?: IUser | null }> = ({ userInfo }) => 
       };
       console.log("data", data);
       axios
-        .get(`${BACK_API_URL}/reports/pdf/planilla-mes`, {
+        .get(`${urlReport}`, {
           params: { year: selectedYear, month: selectedMonth, id: userInfo?.id },
           // responseType: "blob", // Para recibir el PDF correctamente
           withCredentials: true,
@@ -214,7 +244,11 @@ const RegistersTable: React.FC<{ userInfo?: IUser | null }> = ({ userInfo }) => 
                 </h3>
 
                 <div className="flex gap-2 items-center justify-center">
-                  <button onClick={handleReport} className="relative h-[35px] max-h-[35px] w-[35px] max-w-[35px]">
+                  <button
+                    id="pdfPlanilla"
+                    onClick={handleReport}
+                    className="relative h-[35px] max-h-[35px] w-[35px] max-w-[35px]"
+                  >
                     <img
                       src="/icons/pdf-document-svgrepo-com (1).svg"
                       alt="icono"
@@ -240,7 +274,11 @@ const RegistersTable: React.FC<{ userInfo?: IUser | null }> = ({ userInfo }) => 
                 </h3>
 
                 <div className="flex gap-2 items-center justify-center">
-                  <button className="relative h-[35px] max-h-[35px] w-[35px] max-w-[35px]">
+                  <button
+                    id="pdfPorcentaje"
+                    onClick={handleReport}
+                    className="relative h-[35px] max-h-[35px] w-[35px] max-w-[35px]"
+                  >
                     <img
                       src="/icons/pdf-document-svgrepo-com (1).svg"
                       alt="icono"
@@ -403,15 +441,32 @@ const RegistersTable: React.FC<{ userInfo?: IUser | null }> = ({ userInfo }) => 
                   <td className="hidden sm:table-cell w-[100px] text-center p-4 border-b border-[#cfd8dc]">
                     {register?.status ? (
                       register.status === "TRABAJANDO" ? (
-                        <div className=" grid items-center px-2 py-1 font-sans text-xs font-bold text-green-900 uppercase rounded-md select-none whitespace-nowrap bg-green-500/20">
+                        <div
+                          className={`  items-center px-2 py-1 font-sans text-xs font-bold text-green-900 uppercase rounded-md select-none whitespace-nowrap ${
+                            register.type === "LLEGADA_TARDE" ? "bg-red-500/20" : "bg-green-500/20"
+                          }  `}
+                          title={register.type === "LLEGADA_TARDE" ? "Llegada tarde" : ""}
+                        >
                           <span className="">Trabajando</span>
                         </div>
                       ) : register.status === "PRESENTE" ? (
                         <div
                           className={`grid items-center px-2 py-1 font-sans text-xs font-bold text-blue-900 uppercase rounded-md select-none whitespace-nowrap ${
-                            register?.type === "LLEGADA_TARDE" ? "bg-red-500/20" : "bg-blue-500/20"
+                            register?.type === "LLEGADA_TARDE" ||
+                            register?.type === "LLEGADA_TARDE-SALIDA_TEMPRANA" ||
+                            register?.type === "SALIDA_TEMPRANA"
+                              ? "bg-red-500/20"
+                              : "bg-blue-500/20"
                           }`}
-                          title={register?.type === "LLEGADA_TARDE" ? "Llegada tarde" : ""}
+                          title={
+                            register?.type === "LLEGADA_TARDE"
+                              ? "Llegada tarde"
+                              : register?.type === "LLEGADA_TARDE-SALIDA_TEMPRANA"
+                              ? "Llegada tarde - Salida temprana"
+                              : register?.type === "SALIDA_TEMPRANA"
+                              ? "Salida temprana"
+                              : ""
+                          }
                         >
                           <span className="">Presente</span>
                         </div>
@@ -462,7 +517,15 @@ const RegistersTable: React.FC<{ userInfo?: IUser | null }> = ({ userInfo }) => 
           </table>
         </div>
         {/* Modal */}
-        {isModalOpen && <ModalGeneric isVisible={isModalOpen} onClose={setIsModalOpen} data={details} typeModal={isTypeModal} />}
+        {isModalOpen && (
+          <ModalGeneric
+            isVisible={isModalOpen}
+            onClose={setIsModalOpen}
+            data={details}
+            typeModal={isTypeModal}
+            onUpdate={handleUpdateRegistration}
+          />
+        )}
       </div>
     </div>
   );

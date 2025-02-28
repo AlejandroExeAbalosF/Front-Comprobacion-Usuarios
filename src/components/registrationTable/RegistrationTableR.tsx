@@ -4,7 +4,7 @@ import { INotificaciónData, IRegistration, IUser } from "../../helpers/types";
 import { toast } from "sonner";
 import { useNotifications } from "../UseNotifications";
 import dayjs from "dayjs";
-import { formatName } from "../../utils/formatName";
+import { formatName } from "../../utils/format";
 import { BsFillPersonLinesFill } from "react-icons/bs";
 import { BsReverseLayoutTextWindowReverse } from "react-icons/bs";
 import ModalRegistration from "../modalRegistration/ModalRegistration";
@@ -202,15 +202,32 @@ const RegistrationTableR = () => {
         <td className="hidden sm:table-cell w-[100px] text-center p-4 border-b border-[#cfd8dc]">
           {user?.registrations.length > 0 ? (
             user.registrations[0].status === "TRABAJANDO" ? (
-              <div className="  items-center px-2 py-1 font-sans text-xs font-bold text-green-900 uppercase rounded-md select-none whitespace-nowrap bg-green-500/20">
+              <div
+                className={`  items-center px-2 py-1 font-sans text-xs font-bold text-green-900 uppercase rounded-md select-none whitespace-nowrap ${
+                  user.registrations[0].type === "LLEGADA_TARDE" ? "bg-red-500/20" : "bg-green-500/20"
+                }  `}
+                title={user.registrations[0].type === "LLEGADA_TARDE" ? "Llegada tarde" : ""}
+              >
                 <span className="">Trabajando</span>
               </div>
             ) : user.registrations[0].status === "PRESENTE" ? (
               <div
                 className={`grid items-center px-2 py-1 font-sans text-xs font-bold text-blue-900 uppercase rounded-md select-none whitespace-nowrap ${
-                  user.registrations[0].type === "LLEGADA_TARDE" ? "bg-red-500/20" : "bg-blue-500/20"
+                  user.registrations[0].type === "LLEGADA_TARDE" ||
+                  user.registrations[0].type === "LLEGADA_TARDE-SALIDA_TEMPRANA" ||
+                  user.registrations[0].type === "SALIDA_TEMPRANA"
+                    ? "bg-red-500/20"
+                    : "bg-blue-500/20"
                 }`}
-                title={user.registrations[0].type === "LLEGADA_TARDE" ? "Llegada tarde" : ""}
+                title={
+                  user.registrations[0].type === "LLEGADA_TARDE"
+                    ? "Llegada tarde"
+                    : user.registrations[0].type === "LLEGADA_TARDE-SALIDA_TEMPRANA"
+                    ? "Llegada tarde - Salida temprana"
+                    : user.registrations[0].type === "SALIDA_TEMPRANA"
+                    ? "Salida temprana"
+                    : ""
+                }
               >
                 <span className="">Presente</span>
               </div>

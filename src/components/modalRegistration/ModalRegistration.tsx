@@ -1,5 +1,5 @@
 import { IRegistration, IUser } from "../../helpers/types";
-import { formatName } from "../../utils/formatName";
+import { formatName } from "../../utils/format";
 
 interface ModalProps {
   isVisible?: boolean;

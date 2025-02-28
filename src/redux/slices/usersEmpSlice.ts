@@ -31,25 +31,22 @@ const usersEmpSlice = createSlice({
     setUsers(state, action: PayloadAction<IUser[]>) {
       state.users = action.payload || []; // Asegurar que sea un array
       state.usersFilter = [...state.users]; // Copia válida del array
-      
     },
     addUser(state, action: PayloadAction<IUser>) {
       const newUser = action.payload;
 
       // Filtrar la lista para eliminar el usuario viejo si existe
       // Elimina la versión anterior del usuario (si existe) y agrega el nuevo al inicio
-      state.users = [newUser, ...state.users.filter(user => user.id !== newUser.id)];
-      state.usersFilter = [newUser, ...state.usersFilter.filter(user => user.id !== newUser.id)];
+      state.users = [newUser, ...state.users.filter((user) => user.id !== newUser.id)];
+      state.usersFilter = [newUser, ...state.usersFilter.filter((user) => user.id !== newUser.id)];
 
-        // Guardamos el ID del usuario resaltado
+      // Guardamos el ID del usuario resaltado
       state.highlightedUserId = newUser.id;
     },
     setSearchTerm(state, action: PayloadAction<string>) {
       state.searchTerm = action.payload;
       state.usersFilter = state.users.filter((user) =>
-        `${user.name} ${user.lastName} ${user.document} ${user.email}`
-          .toLowerCase()
-          .includes(action.payload.toLowerCase())
+        `${user.name} ${user.lastName} ${user.document} ${user.email}`.toLowerCase().includes(action.payload.toLowerCase())
       );
     },
     setFilterColumn(state, action: PayloadAction<IFilterColumn>) {
@@ -58,7 +55,7 @@ const usersEmpSlice = createSlice({
     },
     updateUserFromNotification(state, action: PayloadAction<any[]>) {
       // const notifications = action.payload;
-     
+
       // const updatedUsers = state.users.map((user) =>{
       //   // console.log("duser.registe", user);
       //   const ab = user.id === notification?.id
@@ -80,84 +77,95 @@ const usersEmpSlice = createSlice({
       //     return ab
       // }
       // );
-  //     let updatedUsers = state.users.map((user) => {
-  //       if (user.id === action.payload?.id) {
-  //         const updatedRegistrations = updateRegistrations(user.registrations, action.payload);
-  //         // console.log("🔹 Antes:", current(user.registrations));
-  //         // console.log("🔹 Después:", updatedRegistrations);
-      
-  //         return {
-  //           ...user,
-  //           registrations: updatedRegistrations,
-  //         };
-  //       }
-  //       return user;
-  //     });
-  //     // console.log("updatedUsers", updatedUsers);
-      
-  //      // Si el filtro actual es "Ingreso" y la notificación es "present"
-  // if (state.filterColumn.type === "Ingreso" && notification?.type === "present") {
-  //   const updatedUserIndex = updatedUsers.findIndex(user => user.id === notification?.id);
-  //   if (updatedUserIndex !== -1) {
-  //     const updatedUser = updatedUsers[updatedUserIndex]; // Obtener el usuario sin eliminarlo
-  //     updatedUsers = updatedUsers.filter(user => user.id !== notification?.id); // Eliminarlo de la lista
-  //     updatedUsers.unshift(updatedUser); // Moverlo al inicio
-  //   }
-  // }
- 
-  const notifications = action.payload;
-  console.log("noti en redux", notifications);
-  let updatedUsers = state.users.map((user) => {
-    const notification = notifications.find(n => n.id === user.id);
-    if (notification) {
-      return {
-        ...user,
-        registrations: updateRegistrations(user.registrations, notification),
-      };
-    }
-    return user;
-  });
+      //     let updatedUsers = state.users.map((user) => {
+      //       if (user.id === action.payload?.id) {
+      //         const updatedRegistrations = updateRegistrations(user.registrations, action.payload);
+      //         // console.log("🔹 Antes:", current(user.registrations));
+      //         // console.log("🔹 Después:", updatedRegistrations);
 
-  // Si el filtro actual es "Ingreso", mover los usuarios actualizados al inicio
-  if (state.filterColumn.type === "Ingreso") {
-    const updatedUserIds = new Set(notifications.map(n => n.id));
- // Guardamos el ID del usuario resaltado
- state.highlightedUserId = notifications[0].id;
-    updatedUsers = [
-      ...updatedUsers.filter(user => updatedUserIds.has(user.id)), // Usuarios actualizados primero
-      ...updatedUsers.filter(user => !updatedUserIds.has(user.id)), // Luego los demás
-    ];
-  }
+      //         return {
+      //           ...user,
+      //           registrations: updatedRegistrations,
+      //         };
+      //       }
+      //       return user;
+      //     });
+      //     // console.log("updatedUsers", updatedUsers);
 
-  // Aplicar nuevamente el ordenamiento sin perder el filtro
-  state.users = updatedUsers;
-  state.usersFilter = sortUsers(state.filterColumn, updatedUsers);
-    
+      //      // Si el filtro actual es "Ingreso" y la notificación es "present"
+      // if (state.filterColumn.type === "Ingreso" && notification?.type === "present") {
+      //   const updatedUserIndex = updatedUsers.findIndex(user => user.id === notification?.id);
+      //   if (updatedUserIndex !== -1) {
+      //     const updatedUser = updatedUsers[updatedUserIndex]; // Obtener el usuario sin eliminarlo
+      //     updatedUsers = updatedUsers.filter(user => user.id !== notification?.id); // Eliminarlo de la lista
+      //     updatedUsers.unshift(updatedUser); // Moverlo al inicio
+      //   }
+      // }
+
+      const notifications = action.payload;
+      console.log("noti en redux", notifications);
+      let updatedUsers = state.users.map((user) => {
+        const notification = notifications.find((n) => n.id === user.id);
+        if (notification) {
+          return {
+            ...user,
+            registrations: updateRegistrations(user.registrations, notification),
+          };
+        }
+        return user;
+      });
+
+      // Si el filtro actual es "Ingreso", mover los usuarios actualizados al inicio
+      if (state.filterColumn.type === "Ingreso") {
+        const updatedUserIds = new Set(notifications.map((n) => n.id));
+        // Guardamos el ID del usuario resaltado
+        state.highlightedUserId = notifications[0].id;
+        updatedUsers = [
+          ...updatedUsers.filter((user) => updatedUserIds.has(user.id)), // Usuarios actualizados primero
+          ...updatedUsers.filter((user) => !updatedUserIds.has(user.id)), // Luego los demás
+        ];
+      }
+
+      // Aplicar nuevamente el ordenamiento sin perder el filtro
+      state.users = updatedUsers;
+      state.usersFilter = sortUsers(state.filterColumn, updatedUsers);
     },
+    updateUserRegister(state, action: PayloadAction<any>) {
+      const register = action.payload;
+      console.log("register", register);
+      console.log("state.users", current(state.users));
+      const user = state.users.find((user) => user.id === register.id);
+      if (user) console.log("user",current(user));
+    }
   },
 });
 
 const updateRegistrations = (registrations: IRegistration[], notification: any) => {
   return registrations?.length
-    ? registrations.map((reg) => 
+    ? registrations.map((reg) =>
         reg.id === notification.idR
           ? {
               ...reg,
               status: notification.status,
-              entryDate: reg.entryDate || (notification.status === "TRABAJANDO" || notification.status === "AUSENTE" ? notification.date : undefined),
-              entryCapture: reg.entryCapture || (notification.status === "TRABAJANDO"  ? notification.capture : undefined),
+              entryDate:
+                reg.entryDate ||
+                (notification.status === "TRABAJANDO" || notification.status === "AUSENTE" ? notification.date : undefined),
+              entryCapture: reg.entryCapture || (notification.status === "TRABAJANDO" ? notification.capture : undefined),
               exitDate: notification.status === "PRESENTE" ? notification.date : reg.exitDate,
               exitCapture: notification.status === "PRESENTE" ? notification.capture : reg.exitCapture,
+              type: notification?.type,
             }
           : {
-            ...reg, // Mantenemos los campos originales ?
-            id: notification.idR,
-            status: notification.status,
-            entryDate: notification.status === "TRABAJANDO" || notification.status === "AUSENTE" ? notification.date : undefined,
-            entryCapture: notification.status === "TRABAJANDO" ? notification.capture : undefined,
-            exitDate: notification.status === "PRESENTE" ? notification.date : undefined,
-            exitCapture: notification.status === "PRESENTE" ? notification.capture : undefined,
-          }
+              ...reg, // Mantenemos los campos originales ?
+              id: notification.idR,
+              status: notification.status,
+              entryDate:
+                notification.status === "TRABAJANDO" || notification.status === "AUSENTE" ? notification.date : undefined,
+              entryCapture: notification.status === "TRABAJANDO" ? notification.capture : undefined,
+              exitDate: notification.status === "PRESENTE" ? notification.date : undefined,
+              exitCapture: notification.status === "PRESENTE" ? notification.capture : undefined,
+              type: notification?.type,
+            }
       )
     : [
         {
@@ -167,6 +175,7 @@ const updateRegistrations = (registrations: IRegistration[], notification: any) 
           entryCapture: notification.status === "TRABAJANDO" ? notification.capture : undefined,
           exitDate: notification.status === "PRESENTE" ? notification.date : undefined,
           exitCapture: notification.status === "PRESENTE" ? notification.capture : undefined,
+          type: notification?.type,
         },
       ];
 };
@@ -197,5 +206,5 @@ const sortUsers = (filterColumn: IFilterColumn, users: IUser[]) => {
   return sortedUsers; // Devolver nuevo array sin modificar el original
 };
 
-export const { setUsers, setSearchTerm, setFilterColumn, updateUserFromNotification, addUser } = usersEmpSlice.actions;
+export const { setUsers, setSearchTerm, setFilterColumn, updateUserFromNotification, addUser , updateUserRegister} = usersEmpSlice.actions;
 export default usersEmpSlice.reducer;
