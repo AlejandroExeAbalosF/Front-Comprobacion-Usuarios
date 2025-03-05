@@ -93,6 +93,7 @@ export interface IArticulo {
   id: string;
   name: string;
   description?: string;
+  statusType?: string;
   incisos?: IInciso[];
 }
 

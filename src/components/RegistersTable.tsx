@@ -19,6 +19,7 @@ const RegistersTable: React.FC<{ userInfo?: IUser | null }> = ({ userInfo }) => 
   const [searchTerm, setSearchTerm] = useState<string>();
   const [selectedMonth, setSelectedMonth] = useState<string>("");
   const [selectedYear, setSelectedYear] = useState<string>("");
+  const [savedFilter, setSavedFilter] = useState<IRegistration[]>([]);
   const [filterColumn, setFilterColumn] = useState({
     type: "Ingreso",
     order: false,
@@ -53,19 +54,21 @@ const RegistersTable: React.FC<{ userInfo?: IUser | null }> = ({ userInfo }) => 
 
   useEffect(() => {
     if (!searchTerm) {
-      setRegisterFilter(registers); // Si no hay búsqueda, mostramos todos los registros
+      setRegisterFilter(savedFilter); // Si no hay búsqueda, mostramos los registro filtrados
       return;
     }
 
     setRegisterFilter(
-      registers.filter((item) => {
+      registerFilter.filter((item) => {
         const formattedDate1 = dayjs(item.entryDate).format("YYYY-MM-DD"); // 2024-02-12
         const formattedDate2 = dayjs(item.entryDate).format("DD/MM/YYYY"); // 12/02/2024
-
-        return formattedDate1.startsWith(searchTerm) || formattedDate2.startsWith(searchTerm);
+        const status = `${item.status}`.toLowerCase().includes(searchTerm.toLowerCase());
+        const artType = `${item.articulo}`.toLowerCase().includes(searchTerm.toLowerCase());
+        // console.log("art", art);
+        return formattedDate1.startsWith(searchTerm) || formattedDate2.startsWith(searchTerm) || artType || status;
       })
     );
-  }, [searchTerm, registers]);
+  }, [searchTerm, registerFilter]);
 
   // Actualizar la tabla cuando cambia el mes o el año
   useEffect(() => {
@@ -75,7 +78,7 @@ const RegistersTable: React.FC<{ userInfo?: IUser | null }> = ({ userInfo }) => 
 
       return (selectedMonth ? itemMonth === selectedMonth : true) && (selectedYear ? itemYear === selectedYear : true);
     });
-
+    setSavedFilter(filtered);
     setRegisterFilter(filtered);
   }, [selectedMonth, selectedYear, registers]);
 
@@ -99,7 +102,7 @@ const RegistersTable: React.FC<{ userInfo?: IUser | null }> = ({ userInfo }) => 
     }
   }, [selectedYear, months]);
 
-  const handleUpdateRegistration = (updatedRecord) => {
+  const handleUpdateRegistration = (updatedRecord: IRegistration) => {
     const userUpdated = usersFilter.find((user) => user.id === userInfo?.id);
     // const updatedRegistrations = {
 
@@ -114,7 +117,19 @@ const RegistersTable: React.FC<{ userInfo?: IUser | null }> = ({ userInfo }) => 
       };
       dispatch(updateUserFromNotification([updatedObject]));
     }
-    setRegisterFilter((prev) => prev.map((record) => (record.id === updatedRecord.id ? updatedRecord : record)));
+    console.log("updatedRecord", updatedRecord);
+    //record.id === updatedRecord.id ? updatedRecord : record
+    setSavedFilter((prev) => prev.map((record) => (record.id === updatedRecord.id ? updatedRecord : record)));
+    setRegisterFilter((prev) =>
+      prev.map((record) => {
+        if (record.id === updatedRecord.id) {
+          console.log("record", record);
+          return updatedRecord;
+        } else {
+          return record;
+        }
+      })
+    );
   };
 
   const handleSelectedMonth = (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => {
@@ -210,7 +225,7 @@ const RegistersTable: React.FC<{ userInfo?: IUser | null }> = ({ userInfo }) => 
                   </div>
                   <input
                     className="peer h-full w-full rounded-[7px] border border-[#E2E8F0] border-t-transparent bg-transparent px-3 py-2.5 !pr-9 font-sans text-sm font-normal text-[#2B4B5B] outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-[#E2E8F0] placeholder-shown:border-t-[#E2E8F0] focus:border-2 focus:border-gray-900  focus:outline-0 disabled:border-0 disabled:bg-[#F8FAFC]"
-                    placeholder="Buscar por fecha (YYYY-MM-DD o DD/MM/YYYY)"
+                    placeholder="(YYYY-MM-DD o DD/MM/YYYY) | Est. | Art."
                     onChange={(e) => setSearchTerm(e.target.value)}
                   />
                 </div>

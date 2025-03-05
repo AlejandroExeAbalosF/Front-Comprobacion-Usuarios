@@ -16,6 +16,7 @@ interface IEditRegister {
 
 const EditRegister: React.FC<IEditRegister> = ({ register, onCloseModal, onUpdate }) => {
   const [art = "", inc = "", subInc = ""] = register?.articulo?.split("-") || ["", "", ""];
+  console.log("art", art, inc, subInc);
   const initialState = {
     status: register?.status || "",
     type: register?.type || "",
@@ -24,9 +25,9 @@ const EditRegister: React.FC<IEditRegister> = ({ register, onCloseModal, onUpdat
       register?.status === "AUSENTE" || register?.status === "NO_LABORABLE" ? "" : dayjs(register?.entryDate).format("HH:mm"),
     exitHour: register?.exitDate ? dayjs(register?.exitDate).format("HH:mm") : "",
     description: register?.description || "",
-    articulo: register?.status === "AUSENTE" && register?.type === "ARTICULO" ? art || "" : "",
-    inciso: register?.status === "AUSENTE" && register?.type === "ARTICULO" ? inc || "" : "",
-    subInciso: register?.status === "AUSENTE" && register?.type === "ARTICULO" ? subInc || "" : "",
+    articulo: register?.type === "ARTICULO" ? art || "" : "",
+    inciso: register?.type === "ARTICULO" ? inc || "" : "",
+    subInciso: register?.type === "ARTICULO" ? subInc || "" : "",
   };
 
   const initialTypePresente = [
@@ -34,6 +35,7 @@ const EditRegister: React.FC<IEditRegister> = ({ register, onCloseModal, onUpdat
     { type: "LLEGADA_TARDE", name: "Llegada Tarde" },
     { type: "SALIDA_TEMPRANA", name: "Salida Temprana" },
     { type: "LLEGADA_TARDE-SALIDA_TEMPRANA", name: "Llegada Tarde - Salida Temprana" },
+    { type: "PERMISO", name: "Permiso" },
   ];
 
   const initialTypeAusente = [
@@ -49,6 +51,7 @@ const EditRegister: React.FC<IEditRegister> = ({ register, onCloseModal, onUpdat
   const [registerData, setRegisterData] = useState(initialState);
   const [typeJustification, setTypeJustification] = useState(initialTypePresente);
   const [articulos, setArticulos] = useState<IArticulo[]>([]);
+  const [articulosType, setArticulosType] = useState<IArticulo[]>([]);
   const [incisos, setIncisos] = useState([]);
   const [subIncisos, setSubIncisos] = useState([]);
 
@@ -61,6 +64,7 @@ const EditRegister: React.FC<IEditRegister> = ({ register, onCloseModal, onUpdat
         .get(`${BACK_API_URL}/articulos`, { withCredentials: true })
         .then(({ data }) => {
           setArticulos(data);
+          setArticulosType(data.filter((art) => art.statusType === register?.status));
         })
         .catch((error) => {
           console.error(error);
@@ -89,8 +93,8 @@ const EditRegister: React.FC<IEditRegister> = ({ register, onCloseModal, onUpdat
         register.status === "AUSENTE"
           ? initialTypeAusente
           : register.status === "PRESENTE"
-            ? initialTypePresente
-            : initialTypeNoLaborable;
+          ? initialTypePresente
+          : initialTypeNoLaborable;
       setTypeJustification(newTypeJustification);
 
       // Establecer los valores iniciales en registerData
@@ -104,12 +108,14 @@ const EditRegister: React.FC<IEditRegister> = ({ register, onCloseModal, onUpdat
         entryHour: register.status === "AUSENTE" ? "" : dayjs(register.entryDate).format("HH:mm"),
         exitHour: register.exitDate ? dayjs(register.exitDate).format("HH:mm") : "",
         description: register.description || "",
-        articulo: register.status === "AUSENTE" && register.type === "ARTICULO" ? art || "" : "",
-        inciso: register.status === "AUSENTE" && register.type === "ARTICULO" ? inc || "" : "",
-        subInciso: register.status === "AUSENTE" && register.type === "ARTICULO" ? subInc || "" : "",
+        articulo: art || "",
+        inciso: inc || "",
+        subInciso: subInc || "",
       });
 
-      if (register.status === "AUSENTE" && register.type === "ARTICULO") {
+      if (register.type === "ARTICULO") {
+        console.log("adasd", register.articulo);
+        setArticulosType(articulos.filter((art) => art.statusType === register.status));
         setSelectedArticulo(art);
         setSelectedInciso(inc);
       }
@@ -131,8 +137,8 @@ const EditRegister: React.FC<IEditRegister> = ({ register, onCloseModal, onUpdat
   const handleArticuloChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { value, name } = e.target;
     if (name === "articulo") {
-      const selectArticulo = articulos.find((a) => a.name === value);
-      if (selectArticulo?.incisos && selectArticulo?.incisos.length > 0) {
+      const selectArt = articulosType.find((a) => a.name === value);
+      if (selectArt?.incisos && selectArt?.incisos.length > 0) {
         // console.log("articulo", selectArticulo?.incisos);
         setSelectedArticulo(value);
       } else {
@@ -141,8 +147,8 @@ const EditRegister: React.FC<IEditRegister> = ({ register, onCloseModal, onUpdat
       // setSelectedArticulo(value);
       setRegisterData((prev) => ({
         ...prev,
-        articulo: selectArticulo?.name || "",
-        description: selectArticulo?.description || "",
+        articulo: selectArt?.name || "",
+        description: selectArt?.description || "",
         inciso: "",
         subInciso: "",
       }));
@@ -160,7 +166,7 @@ const EditRegister: React.FC<IEditRegister> = ({ register, onCloseModal, onUpdat
     if (name === "inciso") {
       // console.log("inciso", e.target.value);
 
-      const selectInciso = articulos.find((a) => a.name === selectedArticulo)?.incisos.find((i) => i.name === value);
+      const selectInciso = articulosType.find((a) => a.name === selectedArticulo)?.incisos.find((i) => i.name === value);
       console.log("inciso", selectInciso);
       if (selectInciso?.subIncisos && selectInciso?.subIncisos.length > 0) {
         console.log("inciso", selectInciso);
@@ -185,11 +191,11 @@ const EditRegister: React.FC<IEditRegister> = ({ register, onCloseModal, onUpdat
     const { value, name } = e.target;
     if (name === "subInciso") {
       // console.log("subInciso", e.target.value);
-      const selectSubInciso = articulos
+      const selectSubInciso = articulosType
         .find((a) => a.name === selectedArticulo)
         ?.incisos.find((i) => i.name === selectedInciso)
         ?.subIncisos.find((s) => s.name === value);
-      console.log("subInciso", selectSubInciso);
+      // console.log("subInciso", selectSubInciso);
       // setSelectedSubInciso(value);
       setRegisterData((prev) => ({
         ...prev,
@@ -204,9 +210,47 @@ const EditRegister: React.FC<IEditRegister> = ({ register, onCloseModal, onUpdat
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement>) => {
     const { value, name } = e.target;
     if (name === "status") {
-      console.log("status", e.target.value);
-      setSelectedArticulo(art);
-      setSelectedInciso(inc);
+      console.log("statushandleChange", e.target.value);
+      setArticulosType(articulos.filter((art) => art.statusType === value));
+      // const selectArt = articulosType.find((a) => a.name === art);
+      // if (selectArt?.incisos && selectArt?.incisos.length > 0) {
+      //   console.log("articulo", selectArt?.incisos);
+      //   setSelectedArticulo(
+      //     value === "PRESENTE" && register?.articulo ? art : value === "AUSENTE" && register?.articulo ? art : null
+      //   );
+      // } else {
+      //   setSelectedArticulo(null);
+      // }
+      console.log(
+        "aver",
+        register?.status === "PRESENTE" && register?.articulo && value === "PRESENTE"
+          ? art
+          : register?.status === "AUSENTE" && register?.articulo && value === "AUSENTE"
+          ? art
+          : "null"
+      );
+      setSelectedArticulo(
+        register?.status === "PRESENTE" && register?.articulo && value === "PRESENTE"
+          ? art
+          : register?.status === "AUSENTE" && register?.articulo && value === "AUSENTE"
+          ? art
+          : null
+      );
+      // const selectInciso = articulosType.find((a) => a.name === selectedArticulo)?.incisos.find((i) => i.name === inc);
+      // // console.log("inciso asd", selectInciso);
+      // if (selectInciso?.subIncisos && selectInciso?.subIncisos.length > 0) {
+      //   console.log("inciso asd", selectInciso);
+      //   setSelectedInciso(
+      //     value === "PRESENTE" && register?.articulo ? inc : value === "AUSENTE" && register?.articulo ? inc : null
+      //   );
+      // } else {
+      //   setSelectedInciso(null);
+      // }
+
+      // setSelectedArticulo(null);
+      setSelectedInciso(null);
+      console.log("selectedArticulo selectedInciso", selectedArticulo, selectedInciso);
+
       setRegisterData((prev) => ({
         ...prev,
         status: value,
@@ -214,40 +258,43 @@ const EditRegister: React.FC<IEditRegister> = ({ register, onCloseModal, onUpdat
           value === "AUSENTE" || value === "NO_LABORABLE"
             ? ""
             : register?.status === "AUSENTE" || register?.status === "NO_LABORABLE"
-              ? ""
-              : dayjs(register?.entryDate).format("HH:mm"),
+            ? ""
+            : dayjs(register?.entryDate).format("HH:mm"),
         exitHour:
           value === "AUSENTE" || value === "NO_LABORABLE"
             ? ""
             : register?.exitDate
-              ? dayjs(register?.exitDate).format("HH:mm")
-              : "",
+            ? dayjs(register?.exitDate).format("HH:mm")
+            : "",
         description:
           value === "PRESENTE"
             ? ""
             : value === "NO_LABORABLE" && register?.status === "NO_LABORABLE"
-              ? register?.description || ""
-              : value === "AUSENTE" && register?.status === "AUSENTE"
-                ? register?.description || ""
-                : "",
-        articulo:
-          value === "PRESENTE" || value === "NO_LABORABLE"
-            ? ""
-            : register?.status === "AUSENTE" && register?.type === "ARTICULO"
-              ? art || ""
-              : "",
-        inciso:
-          value === "PRESENTE" || value === "NO_LABORABLE"
-            ? ""
-            : register?.status === "AUSENTE" && register?.type === "ARTICULO"
-              ? inc || ""
-              : "",
-        subInciso:
-          value === "PRESENTE" || value === "NO_LABORABLE"
-            ? ""
-            : register?.status === "AUSENTE" && register?.type === "ARTICULO"
-              ? subInc || ""
-              : "",
+            ? register?.description || ""
+            : value === "AUSENTE" && register?.status === "AUSENTE"
+            ? register?.description || ""
+            : "",
+        articulo: art,
+        inciso: inc,
+        subInciso: subInc,
+        // articulo:
+        //   value === "PRESENTE" || value === "NO_LABORABLE"
+        //     ? ""
+        //     : register?.status === "AUSENTE" && register?.type === "ARTICULO"
+        //     ? art || ""
+        //     : "",
+        // inciso:
+        //   value === "PRESENTE" || value === "NO_LABORABLE"
+        //     ? ""
+        //     : register?.status === "AUSENTE" && register?.type === "ARTICULO"
+        //     ? inc || ""
+        //     : "",
+        // subInciso:
+        //   value === "PRESENTE" || value === "NO_LABORABLE"
+        //     ? ""
+        //     : register?.status === "AUSENTE" && register?.type === "ARTICULO"
+        //     ? subInc || ""
+        //     : "",
       }));
     } else {
       setRegisterData({ ...registerData, [e.target.name]: e.target.value });
@@ -294,10 +341,14 @@ const EditRegister: React.FC<IEditRegister> = ({ register, onCloseModal, onUpdat
         console.error("Error al actualizar el registro:", error.response.data.message);
       });
   };
-  const p =articulos
-  .find((art) => art.name === selectedArticulo)
-  ?.incisos
-  console.log("p", p);
+
+  // useEffect(() => {
+  //   console.log("selecARticulo", selectedArticulo);
+  //   setArticulosType(articulos.filter((art) => art.statusType === selectedArticulo.stateType));
+  //   console.log("articulosType", articulos);
+  // }, [registerData.status, selectedArticulo]);
+  // const p = articulos.find((art) => art.name === selectedArticulo)?.incisos;
+  // console.log("p", p);
   return (
     <div className="w-[1000px] h-200">
       <h2 className="mt-4 text-center font-[500] text-[30px]">
@@ -353,34 +404,128 @@ const EditRegister: React.FC<IEditRegister> = ({ register, onCloseModal, onUpdat
                 <h3 className="text-start text-[20px]">Detalles y Descripcion</h3>
                 <hr className="border-t border-gray-300 my-3" />
               </div>
-              {registerData.status === "PRESENTE" && (
-                <div className="my-3 h-[120px] flex flex-col xl:flex-row xl:h-auto gap-4">
-                  <div className=" relative  w-[150px]  flex flex-col justify-start items-start">
-                    <label className="form-title-md"> Hora de Entrada</label>
-                    <input
-                      // id={name}
-                      type="time"
-                      name="entryHour"
-                      value={registerData.entryHour}
-                      className={` px-2 h-[35px]  text-black py-2.5  w-[150px]  input-form-create`}
-                      placeholder=" "
-                      onChange={handleChange}
-                    />
+              {registerData.status === "PRESENTE" &&
+                (registerData.type === "PERMISO" ? (
+                  <div>
+                    <div className="my-3  grid grid-cols-3 grid-rows-1 gap-4">
+                      {/* Select de Artículos */}
+                      <div className="  flex flex-col justify-start items-start">
+                        <label htmlFor="articulo" className="form-title-md">
+                          Artículo
+                        </label>
+                        <select
+                          id="articulo"
+                          name="articulo"
+                          value={registerData.articulo}
+                          onChange={handleArticuloChange}
+                          className="w-[200px] outline-none bg-gray-50 border-[#E2E8F0] text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-[7.5px]"
+                        >
+                          <option value="">Seleccione un Artículo</option>
+                          {articulosType.map((articulo) => (
+                            <option key={articulo.id} value={articulo.name}>
+                              {articulo.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      {/* Select de Incisos (Depende del Artículo seleccionado) */}
+                      {selectedArticulo && (
+                        <>
+                          <div className="flex flex-col justify-start items-start">
+                            <label htmlFor="inciso" className="form-title-md">
+                              Inciso
+                            </label>
+                            <select
+                              id="inciso"
+                              name="inciso"
+                              value={registerData.inciso}
+                              onChange={handleIncisoChange}
+                              className="w-[200px] outline-none bg-gray-50 border-[#E2E8F0] text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-[7.5px]"
+                            >
+                              <option value="">Seleccione un Inciso</option>
+                              {articulosType
+                                .find((art) => art.name === selectedArticulo)
+                                ?.incisos.map((inciso) => (
+                                  <option key={inciso.id} value={inciso.name}>
+                                    {inciso.name}
+                                  </option>
+                                ))}
+                            </select>
+                          </div>
+                        </>
+                      )}
+
+                      {/* Select de SubIncisos (Depende del Inciso seleccionado) */}
+                      {selectedInciso && (
+                        <>
+                          <div className=" flex flex-col justify-start items-start">
+                            <label htmlFor="subinciso" className="form-title-md">
+                              SubInciso
+                            </label>
+                            <select
+                              id="subinciso"
+                              name="subInciso"
+                              value={registerData.subInciso}
+                              onChange={handleSubIncisoChange}
+                              className="w-[200px] outline-none bg-gray-50 border-[#E2E8F0] text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-[7.5px]"
+                            >
+                              <option value="">Seleccione un SubInciso</option>
+                              {articulosType
+                                .find((art) => art.name === selectedArticulo)
+                                ?.incisos.find((inc) => selectedArticulo + inc.name === selectedArticulo + selectedInciso)
+                                ?.subIncisos.map((subinciso) => (
+                                  <option key={subinciso.id} value={subinciso.name}>
+                                    {subinciso.name}
+                                  </option>
+                                ))}
+                            </select>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                    <div className="my-3 h-[120px] flex flex-col xl:flex-row xl:h-auto gap-4">
+                      <div className=" relative  w-[350px]   flex flex-col justify-start items-start">
+                        <label className="form-title-md"> Descripción</label>
+
+                        <textarea
+                          name="description"
+                          value={registerData.description}
+                          onChange={handleChange}
+                          className="w-[800px] h-[100px] p-1 mt-1 input-form-create resize-none outline-none"
+                          readOnly={false}
+                        />
+                      </div>
+                    </div>
                   </div>
-                  <div className=" relative  w-[150px]  flex flex-col justify-start items-start">
-                    <label className="form-title-md"> Hora de Salida</label>
-                    <input
-                      // id={name}
-                      type="time"
-                      name="exitHour"
-                      value={registerData.exitHour}
-                      className={` px-2 h-[35px]  text-black py-2.5  w-[150px]  input-form-create`}
-                      placeholder=" "
-                      onChange={handleChange}
-                    />
+                ) : (
+                  <div className="my-3 h-[120px] flex flex-col xl:flex-row xl:h-auto gap-4">
+                    <div className=" relative  w-[150px]  flex flex-col justify-start items-start">
+                      <label className="form-title-md"> Hora de Entrada</label>
+                      <input
+                        // id={name}
+                        type="time"
+                        name="entryHour"
+                        value={registerData.entryHour}
+                        className={` px-2 h-[35px]  text-black py-2.5  w-[150px]  input-form-create`}
+                        placeholder=" "
+                        onChange={handleChange}
+                      />
+                    </div>
+                    <div className=" relative  w-[150px]  flex flex-col justify-start items-start">
+                      <label className="form-title-md"> Hora de Salida</label>
+                      <input
+                        // id={name}
+                        type="time"
+                        name="exitHour"
+                        value={registerData.exitHour}
+                        className={` px-2 h-[35px]  text-black py-2.5  w-[150px]  input-form-create`}
+                        placeholder=" "
+                        onChange={handleChange}
+                      />
+                    </div>
                   </div>
-                </div>
-              )}
+                ))}
               {registerData.status === "NO_LABORABLE" && (
                 <div className="my-3 h-[120px] flex flex-col xl:flex-row xl:h-auto gap-4">
                   <div className=" relative  w-[350px]   flex flex-col justify-start items-start">
@@ -420,7 +565,7 @@ const EditRegister: React.FC<IEditRegister> = ({ register, onCloseModal, onUpdat
                         className="w-[200px] outline-none bg-gray-50 border-[#E2E8F0] text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-[7.5px]"
                       >
                         <option value="">Seleccione un Artículo</option>
-                        {articulos.map((articulo) => (
+                        {articulosType.map((articulo) => (
                           <option key={articulo.id} value={articulo.name}>
                             {articulo.name}
                           </option>
@@ -431,6 +576,7 @@ const EditRegister: React.FC<IEditRegister> = ({ register, onCloseModal, onUpdat
                     {/* Select de Incisos (Depende del Artículo seleccionado) */}
                     {selectedArticulo && (
                       <>
+                        {/* {`${console.log("cuerposelectedArticulo", selectedArticulo)}`} */}
                         <div className="flex flex-col justify-start items-start">
                           <label htmlFor="inciso" className="form-title-md">
                             Inciso
@@ -443,11 +589,11 @@ const EditRegister: React.FC<IEditRegister> = ({ register, onCloseModal, onUpdat
                             className="w-[200px] outline-none bg-gray-50 border-[#E2E8F0] text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-[7.5px]"
                           >
                             <option value="">Seleccione un Inciso</option>
-                            {articulos
+                            {articulosType
                               .find((art) => art.name === selectedArticulo)
                               ?.incisos.map((inciso) => (
                                 <option key={inciso.id} value={inciso.name}>
-                                  {inciso.name } 
+                                  {inciso.name}
                                 </option>
                               ))}
                           </select>
@@ -470,10 +616,10 @@ const EditRegister: React.FC<IEditRegister> = ({ register, onCloseModal, onUpdat
                             className="w-[200px] outline-none bg-gray-50 border-[#E2E8F0] text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-[7.5px]"
                           >
                             <option value="">Seleccione un SubInciso</option>
-                            {articulos
-                              .find((art) => art.name === selectedArticulo)?.incisos.find((inc) =>
-                                selectedArticulo + inc.name === selectedArticulo + selectedInciso
-                              )?.subIncisos.map((subinciso) => (
+                            {articulosType
+                              .find((art) => art.name === selectedArticulo)
+                              ?.incisos.find((inc) => selectedArticulo + inc.name === selectedArticulo + selectedInciso)
+                              ?.subIncisos.map((subinciso) => (
                                 <option key={subinciso.id} value={subinciso.name}>
                                   {subinciso.name}
                                 </option>
