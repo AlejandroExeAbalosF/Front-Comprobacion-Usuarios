@@ -1,6 +1,6 @@
 import { toast } from "sonner";
 import RegistrationTable from "../components/registrationTable/RegistrationTable";
-import { useNotifications } from "../components/UseNotifications";
+import { useNotifications } from "../hooks/useNotifications";
 import RegistrationTableR from "../components/registrationTable/RegistrationTableR";
 import Menu from "../components/Menu";
 

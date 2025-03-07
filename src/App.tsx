@@ -16,6 +16,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import "react-photo-view/dist/react-photo-view.css";
 import "dayjs/locale/es";
 import dayjs from "dayjs";
+import Configuration from "./views/Configuration";
 dayjs.locale("es");
 
 function App() {
@@ -24,7 +25,7 @@ function App() {
   return (
     <>
       {/* Inicializa Redux con los datos del usuario al cargar la página */}
-      <InitAuth />
+      {/* <InitAuth /> */}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/iniciar_sesion" element={<LoginUser />} />
@@ -33,6 +34,7 @@ function App() {
         <Route path="/prueba" element={<Proof />} />
         <Route element={<ProtectedRoute />}>
           <Route path="/inicio" element={<Start />} />
+          <Route path="/configuracion/*" element={<Configuration />} />
         </Route>
       </Routes>
       <Toaster expand={true} visibleToasts={9} closeButton />

@@ -9,6 +9,7 @@ const DetailsUser: React.FC<{ userInfo?: IUser | null; onCloseModal?: (isVisible
   userInfo,
   onCloseModal,
 }) => {
+  console.log("userInfo", userInfo);
   const [isEditing, setIsEditing] = useState(false);
   const handleModal = () => {
     // console.log(isVisible);
@@ -64,7 +65,7 @@ const DetailsUser: React.FC<{ userInfo?: IUser | null; onCloseModal?: (isVisible
                     <p className="px-2 h-[35px] w-[150px] text-center flex justify-center items-center ">
                       {userInfo?.entryHour
                         ? formatTime(userInfo?.entryHour)
-                        : userInfo?.shift.entryHour
+                        : userInfo?.shift && userInfo?.shift.entryHour
                         ? formatTime(userInfo?.shift.entryHour)
                         : "-"}
                     </p>
@@ -74,7 +75,7 @@ const DetailsUser: React.FC<{ userInfo?: IUser | null; onCloseModal?: (isVisible
                     <p className="px-2 h-[35px] w-[150px] text-center flex justify-center items-center ">
                       {userInfo?.exitHour
                         ? formatTime(userInfo?.exitHour)
-                        : userInfo?.shift.exitHour
+                        : userInfo?.shift && userInfo?.shift.exitHour
                         ? formatTime(userInfo?.shift.exitHour)
                         : "-"}
                     </p>

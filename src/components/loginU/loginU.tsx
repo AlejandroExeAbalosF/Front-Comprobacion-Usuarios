@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Buttonn from "../Buttonn";
 import { dataInputs } from "../loginU/helpers/dataInputs";
 // import validateInputLoginU from "./helpers/validateInputLoginU";
@@ -18,6 +18,27 @@ const LoginU = () => {
   };
   const [userDataInputs, setUserDataInputs] = useState(initialState);
   const [errors, setErrors] = useState(initialState);
+
+  // useEffect(() => {
+  //   const input = document.getElementById("username");
+  //   if (input) {
+  //     const handleAutofill = () => {
+  //       if (input.matches(":-webkit-autofill")) {
+  //         console.log("autofill");
+  //         input.classList.add("autofilled");
+  //       } else {
+  //         console.log("not autofill");
+  //         input.classList.remove("autofilled");
+  //       }
+  //     };
+
+  //     input.addEventListener("animationstart", handleAutofill, true);
+  //     return () => {
+  //       input.removeEventListener("animationstart", handleAutofill, true);
+  //     };
+  //   }
+  // }, []);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value, name } = e.target;
 

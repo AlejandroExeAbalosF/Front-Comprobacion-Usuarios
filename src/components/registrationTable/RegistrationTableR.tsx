@@ -2,7 +2,7 @@ import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import { INotificaciónData, IRegistration, IUser } from "../../helpers/types";
 import { toast } from "sonner";
-import { useNotifications } from "../UseNotifications";
+import { useNotifications } from "../../hooks/useNotifications";
 import dayjs from "dayjs";
 import { formatName } from "../../utils/format";
 import { BsFillPersonLinesFill } from "react-icons/bs";
@@ -13,6 +13,7 @@ import { setFilterColumn, setSearchTerm, setUsers, updateUserFromNotification } 
 import ModalGeneric from "../ModalGeneric";
 import { PhotoProvider, PhotoView } from "react-photo-view";
 import { motion } from "framer-motion";
+import { closeModal } from "../../redux/slices/modalSlice";
 
 const RegistrationTableR = () => {
   const BACK_API_URL = import.meta.env.VITE_LOCAL_API_URL;
@@ -41,6 +42,11 @@ const RegistrationTableR = () => {
     setIsModalOpen(true);
   };
 
+  // Función para cerrar el modal
+  const handleCloseModal = () => {
+    setIsModalOpen(false); // Cierra el modal localmente
+    dispatch(closeModal()); // Cierra el modal en Redux
+  };
   //-----------
   const { notifications, clearNotifications } = useNotifications();
   const queueRef = useRef<INotificaciónData[]>([]); // Cola de notificaciones pendientes
@@ -70,9 +76,6 @@ const RegistrationTableR = () => {
 
   useEffect(() => {
     const fetchUsers = async () => {
-      const storedToken = await localStorage.getItem("token");
-      // setToken(storedToken);
-
       try {
         const response = await axios.get(`${BACK_API_URL}/users/users_with_last_registration`, {
           withCredentials: true, // Envia la cookie HTTPOnly automáticamente
@@ -97,7 +100,7 @@ const RegistrationTableR = () => {
     };
 
     fetchUsers();
-  }, [BACK_API_URL, dispatch]);
+  }, []);
 
   const handleButtonValidateAssistance = () => {
     const data = {
@@ -418,7 +421,7 @@ const RegistrationTableR = () => {
       </div>
       {/* Modal */}
       {isModalOpen && (
-        <ModalGeneric isVisible={isModalOpen} onClose={setIsModalOpen} data={userDetails} typeModal={isTypeModal} />
+        <ModalGeneric isVisible={isModalOpen} onClose={handleCloseModal} data={userDetails} typeModal={isTypeModal} />
       )}
     </section>
   );

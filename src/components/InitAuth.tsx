@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import axios from "axios";
 import { useAppDispatch } from "../redux/hooks";
-import { loginSuccess, logout, setError, setLoading } from "../redux/slices/authSlice";
+import { loginSuccess, logout, setError, setLoading, restoreUser } from "../redux/slices/authSlice";
 import { toast } from "sonner";
 
 const BACK_API_URL = import.meta.env.VITE_LOCAL_API_URL;
@@ -10,55 +10,37 @@ const InitAuth = () => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("validateUserArGobSal_user");
-
-    if (storedUser) {
-      dispatch(loginSuccess({ user: JSON.parse(storedUser) })); // Restaurar desde localStorage
-    }
     const checkAuth = async () => {
-      dispatch(setLoading());
+      dispatch(setLoading(true)); // Activar estado de carga
+
       try {
-        await axios
-          .get(`${BACK_API_URL}/auth/validate-token`, {
-            withCredentials: true,
-          })
-          .then(({ data }) => {
-            dispatch(loginSuccess({ user: data.user }));
-            localStorage.setItem("validateUserArGobSal_user", JSON.stringify(data.user));
-          })
-          .catch((error) => {
-            dispatch(logout()); // Desloguea si el token no es válido
-            dispatch(setError({ error: error.response.data.message }));
-            console.log(error.response.data);
-            toast.error(error.response.data.message);
-            localStorage.removeItem("validateUserArGobSal_user");
-          });
-      } catch (error) {
-        // console.log("Asdd", error);
+        const storedUser = localStorage.getItem("validateUserArGobSal_user");
 
-        if (error) {
-          console.log("verdadero");
+        if (storedUser) {
+          const user = JSON.parse(storedUser);
+          dispatch(restoreUser({ user })); // Restaurar desde localStorage
         }
-      }
 
-      // try {
-      //   const response = await axios.get(`${BACK_API_URL}/auth/validate-token`, {
-      //     withCredentials: true,
-      //   });
-      //   dispatch(loginSuccess({ user: response.data.user }));
-      //   localStorage.setItem("validateUserArGobSal_user", JSON.stringify(response.data.user));
-      // } catch (error) {
-      //   console.log(error.response.data.message);
-      //   dispatch(logout()); // Desloguea si el token no es válido
-      //   dispatch(setError({ error: error.response.data.message }));
-      //   localStorage.removeItem("validateUserArGobSal_user");
-      // }
+        const response = await axios.get(`${BACK_API_URL}/auth/validate-token`, {
+          withCredentials: true,
+        });
+
+        dispatch(loginSuccess({ user: response.data.user })); // Actualizar estado con datos del servidor
+        localStorage.setItem("validateUserArGobSal_user", JSON.stringify(response.data.user));
+      } catch (error) {
+        dispatch(logout()); // Desloguea si el token no es válido
+        dispatch(setError({ error: error.response?.data?.message || "Error de autenticación" }));
+        localStorage.removeItem("validateUserArGobSal_user");
+        toast.error("Error de autenticación");
+      } finally {
+        dispatch(setLoading(false)); // Desactivar estado de carga
+      }
     };
 
     checkAuth();
   }, [dispatch]);
 
-  return null;
+  return null; // Este componente no renderiza nada
 };
 
 export default InitAuth;

@@ -4,6 +4,8 @@ import CreateUser from "./CreateUser";
 import RegistersTable from "./RegistersTable";
 import DetailsUser from "./DetailsUser";
 import EditRegister from "./EditRegister";
+import { useAppDispatch } from "../redux/hooks";
+import { openModal, closeModal } from "../redux/slices/modalSlice"; // Importa las acciones
 
 interface ModalProps {
   isVisible?: boolean;
@@ -50,12 +52,22 @@ const ModalGeneric: React.FC<ModalProps> = ({
   closeOnBackdropClick = true,
   onUpdate,
 }) => {
-  useBodyScrollLock(isVisible);
   const ModalContent = typeModal ? MODAL_COMPONENTS[typeModal] : null;
+  const dispatch = useAppDispatch();
+
+  useBodyScrollLock(isVisible);
+
+  useEffect(() => {
+    if (isVisible) {
+      dispatch(openModal()); // Abre el modal
+    } else {
+      dispatch(closeModal()); // Cierra el modal
+    }
+  }, [isVisible, dispatch]);
 
   const handleBackdropClick = () => {
     if (closeOnBackdropClick) {
-      onClose();
+      onClose(); // Llama a onClose
     }
   };
 

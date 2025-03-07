@@ -2,7 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { IRegistration, IUser } from "../../helpers/types";
 import { toast } from "sonner";
-import { useNotifications } from "../UseNotifications";
+import { useNotifications } from "../../hooks/useNotifications";
 import dayjs from "dayjs";
 import { formatName } from "../../utils/format";
 import { BsFillPersonLinesFill } from "react-icons/bs";

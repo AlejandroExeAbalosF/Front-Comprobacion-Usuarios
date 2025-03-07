@@ -9,7 +9,7 @@ const BACK_API_URL = import.meta.env.VITE_LOCAL_API_URL;
 
 interface IEditRegister {
   register?: IRegistration | null;
-  onCloseModal?: (isVisible: boolean) => void;
+  onCloseModal?: () => void;
 
   onUpdate?: (register: IRegistration) => void;
 }
@@ -302,7 +302,7 @@ const EditRegister: React.FC<IEditRegister> = ({ register, onCloseModal, onUpdat
   };
 
   const handleModal = () => {
-    if (onCloseModal) onCloseModal(false);
+    if (onCloseModal) onCloseModal();
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {

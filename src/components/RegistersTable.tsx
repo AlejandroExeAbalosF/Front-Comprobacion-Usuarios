@@ -177,7 +177,10 @@ const RegistersTable: React.FC<{ userInfo?: IUser | null }> = ({ userInfo }) => 
             const url = window.URL.createObjectURL(new Blob([data]));
             const link = document.createElement("a");
             link.href = url;
-            link.setAttribute("download", `planilla-${selectedYear}-${selectedMonth}.xlsx`);
+            link.setAttribute(
+              "download",
+              `planilla-${userInfo?.name + " " + userInfo?.lastName}-${selectedYear}-${selectedMonth}.xlsx`
+            );
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
