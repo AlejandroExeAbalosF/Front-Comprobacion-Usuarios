@@ -7,7 +7,8 @@ import { motion } from "framer-motion";
 import { BrowserRouter as Router, Route, Routes, Link, useLocation, Outlet } from "react-router-dom";
 import Profile from "../components/Profile";
 import NonLaborDates from "../components/NonLaborDates";
-import DetailsUser from "../components/DetailsUser";
+import { BsCalendarWeek } from "react-icons/bs";
+import { ImProfile } from "react-icons/im";
 
 export default function Configuration() {
   const navigate = useNavigate();
@@ -21,8 +22,13 @@ export default function Configuration() {
   }, [user, navigate]);
 
   const tabs = [
-    { id: "perfil", label: "Perfil", path: "/configuracion/perfil" },
-    { id: "fechas_no_laboral", label: "Fechas No Laboral", path: "/configuracion/fechas_no_laboral" },
+    { id: "perfil", name: "Perfil", label: <ImProfile className="w-7 h-7" />, path: "/configuracion/perfil" },
+    {
+      id: "fechas_no_laboral",
+      name: "Fechas no laborales",
+      label: <BsCalendarWeek className="w-[26px] h-[26px]" />,
+      path: "/configuracion/fechas_no_laboral",
+    },
   ];
   return (
     <>
@@ -32,28 +38,28 @@ export default function Configuration() {
         <section className="">
           <h1 className="text-3xl   mt-5">Configuración</h1>
         </section>
-        <div className="flex 2xl:w-[1550px] lg:w-[1200px] md:w-[900px]  h-[700px] mt-4 ">
-          <div style={{ width: "200px" }}>
+        <div className="flex 2xl:w-[1550px] lg:w-[1200px] md:w-[900px]  h-[750px] mt-4 ">
+          <div>
             {tabs.map((tab) => (
               <Link to={tab.path} key={tab.id} style={{ textDecoration: "none" }}>
                 <motion.div
                   style={{
                     padding: "10px",
-                    margin: "5px 0",
                     cursor: "pointer",
-                    backgroundColor: activeTab === tab.path ? "#F9FAFB" : "#fff",
-                    borderRadius: "5px",
+                    backgroundColor: activeTab === tab.path ? "#f0f8ff" : "#fff",
                   }}
+                  className="flex flex-col items-center justify-center"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => setActiveTab(tab.path)}
+                  title={`${tab.name}`}
                 >
                   {tab.label}
                 </motion.div>
               </Link>
             ))}
           </div>
-          <div className="w-full bg-[#F9FAFB]">
+          <div className="w-full bg-[#f0f8ff]">
             <Routes>
               <Route path="perfil" element={<Profile userInfo={user} />} />
               <Route path="fechas_no_laboral" element={<NonLaborDates />} />

@@ -110,3 +110,15 @@ export interface ISubInciso{
   description?: string;
 
 }
+
+export interface INonLaborDate {
+  id: string;
+  startDate: string;
+  endDate: string;
+  description?: string;
+  is_optional?: boolean;
+  year: string;
+  type : string
+
+  createdAt?: string;
+}

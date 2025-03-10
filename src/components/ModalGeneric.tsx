@@ -1,21 +1,22 @@
 import { useEffect } from "react";
-import { IRegistration, IUser } from "../helpers/types";
+import { INonLaborDate, IRegistration, IUser } from "../helpers/types";
 import CreateUser from "./CreateUser";
 import RegistersTable from "./RegistersTable";
 import DetailsUser from "./DetailsUser";
 import EditRegister from "./EditRegister";
 import { useAppDispatch } from "../redux/hooks";
 import { openModal, closeModal } from "../redux/slices/modalSlice"; // Importa las acciones
+import CreateNonLaborDate from "./CreateNonLaborDate";
 
 interface ModalProps {
   isVisible?: boolean;
   onClose: () => void;
-  data?: IUser | IRegistration;
-  typeModal?: "userRegisters" | "userDetails" | "createEmployee" | "editRegister";
+  data?: IUser | IRegistration | INonLaborDate;
+  typeModal?: "userRegisters" | "userDetails" | "createEmployee" | "editRegister" | "createNonLaborDate";
 
   closeOnBackdropClick?: boolean;
 
-  onUpdate?: (register: IRegistration) => void;
+  onUpdate?: () => void;
 }
 
 const useBodyScrollLock = (isLocked: boolean) => {
@@ -53,6 +54,7 @@ const ModalGeneric: React.FC<ModalProps> = ({
   onUpdate,
 }) => {
   const ModalContent = typeModal ? MODAL_COMPONENTS[typeModal] : null;
+  console.log("ModalContent", ModalContent);
   const dispatch = useAppDispatch();
 
   useBodyScrollLock(isVisible);
@@ -93,7 +95,7 @@ const ModalGeneric: React.FC<ModalProps> = ({
         className={`bg-white rounded-md shadow transition-all 
           ${isVisible ? "scale-100 opacity-100" : "scale-125 opacity-0"}`}
       >
-        {ModalContent ? (
+        {typeModal ? (
           typeModal === "editRegister" ? (
             <EditRegister register={data as IRegistration | null} onCloseModal={onClose} onUpdate={onUpdate} />
           ) : typeModal === "userDetails" ? (
@@ -102,6 +104,8 @@ const ModalGeneric: React.FC<ModalProps> = ({
             <RegistersTable userInfo={data as IUser | null} />
           ) : typeModal === "createEmployee" ? (
             <CreateUser onCloseModal={onClose} />
+          ) : typeModal === "createNonLaborDate" ? (
+            <CreateNonLaborDate onCloseModal={onClose} onUpdate={onUpdate} nonLaborDate={data as INonLaborDate} />
           ) : null
         ) : (
           "No se encontró el Modal"

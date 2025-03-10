@@ -11,7 +11,7 @@ interface IEditRegister {
   register?: IRegistration | null;
   onCloseModal?: () => void;
 
-  onUpdate?: (register: IRegistration) => void;
+  onUpdate?: () => void;
 }
 
 const EditRegister: React.FC<IEditRegister> = ({ register, onCloseModal, onUpdate }) => {

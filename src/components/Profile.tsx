@@ -20,8 +20,10 @@ const Profile: React.FC<{ userInfo?: IUser | null }> = ({ userInfo }) => {
     }
   }, [userInfo]);
   return (
-    <div>
-      <DetailsUser userInfo={user} />
+    <div className="2xl:w-[1500px] lg:w-[1200px] md:w-[900px]  h-[750px]  p-2 overflow-auto">
+      <div className=" bg-white ">
+        <DetailsUser userInfo={user} />
+      </div>
     </div>
   );
 };

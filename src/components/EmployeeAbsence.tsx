@@ -1,85 +1,30 @@
-import axios from "axios";
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
-import { INonLaborDate } from "../helpers/types";
-import { FiEdit } from "react-icons/fi";
-import { useAppDispatch } from "../redux/hooks";
-import { closeModal } from "../redux/slices/modalSlice";
-import ModalGeneric from "./ModalGeneric";
-import { formatTime } from "../utils/format";
-import dayjs from "dayjs";
-import { toZonedTime, format } from "date-fns-tz";
+import { IUser } from "../helpers/types";
 
-// Fecha en UTC
-const timeZone = "America/Argentina/Buenos_Aires";
+interface Props {
+  onClose: () => void;
+  userInfo?: IUser;
+  typeModal?: "userRegisters" | "userDetails" | "createEmployee" | "editRegister" | "createNonLaborDate";
 
-const BACK_API_URL = import.meta.env.VITE_LOCAL_API_URL;
-const NonLaborDates = () => {
-  const dispatch = useAppDispatch();
-  const [nonLaborDates, setNonLaborDates] = useState<INonLaborDate[]>([]);
-  const [nonDateLaborDetails, setNonDateLaborDetails] = useState<INonLaborDate | null>();
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isTypeModal, setIsTypeModal] = useState("");
+  closeOnBackdropClick?: boolean;
 
-  useEffect(() => {
-    const info = async () => {
-      axios
-        .get(`${BACK_API_URL}/non-working-day`, { withCredentials: true })
-        .then(({ data }) => {
-          console.log(data);
-          setNonLaborDates(data);
-        })
-        .catch((error) => {
-          console.error(error.response.data.message);
-          toast.error(error.response.data.message);
-        });
-    };
-    info();
-  }, []);
-
-  // Función para abrir el modal y cargar datos
-  const handleOpenModal = (nonLaborDate: INonLaborDate | null, event: React.SyntheticEvent) => {
-    console.log("id", event.currentTarget.id);
-    setIsTypeModal(event.currentTarget.id);
-    setNonDateLaborDetails(nonLaborDate);
-    setIsModalOpen(true);
-  };
-
-  // Función para cerrar el modal
-  const handleCloseModal = () => {
-    setIsModalOpen(false); // Cierra el modal localmente
-    dispatch(closeModal()); // Cierra el modal en Redux
-  };
-  //-----------
-
-  const handleUpdateAndAdd = (updatedOrNewRecord: INonLaborDate) => {
-    setNonLaborDates((prev) => {
-      // Busca si el registro ya existe en la lista
-      const exists = prev.some((item) => item.id === updatedOrNewRecord.id);
-
-      if (exists) {
-        // Si existe, actualiza el registro
-        return prev.map((item) => (item.id === updatedOrNewRecord.id ? updatedOrNewRecord : item));
-      } else {
-        // Si no existe, agrega el nuevo registro al principio de la lista
-        return [updatedOrNewRecord, ...prev];
-      }
-    });
-  };
+  onUpdate?: () => void;
+}
+const EmployeeAbsence: React.FC<Props> = ({ userInfo, onClose }) => {
+  //   console.log("userInfo", userInfo);
   return (
-    <section className="2xl:w-[1500px] lg:w-[1200px] md:w-[900px]  h-[700px]  p-2">
+    <section className="2xl:w-[1084px] lg:w-[800px] md:w-[800px]  h-[620px]  ">
       <div className="xs:w-4/5 m-auto my-2 relative flex flex-col w-full h-full text-gray-700 bg-white shadow-md rounded-xl bg-clip-border">
-        <h2 className="notificationsext-2xl ml-5  text-2xl flex  items-start">Fechas no laborales</h2>
+        <h2 className="notificationsext-2xl ml-5  text-2xl flex  items-start">Fechas de Ausencia</h2>
         <div className="relative mx-4 mt-4 overflow-hidden text-gray-700 bg-white rounded-none bg-clip-border">
           <div className="flex flex-col justify-between gap-8 mb-4 md:flex-row md:items-center">
             {/* <div>
-            <h5 className="block font-sans text-xl antialiased font-semibold leading-snug tracking-normal text-blue-gray-900">
-              Recent Transactions
-            </h5>
-            <p className="block mt-1 font-sans text-base antialiased font-normal leading-relaxed text-gray-700">
-              These are details about the last transactions
-            </p>
-          </div> */}
+          <h5 className="block font-sans text-xl antialiased font-semibold leading-snug tracking-normal text-blue-gray-900">
+            Recent Transactions
+          </h5>
+          <p className="block mt-1 font-sans text-base antialiased font-normal leading-relaxed text-gray-700">
+            These are details about the last transactions
+          </p>
+        </div> */}
 
             <div className="flex w-full gap-2 shrink-0 md:w-max">
               <div className="w-full md:w-72">
@@ -116,7 +61,7 @@ const NonLaborDates = () => {
             <button
               className="rounded-md bg-blue-600 py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-blue-700 focus:shadow-none active:bg-blue-700 hover:bg-blue-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none ml-2"
               id="createNonLaborDate"
-              onClick={(e) => handleOpenModal(null, e)}
+              //   onClick={(e) => handleOpenModal(null, e)}
             >
               Agregar Fecha
             </button>
@@ -128,24 +73,24 @@ const NonLaborDates = () => {
             <thead className="sticky top-0 bg-white shadow-md" style={{ top: "-0.5px" }}>
               <tr className="bg-[#F5F7F8]">
                 <th
-                  className="cursor-pointer w-[250px] sm:w-[350px] p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
+                  className="cursor-pointer w-[120px] sm:w-[350px] p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
                   // onClick={onClickName}
                 >
                   <p className="block font-sans text-sm text-center antialiased font-bold leading-none ">Tipo</p>
                 </th>
                 <th
-                  className=" hidden lg:table-cell w-[450px]  cursor-pointer p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
+                  className=" hidden lg:table-cell w-[250px]  cursor-pointer p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
                   // onClick={onClickName}
                 >
                   <p className=" font-sans text-sm text-center lg:text-start  antialiased font-bold  leading-none ">
                     Descripcion
                   </p>
                 </th>
-                <th className="hidden lg:table-cell  w-[200px] p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50">
+                <th className="hidden lg:table-cell  w-[100px] p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50">
                   <p className=" font-sans text-sm text-center antialiased font-bold  leading-none ">Fecha de Inicio</p>
                 </th>
                 <th
-                  className="hidden lg:table-cell  w-[200px] p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
+                  className="hidden lg:table-cell  w-[100px] p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
                   // onClick={onClickName}
                 >
                   <p className=" block font-sans text-sm text-center antialiased font-bold  leading-none ">Fecha de Fin</p>
@@ -158,7 +103,7 @@ const NonLaborDates = () => {
             </thead>
             <tbody>
               {/*  */}
-              {nonLaborDates.map((laborDate) => (
+              {/* {nonLaborDates.map((laborDate) => (
                 <tr key={laborDate.id} className="hover:bg-slate-50 ">
                   <td className="p-4 border-b border-[#cfd8dc] ">
                     <p className="lg:w-auto block font-sans text-sm text-center antialiased font-normal leading-normal text-blue-gray-900">
@@ -187,30 +132,39 @@ const NonLaborDates = () => {
                         className="w-7 h-7 cursor-pointer"
                         id="createNonLaborDate"
                         // onClick={(e) => handleOpenModal(null, e)}
-                        onClick={(e) => handleOpenModal(laborDate, e)}
+                        // onClick={(e) => handleOpenModal(laborDate, e)}
 
                         // id="editRegister"
                       />
                     </div>
                   </td>
                 </tr>
-              ))}
+              ))} */}
             </tbody>
           </table>
         </div>
       </div>
       {/* Modal */}
-      {isModalOpen && (
-        <ModalGeneric
-          isVisible={isModalOpen}
-          onClose={handleCloseModal}
-          data={nonDateLaborDetails}
-          typeModal={isTypeModal}
-          onUpdate={handleUpdateAndAdd}
-        />
-      )}
+      {/* {isModalOpen && (
+      <ModalGeneric
+        isVisible={isModalOpen}
+        onClose={handleCloseModal}
+        data={nonDateLaborDetails}
+        typeModal={isTypeModal}
+        onUpdate={handleUpdateAndAdd}
+      />
+    )} */}
+      <div className="flex justify-end items-end w-full mt-1">
+        <button
+          className="mr-2 rounded-md bg-red-600 py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-red-700 focus:shadow-none active:bg-red-700 hover:bg-red-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none ml-2"
+          type="button"
+          onClick={onClose}
+        >
+          Atras
+        </button>
+      </div>
     </section>
   );
 };
 
-export default NonLaborDates;
+export default EmployeeAbsence;
