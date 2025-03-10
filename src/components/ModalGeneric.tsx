@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { INonLaborDate, IRegistration, IUser } from "../helpers/types";
+import { IEmployeeAbsence, INonLaborDate, IRegistration, IUser } from "../helpers/types";
 import CreateUser from "./CreateUser";
 import RegistersTable from "./RegistersTable";
 import DetailsUser from "./DetailsUser";
@@ -7,12 +7,13 @@ import EditRegister from "./EditRegister";
 import { useAppDispatch } from "../redux/hooks";
 import { openModal, closeModal } from "../redux/slices/modalSlice"; // Importa las acciones
 import CreateNonLaborDate from "./CreateNonLaborDate";
+import CreateEmployeeAbsence from "./CreateEmployeeAbsence";
 
 interface ModalProps {
   isVisible?: boolean;
   onClose: () => void;
   data?: IUser | IRegistration | INonLaborDate;
-  typeModal?: "userRegisters" | "userDetails" | "createEmployee" | "editRegister" | "createNonLaborDate";
+  typeModal?: "userRegisters" | "userDetails" | "createEmployee" | "editRegister" | "createNonLaborDate" | "createEmployeeAbsence";
 
   closeOnBackdropClick?: boolean;
 
@@ -106,6 +107,8 @@ const ModalGeneric: React.FC<ModalProps> = ({
             <CreateUser onCloseModal={onClose} />
           ) : typeModal === "createNonLaborDate" ? (
             <CreateNonLaborDate onCloseModal={onClose} onUpdate={onUpdate} nonLaborDate={data as INonLaborDate} />
+          ) : typeModal === "createEmployeeAbsence" ? (
+            <CreateEmployeeAbsence onCloseModal={onClose} onUpdate={onUpdate}  />
           ) : null
         ) : (
           "No se encontró el Modal"

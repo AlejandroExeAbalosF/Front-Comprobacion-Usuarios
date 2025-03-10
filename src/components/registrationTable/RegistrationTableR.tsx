@@ -238,6 +238,10 @@ const RegistrationTableR = () => {
               <div className="  items-center px-2 py-1 font-sans text-xs font-bold text-amber-900 uppercase rounded-md select-none whitespace-nowrap bg-blue-gray-500/20 bg-amber-500/20">
                 <span className="">Ausente</span>
               </div>
+            ) : user.registrations[0].status === "NO_LABORABLE" ? (
+              <div className=" grid items-center px-2 py-1 font-sans text-xs font-bold uppercase rounded-md select-none whitespace-nowrap bg-blue-gray-500/20 text-blue-gray-900">
+                <span className="">Día No Laboral</span>
+              </div>
             ) : null
           ) : null}
         </td>

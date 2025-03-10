@@ -122,3 +122,15 @@ export interface INonLaborDate {
 
   createdAt?: string;
 }
+
+export interface IEmployeeAbsence {
+  id: string;
+  startDate: string;
+  endDate: string;
+  description?: string;
+  is_optional?: boolean;
+  year: string;
+  type : string
+  articulo?: string;
+  createdAt?: string;
+}
