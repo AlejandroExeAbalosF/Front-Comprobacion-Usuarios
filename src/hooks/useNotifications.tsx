@@ -36,6 +36,13 @@ export function useNotifications() {
           duration: 10000,
           icon: <BsFillRecordFill className="icon-notification w-6 h-6 text-amber-500" />,
         });
+      } else if (data.status === "NO_LABORABLE") {
+        toast(` ${formatName(data.name, data.lastName)} no laborable`, {
+          className: ``,
+          description: `${dayjs(data.exitDate).format("DD/MM/YYYY")}`,
+          duration: 10000,
+          icon: <BsFillRecordFill className="icon-notification w-6 h-6 text-gray-500" />,
+        });
       }
       // console.log("Empleado validado:", data);
       setNotifications((prev) => [...prev, data]); // Acumular en el array

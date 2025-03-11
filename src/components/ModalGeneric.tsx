@@ -13,7 +13,14 @@ interface ModalProps {
   isVisible?: boolean;
   onClose: () => void;
   data?: IUser | IRegistration | INonLaborDate;
-  typeModal?: "userRegisters" | "userDetails" | "createEmployee" | "editRegister" | "createNonLaborDate" | "createEmployeeAbsence";
+  userId?: string | null;
+  typeModal?:
+    | "userRegisters"
+    | "userDetails"
+    | "createEmployee"
+    | "editRegister"
+    | "createNonLaborDate"
+    | "createEmployeeAbsence";
 
   closeOnBackdropClick?: boolean;
 
@@ -50,6 +57,7 @@ const ModalGeneric: React.FC<ModalProps> = ({
   isVisible = false,
   onClose,
   data,
+  userId,
   typeModal,
   closeOnBackdropClick = true,
   onUpdate,
@@ -88,7 +96,7 @@ const ModalGeneric: React.FC<ModalProps> = ({
       aria-modal="true"
       onClick={handleBackdropClick}
       className={`fixed inset-0 z-10 flex justify-center items-center transition-colors 
-        ${isVisible ? "visible bg-black/55 backdrop-blur-sm" : "invisible"}`}
+        ${isVisible ? "visible bg-black/55 backdrop-blur-none" : "invisible"}`}
     >
       <div
         id="modal_container"
@@ -108,7 +116,7 @@ const ModalGeneric: React.FC<ModalProps> = ({
           ) : typeModal === "createNonLaborDate" ? (
             <CreateNonLaborDate onCloseModal={onClose} onUpdate={onUpdate} nonLaborDate={data as INonLaborDate} />
           ) : typeModal === "createEmployeeAbsence" ? (
-            <CreateEmployeeAbsence onCloseModal={onClose} onUpdate={onUpdate}  />
+            <CreateEmployeeAbsence onCloseModal={onClose} onUpdate={onUpdate} userId={userId} />
           ) : null
         ) : (
           "No se encontró el Modal"

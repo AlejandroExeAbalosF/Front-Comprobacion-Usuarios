@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { IArticulo, IEmployeeAbsence, INonLaborDate } from "../helpers/types";
+import { IArticulo, IEmployeeAbsence, INonLaborDate, IUser } from "../helpers/types";
 import { cleanObject } from "../utils/format";
 import axios from "axios";
 import { toast } from "sonner";
@@ -8,14 +8,15 @@ const BACK_API_URL = import.meta.env.VITE_LOCAL_API_URL;
 
 interface Props {
   onCloseModal?: () => void;
-  employeeAbsence?: IEmployeeAbsence| null;
+  employeeAbsence?: IEmployeeAbsence | null;
+  userId?: string | null;
   setIsEditing?: (isEditing: boolean) => void;
 
   onUpdate?: (employeeAbsence: INonLaborDate) => void;
 }
 
-const CreateEmployeeAbsence: React.FC<Props> = ({ onCloseModal, employeeAbsence, setIsEditing, onUpdate }) => {
-  // console.log("EmployeeAbsence", EmployeeAbsence);
+const CreateEmployeeAbsence: React.FC<Props> = ({ onCloseModal, employeeAbsence, userId, setIsEditing, onUpdate }) => {
+  // console.log("userId", userId);
   const [art = "", inc = "", subInc = ""] = employeeAbsence?.articulo?.split("-") || ["", "", ""];
   console.log("art", art, inc, subInc);
   const initialTypeAusente = [
@@ -29,16 +30,15 @@ const CreateEmployeeAbsence: React.FC<Props> = ({ onCloseModal, employeeAbsence,
     startDate: employeeAbsence?.startDate || "",
     endDate: employeeAbsence?.endDate || "",
     isOptional: employeeAbsence?.is_optional || "",
-    year: employeeAbsence?.year || "",
     articulo: employeeAbsence?.type === "ARTICULO" ? art || "" : "",
     inciso: employeeAbsence?.type === "ARTICULO" ? inc || "" : "",
     subInciso: employeeAbsence?.type === "ARTICULO" ? subInc || "" : "",
   };
   const [employeeAbsenceDataInputs, setEmployeeAbsenceDataInputs] = useState(initialState);
-    const [articulos, setArticulos] = useState<IArticulo[]>([]);
-    const [articulosType, setArticulosType] = useState<IArticulo[]>([]);
-    const [selectedArticulo, setSelectedArticulo] = useState(null);
-    const [selectedInciso, setSelectedInciso] = useState(null);
+  const [articulos, setArticulos] = useState<IArticulo[]>([]);
+  const [articulosType, setArticulosType] = useState<IArticulo[]>([]);
+  const [selectedArticulo, setSelectedArticulo] = useState(null);
+  const [selectedInciso, setSelectedInciso] = useState(null);
 
   useEffect(() => {
     const info = async () => {
@@ -146,33 +146,33 @@ const CreateEmployeeAbsence: React.FC<Props> = ({ onCloseModal, employeeAbsence,
     const data = cleanObject(employeeAbsenceDataInputs as Record<string, unknown>);
     console.log("data", data);
 
-    // if (EmployeeAbsence) {
-    //   axios
-    //     .put(`${BACK_API_URL}/non-working-day/${EmployeeAbsence.id}`, data, { withCredentials: true })
-    //     .then(({ data }) => {
-    //       console.log("data", data);
-    //       toast.success("Fecha actualizada exitosamente");
-    //       if (data.data) onUpdate(data.data);
-    //       onCloseModal?.();
-    //     })
-    //     .catch((error) => {
-    //       console.error(error.response.data.message);
-    //       toast.error(error.response.data.message);
-    //     });
-    // } else {
-    //   axios
-    //     .post(`${BACK_API_URL}/non-working-day`, data, { withCredentials: true })
-    //     .then(({ data }) => {
-    //       console.log("data", data);
-    //       toast.success("Fecha creada exitosamente");
-    //       onUpdate(data.data);
-    //       onCloseModal?.();
-    //     })
-    //     .catch((error) => {
-    //       console.error(error.response.data.message);
-    //       toast.error(error.response.data.message);
-    //     });
-    // }
+    if (employeeAbsence) {
+      // axios
+      //   .put(`${BACK_API_URL}/non-working-day/${EmployeeAbsence.id}`, data, { withCredentials: true })
+      //   .then(({ data }) => {
+      //     console.log("data", data);
+      //     toast.success("Fecha actualizada exitosamente");
+      //     if (data.data) onUpdate(data.data);
+      //     onCloseModal?.();
+      //   })
+      //   .catch((error) => {
+      //     console.error(error.response.data.message);
+      //     toast.error(error.response.data.message);
+      //   });
+    } else {
+      axios
+        .post(`${BACK_API_URL}/employee-absences/user/${userId}`, data, { withCredentials: true })
+        .then(({ data }) => {
+          console.log("data", data);
+          toast.success("Fecha creada exitosamente");
+          onUpdate(data.data);
+          onCloseModal?.();
+        })
+        .catch((error) => {
+          console.error(error.response.data.message);
+          toast.error(error.response.data.message);
+        });
+    }
   };
   return (
     <div className="w-[900px] h-[470px]">

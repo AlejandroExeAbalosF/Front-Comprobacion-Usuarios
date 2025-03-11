@@ -1,8 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { IEmployeeAbsence, IUser } from "../helpers/types";
 import { useAppDispatch } from "../redux/hooks";
 import { closeModal } from "../redux/slices/modalSlice";
 import ModalGeneric from "./ModalGeneric";
+import axios from "axios";
+import { toast } from "sonner";
+import { FiEdit } from "react-icons/fi";
+import dayjs from "dayjs";
 
 interface Props {
   onClose: () => void;
@@ -13,26 +17,61 @@ interface Props {
 
   onUpdate?: () => void;
 }
+
+const BACK_API_URL = import.meta.env.VITE_LOCAL_API_URL;
+
 const EmployeeAbsence: React.FC<Props> = ({ userInfo, onClose }) => {
   //   console.log("userInfo", userInfo);
   const dispatch = useAppDispatch();
-const [nonDateLaborDetails, setNonDateLaborDetails] = useState<IEmployeeAbsence | null>();
+  const [employeeAbsenceDetails, setEmployeeAbsenceDetails] = useState<IEmployeeAbsence[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isTypeModal, setIsTypeModal] = useState("");
-   // Función para abrir el modal y cargar datos
-    const handleOpenModal = (nonLaborDate: IEmployeeAbsence | null, event: React.SyntheticEvent) => {
-      console.log("id", event.currentTarget.id);
-      setIsTypeModal(event.currentTarget.id);
-      setNonDateLaborDetails(nonLaborDate);
-      setIsModalOpen(true);
-    };
-  
-    // Función para cerrar el modal
-    const handleCloseModal = () => {
-      setIsModalOpen(false); // Cierra el modal localmente
-      dispatch(closeModal()); // Cierra el modal en Redux
-    };
-    //-----------
+
+  useEffect(() => {
+    if (userInfo) {
+      axios
+        .get(`${BACK_API_URL}/employee-absences/user/${userInfo?.id}`, {
+          withCredentials: true,
+        })
+        .then(({ data }) => {
+          console.log(data);
+          setEmployeeAbsenceDetails(data);
+        })
+        .catch((error) => {
+          console.error(error.response.data.message);
+          toast.error(error.response.data.message);
+        });
+    }
+  }, [userInfo]);
+  // Función para abrir el modal y cargar datos
+  const handleOpenModal = (employeeAbsenceDate: IEmployeeAbsence | null, event: React.SyntheticEvent) => {
+    console.log("id", event.currentTarget.id);
+    setIsTypeModal(event.currentTarget.id);
+    // setNonDateLaborDetails(nonLaborDate);
+    setIsModalOpen(true);
+  };
+
+  // Función para cerrar el modal
+  const handleCloseModal = () => {
+    setIsModalOpen(false); // Cierra el modal localmente
+    dispatch(closeModal()); // Cierra el modal en Redux
+  };
+  //-----------
+
+  const handleUpdateAndAdd = (updatedOrNewRecord: IEmployeeAbsence) => {
+    setEmployeeAbsenceDetails((prev) => {
+      // Busca si el registro ya existe en la lista
+      const exists = prev.some((item) => item.id === updatedOrNewRecord.id);
+
+      if (exists) {
+        // Si existe, actualiza el registro
+        return prev.map((item) => (item.id === updatedOrNewRecord.id ? updatedOrNewRecord : item));
+      } else {
+        // Si no existe, agrega el nuevo registro al principio de la lista
+        return [updatedOrNewRecord, ...prev];
+      }
+    });
+  };
   return (
     <section className="2xl:w-[1084px] lg:w-[800px] md:w-[800px]  h-[620px]  ">
       <div className="xs:w-4/5 m-auto my-2 relative flex flex-col w-full h-full text-gray-700 bg-white shadow-md rounded-xl bg-clip-border">
@@ -83,7 +122,7 @@ const [nonDateLaborDetails, setNonDateLaborDetails] = useState<IEmployeeAbsence 
             <button
               className="rounded-md bg-blue-600 py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-blue-700 focus:shadow-none active:bg-blue-700 hover:bg-blue-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none ml-2"
               id="createEmployeeAbsence"
-             onClick={(e) => handleOpenModal(null, e)}
+              onClick={(e) => handleOpenModal(null, e)}
             >
               Agregar Fecha
             </button>
@@ -95,13 +134,19 @@ const [nonDateLaborDetails, setNonDateLaborDetails] = useState<IEmployeeAbsence 
             <thead className="sticky top-0 bg-white shadow-md" style={{ top: "-0.5px" }}>
               <tr className="bg-[#F5F7F8]">
                 <th
-                  className="cursor-pointer w-[250px] p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
+                  className="cursor-pointer w-[150px] p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
                   // onClick={onClickName}
                 >
                   <p className="block font-sans text-sm text-center antialiased font-bold leading-none ">Tipo</p>
                 </th>
                 <th
-                  className=" hidden lg:table-cell w-[450px]  cursor-pointer p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
+                  className="cursor-pointer w-[150px] p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
+                  // onClick={onClickName}
+                >
+                  <p className="block font-sans text-sm text-center antialiased font-bold leading-none ">Articulo</p>
+                </th>
+                <th
+                  className=" hidden lg:table-cell w-[400px]  cursor-pointer p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
                   // onClick={onClickName}
                 >
                   <p className=" font-sans text-sm text-center lg:text-start  antialiased font-bold  leading-none ">
@@ -125,27 +170,32 @@ const [nonDateLaborDetails, setNonDateLaborDetails] = useState<IEmployeeAbsence 
             </thead>
             <tbody>
               {/*  */}
-              {/* {nonLaborDates.map((laborDate) => (
-                <tr key={laborDate.id} className="hover:bg-slate-50 ">
+              {employeeAbsenceDetails.map((employeeAbsence) => (
+                <tr key={employeeAbsence.id} className="hover:bg-slate-50 ">
                   <td className="p-4 border-b border-[#cfd8dc] ">
                     <p className="lg:w-auto block font-sans text-sm text-center antialiased font-normal leading-normal text-blue-gray-900">
-                      {laborDate.type}
+                      {employeeAbsence.type}
+                    </p>
+                  </td>
+                  <td className="p-4 border-b border-[#cfd8dc] ">
+                    <p className="lg:w-auto block font-sans text-sm text-center antialiased font-normal leading-normal text-blue-gray-900">
+                      {employeeAbsence.articulo}
                     </p>
                   </td>
                   <td className="hidden lg:table-cell p-4 border-b border-[#cfd8dc]">
                     {" "}
                     <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                      {laborDate.description}{" "}
+                      {employeeAbsence.description}{" "}
                     </p>
                   </td>
                   <td className="hidden lg:table-cell p-4 border-b border-[#cfd8dc]">
                     <p className="lg:w-auto block font-sans text-sm text-center antialiased font-normal leading-normal text-blue-gray-900">
-                      {dayjs(laborDate.startDate).format("DD/MM/YYYY")}
+                      {dayjs(employeeAbsence.startDate).format("DD/MM/YYYY")}
                     </p>
                   </td>
                   <td className="hidden lg:table-cell p-4 border-b border-[#cfd8dc]">
                     <p className="lg:w-auto block font-sans text-sm text-center antialiased font-normal leading-normal text-blue-gray-900">
-                      {dayjs(laborDate.endDate).format("DD/MM/YYYY")}
+                      {dayjs(employeeAbsence.endDate).format("DD/MM/YYYY")}
                     </p>
                   </td>
                   <td className="p-4 border-b border-[#cfd8dc] ">
@@ -154,28 +204,29 @@ const [nonDateLaborDetails, setNonDateLaborDetails] = useState<IEmployeeAbsence 
                         className="w-7 h-7 cursor-pointer"
                         id="createNonLaborDate"
                         // onClick={(e) => handleOpenModal(null, e)}
-                        // onClick={(e) => handleOpenModal(laborDate, e)}
+                        // onClick={(e) => handleOpenModal(employeeAbsence, e)}
 
                         // id="editRegister"
                       />
                     </div>
                   </td>
                 </tr>
-              ))} */}
+              ))}
             </tbody>
           </table>
         </div>
       </div>
       {/* Modal */}
-       {isModalOpen && (
-      <ModalGeneric
-        isVisible={isModalOpen}
-        onClose={handleCloseModal}
-        // data={nonDateLaborDetails}
-        typeModal={isTypeModal}
-        // onUpdate={handleUpdateAndAdd}
-      />
-    )} 
+      {isModalOpen && (
+        <ModalGeneric
+          isVisible={isModalOpen}
+          onClose={handleCloseModal}
+          // data={nonDateLaborDetails}
+          userId={userInfo?.id}
+          typeModal={isTypeModal}
+          onUpdate={handleUpdateAndAdd}
+        />
+      )}
       <div className="flex justify-end items-end w-full mt-1">
         <button
           className="mr-2 rounded-md bg-red-600 py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-red-700 focus:shadow-none active:bg-red-700 hover:bg-red-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none ml-2"

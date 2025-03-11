@@ -129,7 +129,7 @@ export interface IEmployeeAbsence {
   endDate: string;
   description?: string;
   is_optional?: boolean;
-  year: string;
+ 
   type : string
   articulo?: string;
   createdAt?: string;

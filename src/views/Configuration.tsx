@@ -9,6 +9,7 @@ import Profile from "../components/Profile";
 import NonLaborDates from "../components/NonLaborDates";
 import { BsCalendarWeek } from "react-icons/bs";
 import { ImProfile } from "react-icons/im";
+import { IoMdArrowRoundBack } from "react-icons/io";
 
 export default function Configuration() {
   const navigate = useNavigate();
@@ -35,9 +36,17 @@ export default function Configuration() {
       {/* <SideBar /> */}
       <Menu />
       <main className=" w-auto h-[830px] text-center   flex flex-col items-center justify-start bg-white shadow-xlrounded-md  m-4">
-        <section className="">
-          <h1 className="text-3xl   mt-5">Configuración</h1>
-        </section>
+        <div className="relative 2xl:w-[1550px] lg:w-[1200px] md:w-[900px] flex items-center justify-center mt-5 w-full">
+          {/* Icono alineado a la izquierda */}
+          <IoMdArrowRoundBack
+            className="absolute left-4 w-10 h-10 cursor-pointer"
+            onClick={() => navigate("/inicio")}
+            title="Volver"
+          />
+
+          {/* Título centrado */}
+          <h1 className="text-3xl">Configuración</h1>
+        </div>
         <div className="flex 2xl:w-[1550px] lg:w-[1200px] md:w-[900px]  h-[750px] mt-4 ">
           <div>
             {tabs.map((tab) => (

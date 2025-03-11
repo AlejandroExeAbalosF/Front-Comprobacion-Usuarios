@@ -136,7 +136,7 @@ const RegisterE = () => {
         })
         .then(({ data }) => {
           console.log("data", data);
-          // console.log(data);
+          console.log(data);
           setIsMsg({ type: "success", message: data.message });
           setUserDataInputs(initialState);
           setErrors(initialState);
