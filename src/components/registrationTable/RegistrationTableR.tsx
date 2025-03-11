@@ -253,9 +253,9 @@ const RegistrationTableR = () => {
           </p>
           <p className="lg:w-auto  block font-sans text-sm text-center antialiased font-normal leading-normal text-blue-gray-900">
             {user?.registrations.length > 0 && user.registrations[0].entryDate
-              ? user.registrations[0].status !== "AUSENTE"
+              ? user.registrations[0].status !== "AUSENTE" && user.registrations[0].status !== "NO_LABORABLE"
                 ? dayjs(user.registrations[0].entryDate).format("HH:mm")
-                : "-"
+                : null
               : null}
           </p>
         </td>
@@ -267,7 +267,9 @@ const RegistrationTableR = () => {
           </p>
           <p className="lg:w-auto  block font-sans text-sm text-center antialiased font-normal leading-normal text-blue-gray-900">
             {user?.registrations.length > 0 && user.registrations[0].exitDate
+            ? user.registrations[0].status !== "AUSENTE" && user.registrations[0].status !== "NO_LABORABLE"
               ? dayjs(user.registrations[0].exitDate).format("HH:mm")
+              : null
               : null}
           </p>
         </td>

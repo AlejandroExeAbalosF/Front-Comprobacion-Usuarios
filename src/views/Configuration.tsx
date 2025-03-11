@@ -36,16 +36,18 @@ export default function Configuration() {
       {/* <SideBar /> */}
       <Menu />
       <main className=" w-auto h-[830px] text-center   flex flex-col items-center justify-start bg-white shadow-xlrounded-md  m-4">
-        <div className="relative 2xl:w-[1550px] lg:w-[1200px] md:w-[900px] flex items-center justify-center mt-5 w-full">
+        
+        <div className="relative 2xl:w-[1550px] lg:w-[1200px] md:w-[900px] flex flex-col  mt-5 w-full">
           {/* Icono alineado a la izquierda */}
           <IoMdArrowRoundBack
-            className="absolute left-4 w-10 h-10 cursor-pointer"
+            className="absolute  left-4 w-10 h-10 cursor-pointer"
             onClick={() => navigate("/inicio")}
             title="Volver"
           />
 
           {/* Título centrado */}
-          <h1 className="text-3xl">Configuración</h1>
+          
+          <h1 className="text-3xl ml-[80px]">Configuración</h1>
         </div>
         <div className="flex 2xl:w-[1550px] lg:w-[1200px] md:w-[900px]  h-[750px] mt-4 ">
           <div>
@@ -57,13 +59,17 @@ export default function Configuration() {
                     cursor: "pointer",
                     backgroundColor: activeTab === tab.path ? "#f0f8ff" : "#fff",
                   }}
-                  className="flex flex-col items-center justify-center"
+                  className="w-[80px] flex flex-col items-center justify-center"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => setActiveTab(tab.path)}
                   title={`${tab.name}`}
                 >
+                  <div className="flex flex-col justify-center items-center">
                   {tab.label}
+                  <p className="text-sm leading-[13px] font-normal mt-1 ">{tab.name}</p>
+                  </div>
+                 
                 </motion.div>
               </Link>
             ))}
