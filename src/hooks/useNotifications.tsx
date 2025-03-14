@@ -37,7 +37,7 @@ export function useNotifications() {
           icon: <BsFillRecordFill className="icon-notification w-6 h-6 text-amber-500" />,
         });
       } else if (data.status === "NO_LABORABLE") {
-        toast(` ${formatName(data.name, data.lastName)} no laborable`, {
+        toast(` ${formatName(data.name, data.lastName)} registro día no laborable`, {
           className: ``,
           description: `${dayjs(data.exitDate).format("DD/MM/YYYY")}`,
           duration: 10000,

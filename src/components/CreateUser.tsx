@@ -94,7 +94,7 @@ const CreateUser: React.FC<CreateUserProps> = ({ onCloseModal, userInfo, setIsEd
   }, []);
   const handleModal = () => {
     // console.log(isVisible);
-    if (userInfo && setIsEditing && onCloseModal) {
+    if (userInfo && setIsEditing ) {
       setIsEditing(false);
     } else if (onCloseModal) {
       onCloseModal(false);
@@ -312,7 +312,7 @@ const CreateUser: React.FC<CreateUserProps> = ({ onCloseModal, userInfo, setIsEd
         </div>
         <div className=" ">
           <form onSubmit={handleSubmit} className="flex  flex-col justify-center items-center ">
-            <main className="w-[375px] sm:w-auto md:w-[390px] lg:w-[590px] xl:w-[890px] 2xl:w-[1090px] h-[607px] overflow-auto ">
+            <main className="w-[375px] sm:w-[590px] md:w-[390px] lg:w-[590px] xl:w-[890px] 2xl:w-[1054px] h-[607px] overflow-auto ">
               <section className="">
                 <div className=" w-full">
                   <h3 className="text-start text-[20px]">Datos Personales</h3> <hr className="border-t border-gray-300 my-3" />

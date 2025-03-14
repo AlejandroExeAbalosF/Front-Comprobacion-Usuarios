@@ -145,7 +145,20 @@ const CreateEmployeeAbsence: React.FC<Props> = ({ onCloseModal, employeeAbsence,
     console.log("nemployeeAbsenceDataInputs", employeeAbsenceDataInputs);
     const data = cleanObject(employeeAbsenceDataInputs as Record<string, unknown>);
     console.log("data", data);
+    if (data.type === "ARTICULO") {
+      const articulo = data.articulo ? data.articulo : "";
+      const inciso = data.inciso ? "-" + data.inciso : "";
+      const subInciso = data.subInciso ? "-" + data.subInciso : "";
+      if (articulo) {
+        data.articulo = articulo + inciso + subInciso;
+      } else {
+        delete data.articulo;
+      }
 
+      delete data.inciso;
+      delete data.subInciso;
+    }
+    console.log("data", data);
     if (employeeAbsence) {
       // axios
       //   .put(`${BACK_API_URL}/non-working-day/${EmployeeAbsence.id}`, data, { withCredentials: true })
@@ -187,7 +200,7 @@ const CreateEmployeeAbsence: React.FC<Props> = ({ onCloseModal, employeeAbsence,
                 <hr className="border-t border-gray-300 my-3" />
               </div>
               <div className="my-3 h-[120px] flex flex-col xl:flex-row xl:h-auto gap-4">
-                <div className="relative w-[250px] flex flex-col justify-start items-start">
+                <div className="relative w-[200px] flex flex-col justify-start items-start">
                   <label className="form-title-md" htmlFor="type">
                     Tipo
                   </label>
@@ -205,37 +218,39 @@ const CreateEmployeeAbsence: React.FC<Props> = ({ onCloseModal, employeeAbsence,
                     ))}
                   </select>
                 </div>
+                <div className="flex flex-row justify-start items-start gap-4">
+                  <div className=" relative  w-[150px]  flex flex-col justify-start items-start">
+                    <label className="form-title-md"> Fecha de inicio</label>
+                    <input
+                      // id={name}
+                      type="date"
+                      name="startDate"
+                      value={employeeAbsenceDataInputs.startDate}
+                      className={` px-2 h-[35px]  text-black py-2.5  w-[150px]  input-form-create`}
+                      placeholder=" "
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div className=" relative w-[170px]  flex flex-col justify-start items-start">
+                    <label className="form-title-md "> Fecha de finalización</label>
+                    <input
+                      // id={name}
+                      type="date"
+                      name="endDate"
+                      value={employeeAbsenceDataInputs.endDate}
+                      className={` px-2 h-[35px]  text-black py-2.5  w-[150px]  input-form-create`}
+                      placeholder=" "
+                      onChange={handleChange}
+                    />
+                  </div>
+                </div>
 
-                <div className=" relative  w-[150px]  flex flex-col justify-start items-start">
-                  <label className="form-title-md"> Fecha de inicio</label>
-                  <input
-                    // id={name}
-                    type="date"
-                    name="startDate"
-                    value={employeeAbsenceDataInputs.startDate}
-                    className={` px-2 h-[35px]  text-black py-2.5  w-[150px]  input-form-create`}
-                    placeholder=" "
-                    onChange={handleChange}
-                  />
-                </div>
-                <div className=" relative w-[170px]  flex flex-col justify-start items-start">
-                  <label className="form-title-md "> Fecha de finalización</label>
-                  <input
-                    // id={name}
-                    type="date"
-                    name="endDate"
-                    value={employeeAbsenceDataInputs.endDate}
-                    className={` px-2 h-[35px]  text-black py-2.5  w-[150px]  input-form-create`}
-                    placeholder=" "
-                    onChange={handleChange}
-                  />
-                </div>
               </div>
               {employeeAbsenceDataInputs.type === "ARTICULO" && (
-                <div>
-                  <div className="my-3  grid grid-cols-3 grid-rows-1 gap-4">
+                <div className="">
+                  <div className="my-2 w-[650px]  grid grid-cols-3 grid-rows-1 gap-1">
                     {/* Select de Artículos */}
-                    <div className="  flex flex-col justify-start items-start">
+                    <div className="w-[200px]  flex flex-col justify-start items-start">
                       <label htmlFor="articulo" className="form-title-md">
                         Artículo
                       </label>
@@ -259,7 +274,7 @@ const CreateEmployeeAbsence: React.FC<Props> = ({ onCloseModal, employeeAbsence,
                     {selectedArticulo && (
                       <>
                         {/* {`${console.log("cuerposelectedArticulo", selectedArticulo)}`} */}
-                        <div className="flex flex-col justify-start items-start">
+                        <div className="w-[200px] flex flex-col justify-start items-start">
                           <label htmlFor="inciso" className="form-title-md">
                             Inciso
                           </label>
@@ -286,7 +301,7 @@ const CreateEmployeeAbsence: React.FC<Props> = ({ onCloseModal, employeeAbsence,
                     {/* Select de SubIncisos (Depende del Inciso seleccionado) */}
                     {selectedInciso && (
                       <>
-                        <div className=" flex flex-col justify-start items-start">
+                        <div className="w-[200px] flex flex-col justify-start items-start">
                           <label htmlFor="subinciso" className="form-title-md">
                             SubInciso
                           </label>

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { cleanObject } from "../utils/format";
 import { toast } from "sonner";
+import { IoIosClose } from "react-icons/io";
 
 const BACK_API_URL = import.meta.env.VITE_LOCAL_API_URL;
 
@@ -93,8 +94,8 @@ const EditRegister: React.FC<IEditRegister> = ({ register, onCloseModal, onUpdat
         register.status === "AUSENTE"
           ? initialTypeAusente
           : register.status === "PRESENTE"
-          ? initialTypePresente
-          : initialTypeNoLaborable;
+            ? initialTypePresente
+            : initialTypeNoLaborable;
       setTypeJustification(newTypeJustification);
 
       // Establecer los valores iniciales en registerData
@@ -226,15 +227,15 @@ const EditRegister: React.FC<IEditRegister> = ({ register, onCloseModal, onUpdat
         register?.status === "PRESENTE" && register?.articulo && value === "PRESENTE"
           ? art
           : register?.status === "AUSENTE" && register?.articulo && value === "AUSENTE"
-          ? art
-          : "null"
+            ? art
+            : "null"
       );
       setSelectedArticulo(
         register?.status === "PRESENTE" && register?.articulo && value === "PRESENTE"
           ? art
           : register?.status === "AUSENTE" && register?.articulo && value === "AUSENTE"
-          ? art
-          : null
+            ? art
+            : null
       );
       // const selectInciso = articulosType.find((a) => a.name === selectedArticulo)?.incisos.find((i) => i.name === inc);
       // // console.log("inciso asd", selectInciso);
@@ -258,22 +259,22 @@ const EditRegister: React.FC<IEditRegister> = ({ register, onCloseModal, onUpdat
           value === "AUSENTE" || value === "NO_LABORABLE"
             ? ""
             : register?.status === "AUSENTE" || register?.status === "NO_LABORABLE"
-            ? ""
-            : dayjs(register?.entryDate).format("HH:mm"),
+              ? ""
+              : dayjs(register?.entryDate).format("HH:mm"),
         exitHour:
           value === "AUSENTE" || value === "NO_LABORABLE"
             ? ""
             : register?.exitDate
-            ? dayjs(register?.exitDate).format("HH:mm")
-            : "",
+              ? dayjs(register?.exitDate).format("HH:mm")
+              : "",
         description:
           value === "PRESENTE"
             ? ""
             : value === "NO_LABORABLE" && register?.status === "NO_LABORABLE"
-            ? register?.description || ""
-            : value === "AUSENTE" && register?.status === "AUSENTE"
-            ? register?.description || ""
-            : "",
+              ? register?.description || ""
+              : value === "AUSENTE" && register?.status === "AUSENTE"
+                ? register?.description || ""
+                : "",
         articulo: art,
         inciso: inc,
         subInciso: subInc,
@@ -350,13 +351,19 @@ const EditRegister: React.FC<IEditRegister> = ({ register, onCloseModal, onUpdat
   // const p = articulos.find((art) => art.name === selectedArticulo)?.incisos;
   // console.log("p", p);
   return (
-    <div className="w-[1000px] h-200">
+    <div className="w-[400px] sm:w-[600px] md:w-[700px] lg:w-[800px] xl:w-[900px] 2xl:w-[1000px]  h-200">
       <h2 className="mt-4 text-center font-[500] text-[30px]">
         Editar Registro {register ? dayjs(register.entryDate).format("DD/MM/YYYY") : "a"}
       </h2>
+      <button
+        onClick={handleModal}
+        className="absolute top-[-1px] right-[-1px]  rounded-lg text-gray-400   hover:text-[#160852] cursor-pointer "
+      >
+        <IoIosClose className="w-10 h-10" />
+      </button>
       <div className="flex flex-col justify-center items-center">
         <form onSubmit={handleSubmit} className="flex flex-col justify-center items-center">
-          <main className="w-[900px] h-[650px] ">
+          <main className="w-[300px] sm:w-[500px] md:w-[600px] lg:w-[700px] xl:w-[800px] 2xl:w-[900px] h-[650px] ">
             <section>
               <div className="w-full">
                 <h3 className="text-start text-[20px]">Estado y Justificación</h3>
@@ -492,7 +499,7 @@ const EditRegister: React.FC<IEditRegister> = ({ register, onCloseModal, onUpdat
                           name="description"
                           value={registerData.description}
                           onChange={handleChange}
-                          className="w-[800px] h-[100px] p-1 mt-1 input-form-create resize-none outline-none"
+                          className="w-[300px] sm:w-[500px] md:w-[600px] lg:w-[700px] xl:w-[800px] 2xl:w-[900px] h-[100px] p-1 mt-1 input-form-create resize-none outline-none"
                           readOnly={false}
                         />
                       </div>
@@ -543,7 +550,7 @@ const EditRegister: React.FC<IEditRegister> = ({ register, onCloseModal, onUpdat
                       name="description"
                       value={registerData.description}
                       onChange={handleChange}
-                      className="w-[800px] h-[100px] p-1 mt-1 input-form-create resize-none outline-none"
+                      className="w-[300px] sm:w-[500px] md:w-[600px] lg:w-[700px] xl:w-[800px] 2xl:w-[900px] h-[100px] p-1 mt-1 input-form-create resize-none outline-none"
                       readOnly={false}
                     />
                   </div>
@@ -551,7 +558,7 @@ const EditRegister: React.FC<IEditRegister> = ({ register, onCloseModal, onUpdat
               )}
               {registerData.status === "AUSENTE" && (
                 <div>
-                  <div className="my-3  grid grid-cols-3 grid-rows-1 gap-4">
+                  <div className="my-3  grid grid-cols-1 grid-rows-1 sm:grid-cols-2 sm:grid-rows-2 md:grid-cols-3 md:grid-rows-1 gap-4">
                     {/* Select de Artículos */}
                     <div className="  flex flex-col justify-start items-start">
                       <label htmlFor="articulo" className="form-title-md">
@@ -637,7 +644,7 @@ const EditRegister: React.FC<IEditRegister> = ({ register, onCloseModal, onUpdat
                         name="description"
                         value={registerData.description}
                         onChange={handleChange}
-                        className="w-[800px] h-[100px] p-1 mt-1 input-form-create resize-none outline-none"
+                        className="w-[300px] sm:w-[500px] md:w-[600px] lg:w-[700px] xl:w-[800px] 2xl:w-[900px] h-[100px] p-1 mt-1 input-form-create resize-none outline-none"
                         readOnly={false}
                       />
                     </div>

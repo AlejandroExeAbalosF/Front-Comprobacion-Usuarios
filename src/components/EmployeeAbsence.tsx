@@ -164,7 +164,7 @@ const EmployeeAbsence: React.FC<Props> = ({ userInfo, onClose }) => {
                   <p className=" block font-sans text-sm text-center antialiased font-bold  leading-none ">Fecha de Fin</p>
                 </th>
 
-                <th className="w-[100px] lg:w-[130px] p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50">
+                <th className="w-[100px] lg:w-auto p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50">
                   <p className="block font-sans text-sm antialiased font-bold  leading-none"></p>
                 </th>
               </tr>
@@ -184,7 +184,7 @@ const EmployeeAbsence: React.FC<Props> = ({ userInfo, onClose }) => {
                     </p>
                   </td>
                   <td className="hidden 2xl:table-cell  p-4 border-b border-[#cfd8dc]">
-                    <div className="w-[400px] h-[40px] overflow-hidden flex items-center">
+                    <div className="w-[350px] h-[40px] overflow-hidden flex items-center">
                       <p className="w-full text-sm text-start font-normal leading-normal text-blue-gray-900 break-words line-clamp-2">
                         {employeeAbsence.description}{" "}
                       </p>

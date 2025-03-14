@@ -15,6 +15,7 @@ const RegisterE = () => {
   const initialIsMsg = {
     type: "loading",
     message: "Cargando...",
+    status: "",
   };
 
   const webcamRef = useRef<Webcam>(null);
@@ -137,7 +138,7 @@ const RegisterE = () => {
         .then(({ data }) => {
           console.log("data", data);
           console.log(data);
-          setIsMsg({ type: "success", message: data.message });
+          setIsMsg({ type: "success", message: data.message, status: data?.status });
           setUserDataInputs(initialState);
           setErrors(initialState);
           setTimeout(() => {
@@ -211,7 +212,7 @@ const RegisterE = () => {
               </div>
               <h1 className="text-2xl ">{isMsg.message}</h1>
             </section>
-          ) : (
+          ) : isMsg.type === "success" ? isMsg.status === "TRABAJANDO" || isMsg.status === "PRESENTE" ? (
             <section className="w-[400px] h-[500px] text-center  m-0 flex flex-col items-center justify-start bg-[#ebf5ee] shadow-xl p-24 rounded-md">
               <div className="dummy-positioning d-flex">
                 <div className="success-icon">
@@ -221,7 +222,16 @@ const RegisterE = () => {
               </div>
               <h1 className="text-2xl ">{isMsg.message}</h1>
             </section>
-          )}
+          ) : (
+            <section className="w-[400px] h-[500px] text-center  m-0 flex flex-col items-center justify-start bg-[#f5f5eb] shadow-xl p-24 rounded-md">
+              <div className="screenAlert-icon screenAlert-warning scaleWarning">
+                <span className="screenAlert-body pulseWarningIns"></span>
+                <span className="screenAlert-dot pulseWarningIns"></span>
+              </div>
+              <h1 className="text-2xl ">{isMsg.message}</h1>
+            </section>
+          )
+            : null}
         </>
       ) : (
         <section className="w-[400px] h-[500px] text-center  m-0 flex flex-col items-center justify-start bg-white shadow-xl p-24 rounded-md">
@@ -234,8 +244,7 @@ const RegisterE = () => {
               value={userDataInputs.document}
               onChange={handleChange}
               className={`mt-11 block px-2 h-[35px]  text-black py-2.5  w-[200px]
-                text-sm  bg-transparent border-2  border-gray-300 appearance-none  dark:border-gray-600  focus:outline-none focus:ring-0 focus:border-[#4151cada] peer rounded-lg ${
-                  errors.document ? "focus:border-red-600 dark:border-red-600" : "focus:border-[#4151cada]"
+                text-sm  bg-transparent border-2  border-gray-300 appearance-none  dark:border-gray-600  focus:outline-none focus:ring-0 focus:border-[#4151cada] peer rounded-lg ${errors.document ? "focus:border-red-600 dark:border-red-600" : "focus:border-[#4151cada]"
                 }`}
             />
             {errors.document ? <span className="absolute  text-red-500 block w-full text-[12px]">{errors.document}</span> : null}

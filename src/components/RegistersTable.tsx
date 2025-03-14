@@ -211,7 +211,7 @@ const RegistersTable: React.FC<{ userInfo?: IUser | null; onCloseModal?: () => v
         >
           <IoIosClose className="w-10 h-10" />
         </button>
-        <div className="relative h-[320px] sm:h-[300px] md:h-[200px] xl:h-[110px] mx-4 mt-4 overflow-hidden  text-gray-700 bg-white rounded-none bg-clip-border">
+        <div className="relative h-[330px] sm:h-[300px] md:h-[200px] xl:h-[110px] mx-4 mt-4 overflow-hidden  text-gray-700 bg-white rounded-none bg-clip-border">
           <div className="flex flex-col justify-between gap-8 mb-4 md:flex-row md:items-center">
             <div className="flex w-full flex-col xl:flex-row gap-2 shrink-0 md:w-max">
               <div className="w-full md:w-[360px] ">
@@ -450,7 +450,7 @@ const RegistersTable: React.FC<{ userInfo?: IUser | null; onCloseModal?: () => v
                   className=" table-cell w-[150px] cursor-pointer  p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
                   // onClick={onClickName}
                 >
-                  <p className="block font-sans text-sm text-center antialiased font-bold  leading-none">Estado</p>
+                  <p className="block font-sans text-sm text-center antialiased font-bold  leading-none">Estado<p className="2xl:hidden">/Justificación</p></p>
                 </th>
 
                 <th

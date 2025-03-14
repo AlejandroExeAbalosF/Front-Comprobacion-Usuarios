@@ -122,11 +122,10 @@ const RegistrationTableR = () => {
       <motion.tr key={user.id} className={`hover:bg-slate-50 ${user.id === highlightedUserId ? "highlighted" : ""}`}>
         <PhotoProvider
           maskOpacity={0.5}
-          key={`${user.id}-${
-            user?.registrations.length > 0 && user.registrations[0].entryCapture ? user.registrations[0].entryCapture : 0
-          }-${user?.registrations.length > 0 && user.registrations[0].exitCapture ? user.registrations[0].exitCapture : 0}`}
+          key={`${user.id}-${user?.registrations.length > 0 && user.registrations[0].entryCapture ? user.registrations[0].entryCapture : 0
+            }-${user?.registrations.length > 0 && user.registrations[0].exitCapture ? user.registrations[0].exitCapture : 0}`}
         >
-          <td className="p-4 border-b border-[#cfd8dc] ">
+          <td className="w-[270px] p-4 border-b border-[#cfd8dc] ">
             <div className="flex items-center gap-3 ">
               <PhotoView src={`${user.image}`}>
                 <img
@@ -149,30 +148,28 @@ const RegistrationTableR = () => {
                     {user?.registrations.length > 0 ? (
                       user.registrations[0].status === "TRABAJANDO" ? (
                         <div
-                          className={`  items-center px-2 py-1 font-sans text-xs font-bold text-green-900 uppercase rounded-md select-none whitespace-nowrap ${
-                            user.registrations[0].type === "LLEGADA_TARDE" ? "bg-red-500/20" : "bg-green-500/20"
-                          }  `}
+                          className={`  items-center px-2 py-1 font-sans text-xs font-bold text-green-900 uppercase rounded-md select-none whitespace-nowrap ${user.registrations[0].type === "LLEGADA_TARDE" ? "bg-red-500/20" : "bg-green-500/20"
+                            }  `}
                           title={user.registrations[0].type === "LLEGADA_TARDE" ? "Llegada tarde" : ""}
                         >
                           <span className="">Trabajando</span>
                         </div>
                       ) : user.registrations[0].status === "PRESENTE" ? (
                         <div
-                          className={`grid items-center px-2 py-1 font-sans text-xs font-bold text-blue-900 uppercase rounded-md select-none whitespace-nowrap ${
-                            user.registrations[0].type === "LLEGADA_TARDE" ||
-                            user.registrations[0].type === "LLEGADA_TARDE-SALIDA_TEMPRANA" ||
-                            user.registrations[0].type === "SALIDA_TEMPRANA"
+                          className={`grid items-center px-2 py-1 font-sans text-xs font-bold text-blue-900 uppercase rounded-md select-none whitespace-nowrap ${user.registrations[0].type === "LLEGADA_TARDE" ||
+                              user.registrations[0].type === "LLEGADA_TARDE-SALIDA_TEMPRANA" ||
+                              user.registrations[0].type === "SALIDA_TEMPRANA"
                               ? "bg-red-500/20"
                               : "bg-blue-500/20"
-                          }`}
+                            }`}
                           title={
                             user.registrations[0].type === "LLEGADA_TARDE"
                               ? "Llegada tarde"
                               : user.registrations[0].type === "LLEGADA_TARDE-SALIDA_TEMPRANA"
-                              ? "Llegada tarde - Salida temprana"
-                              : user.registrations[0].type === "SALIDA_TEMPRANA"
-                              ? "Salida temprana"
-                              : ""
+                                ? "Llegada tarde - Salida temprana"
+                                : user.registrations[0].type === "SALIDA_TEMPRANA"
+                                  ? "Salida temprana"
+                                  : ""
                           }
                         >
                           <span className="">Presente</span>
@@ -192,35 +189,38 @@ const RegistrationTableR = () => {
               </div>
             </div>
           </td>
-          <td className="  table-cell sm:hidden w-[100px] gap-2 text-center  items-center p-4 border-b border-[#cfd8dc]">
-            <div className="flex flex-col items-center justify-center">
-              <p className="lg:w-auto block font-sans text-sm text-center antialiased font-normal leading-normal text-blue-gray-900">
-                {user?.registrations.length > 0 && user.registrations[0].entryDate
-                  ? dayjs(user.registrations[0].entryDate).format("DD/MM/YYYY")
-                  : "-"}
-              </p>
-              <p className="lg:w-auto  block font-sans text-sm text-center antialiased font-normal leading-normal text-blue-gray-900">
-                {user?.registrations.length > 0 && user.registrations[0].entryDate
-                  ? user.registrations[0].status !== "AUSENTE" && user.registrations[0].status !== "NO_LABORABLE"
-                    ? dayjs(user.registrations[0].entryDate).format("HH:mm")
-                    : null
-                  : null}
-              </p>
+          <td className="  table-cell sm:hidden w-[100px] gap-2 text-center  items-center p-1 border-b border-[#cfd8dc]">
+            <div className="w-[110px] flex flex-col items-center justify-center">
+              <div className="w-[110px] flex flex-col items-center justify-center">
+                <p className="w-[100px] lg:w-auto block font-sans text-sm text-center antialiased font-normal leading-normal text-blue-gray-900">
+                  {user?.registrations.length > 0 && user.registrations[0].entryDate
+                    ? dayjs(user.registrations[0].entryDate).format("DD/MM/YYYY")
+                    : "-"}
+                </p>
+                <p className="w-[100px] lg:w-auto  block font-sans text-sm text-center antialiased font-normal leading-normal text-blue-gray-900">
+                  {user?.registrations.length > 0 && user.registrations[0].entryDate
+                    ? user.registrations[0].status !== "AUSENTE" && user.registrations[0].status !== "NO_LABORABLE"
+                      ? dayjs(user.registrations[0].entryDate).format("HH:mm")
+                      : null
+                    : null}
+                </p>
+              </div>
+              <div className="w-[110px] flex flex-col items-center justify-center">
+                <p className="w-[100px] lg:w-auto  block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
+                  {user?.registrations.length > 0 && user.registrations[0].exitDate
+                    ? dayjs(user.registrations[0].exitDate).format("DD/MM/YYYY")
+                    : "-"}
+                </p>
+                <p className="w-[100px] lg:w-auto  block font-sans text-sm text-center antialiased font-normal leading-normal text-blue-gray-900">
+                  {user?.registrations.length > 0 && user.registrations[0].exitDate
+                    ? user.registrations[0].status !== "AUSENTE" && user.registrations[0].status !== "NO_LABORABLE"
+                      ? dayjs(user.registrations[0].exitDate).format("HH:mm")
+                      : null
+                    : null}
+                </p>
+              </div>
             </div>
-            <div className="flex flex-col items-center justify-center">
-              <p className="lg:w-auto  block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                {user?.registrations.length > 0 && user.registrations[0].exitDate
-                  ? dayjs(user.registrations[0].exitDate).format("DD/MM/YYYY")
-                  : "-"}
-              </p>
-              <p className="lg:w-auto  block font-sans text-sm text-center antialiased font-normal leading-normal text-blue-gray-900">
-                {user?.registrations.length > 0 && user.registrations[0].exitDate
-                  ? user.registrations[0].status !== "AUSENTE" && user.registrations[0].status !== "NO_LABORABLE"
-                    ? dayjs(user.registrations[0].exitDate).format("HH:mm")
-                    : null
-                  : null}
-              </p>
-            </div>
+
           </td>
           <td className="hidden 2xl:table-cell p-4 border-b border-[#cfd8dc]">
             <p className=" font-sans text-sm  flex flex-col items-center lg:items-start antialiased font-normal leading-normal text-blue-gray-900">
@@ -262,30 +262,28 @@ const RegistrationTableR = () => {
           {user?.registrations.length > 0 ? (
             user.registrations[0].status === "TRABAJANDO" ? (
               <div
-                className={`  items-center px-2 py-1 font-sans text-xs font-bold text-green-900 uppercase rounded-md select-none whitespace-nowrap ${
-                  user.registrations[0].type === "LLEGADA_TARDE" ? "bg-red-500/20" : "bg-green-500/20"
-                }  `}
+                className={`  items-center px-2 py-1 font-sans text-xs font-bold text-green-900 uppercase rounded-md select-none whitespace-nowrap ${user.registrations[0].type === "LLEGADA_TARDE" ? "bg-red-500/20" : "bg-green-500/20"
+                  }  `}
                 title={user.registrations[0].type === "LLEGADA_TARDE" ? "Llegada tarde" : ""}
               >
                 <span className="">Trabajando</span>
               </div>
             ) : user.registrations[0].status === "PRESENTE" ? (
               <div
-                className={`grid items-center px-2 py-1 font-sans text-xs font-bold text-blue-900 uppercase rounded-md select-none whitespace-nowrap ${
-                  user.registrations[0].type === "LLEGADA_TARDE" ||
-                  user.registrations[0].type === "LLEGADA_TARDE-SALIDA_TEMPRANA" ||
-                  user.registrations[0].type === "SALIDA_TEMPRANA"
+                className={`grid items-center px-2 py-1 font-sans text-xs font-bold text-blue-900 uppercase rounded-md select-none whitespace-nowrap ${user.registrations[0].type === "LLEGADA_TARDE" ||
+                    user.registrations[0].type === "LLEGADA_TARDE-SALIDA_TEMPRANA" ||
+                    user.registrations[0].type === "SALIDA_TEMPRANA"
                     ? "bg-red-500/20"
                     : "bg-blue-500/20"
-                }`}
+                  }`}
                 title={
                   user.registrations[0].type === "LLEGADA_TARDE"
                     ? "Llegada tarde"
                     : user.registrations[0].type === "LLEGADA_TARDE-SALIDA_TEMPRANA"
-                    ? "Llegada tarde - Salida temprana"
-                    : user.registrations[0].type === "SALIDA_TEMPRANA"
-                    ? "Salida temprana"
-                    : ""
+                      ? "Llegada tarde - Salida temprana"
+                      : user.registrations[0].type === "SALIDA_TEMPRANA"
+                        ? "Salida temprana"
+                        : ""
                 }
               >
                 <span className="">Presente</span>
@@ -429,16 +427,16 @@ const RegistrationTableR = () => {
             <thead className="sticky top-0 bg-white shadow-md" style={{ top: "-1.8px" }}>
               <tr className="bg-[#F5F7F8]">
                 <th
-                  className="cursor-pointer w-[150px] 2xl:w-[300px] sm:w-[150px] p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
+                  className="cursor-pointer w-[200px] 2xl:w-[300px] sm:w-[150px] p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
                   onClick={onClickName}
                 >
                   <p className="block font-sans text-sm antialiased font-bold leading-none ">Empleados</p>
                 </th>
                 <th
-                  className="table-cell sm:hidden cursor-pointer  p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
+                  className="table-cell w-[100px] sm:hidden cursor-pointer   border-y border-[#cbd5e0] bg-blue-gray-50/50"
                   onClick={onClickName}
                 >
-                  <p className="block font-sans text-sm text-center antialiased font-bold  leading-none">Ingreso/Salida</p>
+                  <p className="block  font-sans text-sm text-center antialiased font-bold  leading-none">Ingreso/Salida</p>
                 </th>
                 <th
                   className=" hidden 2xl:table-cell 2xl:w-[150px]  cursor-pointer p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
