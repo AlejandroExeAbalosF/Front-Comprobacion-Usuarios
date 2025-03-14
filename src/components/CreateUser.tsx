@@ -8,6 +8,7 @@ import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { addUser } from "../redux/slices/usersEmpSlice";
 import { toast } from "sonner";
 import { formatName, formatTime } from "../utils/format";
+import { IoIosClose } from "react-icons/io";
 
 const BACK_API_URL = import.meta.env.VITE_LOCAL_API_URL;
 
@@ -219,11 +220,17 @@ const CreateUser: React.FC<CreateUserProps> = ({ onCloseModal, userInfo, setIsEd
     }
   };
   return (
-    <div className="w-[1500px] h-200">
+    <div className="w-[400px] sm:w-[600px] md:w-[800px] lg:w-[1000px] xl:w-[1300px] 2xl:w-[1500px] h-200">
       <h2 className="mt-4  text-center font-[500] text-[30px]">
         {userInfo ? `Editar Empleado: ${formatName(userInfo?.name, userInfo?.lastName)}` : "Crear Empleado"}
       </h2>
-      <div className="flex flex-row w-auto p-6 ">
+      <button
+        onClick={handleModal}
+        className="absolute top-[-1px] right-[-1px] rounded-lg text-gray-400   hover:text-[#160852] cursor-pointer "
+      >
+        <IoIosClose className="w-10 h-10" />
+      </button>
+      <div className="flex flex-col overflow-auto h-[700px] md:h-auto md:overflow-hidden md:flex-row w-auto p-6 ">
         <div className="flex flex-col items-center">
           <div className="w-[380px] h-[300px] flex flex-col justify-center items-center">
             <div className="flex relative justify-center items-center  mt-1 bg-gray-400 hover:bg-[#69696965] w-[252px] h-[252px] rounded-[50%] shadow-md ">
@@ -303,15 +310,15 @@ const CreateUser: React.FC<CreateUserProps> = ({ onCloseModal, userInfo, setIsEd
             </div>
           </div>
         </div>
-        <div className="w-[1024px] h-[600px] ">
+        <div className=" ">
           <form onSubmit={handleSubmit} className="flex  flex-col justify-center items-center ">
-            <main className="w-[1024px] ">
-              <section className="w-full h-full">
+            <main className="w-[375px] sm:w-auto md:w-[390px] lg:w-[590px] xl:w-[890px] 2xl:w-[1090px] h-[607px] overflow-auto ">
+              <section className="">
                 <div className=" w-full">
                   <h3 className="text-start text-[20px]">Datos Personales</h3> <hr className="border-t border-gray-300 my-3" />
                 </div>
-                <div className="my-3 h-[120px] flex flex-col xl:flex-row xl:h-auto gap-4 ">
-                  <div className=" relative  w-[500px]   flex flex-col justify-start items-start">
+                <div className="my-3 flex flex-col lg:flex-row  gap-4 ">
+                  <div className=" relative  w-[200px]  2xl:w-[500px]   flex flex-col justify-start items-start">
                     <label className="form-title-md" htmlFor="">
                       {" "}
                       Nombres
@@ -321,12 +328,12 @@ const CreateUser: React.FC<CreateUserProps> = ({ onCloseModal, userInfo, setIsEd
                       type="text"
                       name="name"
                       value={userDataInputs.name}
-                      className={` px-2 h-[35px]  text-black py-2.5  w-[500px]  input-form-create`}
+                      className={` px-2 h-[35px]  text-black py-2.5  w-[200px]  2xl:w-[500px]  input-form-create`}
                       placeholder=" "
                       onChange={handleChange}
                     />
                   </div>
-                  <div className=" relative  w-[500px]  flex flex-col justify-start items-start">
+                  <div className=" relative  w-[200px]  2xl:w-[500px]  flex flex-col justify-start items-start">
                     <label className="form-title-md" htmlFor="">
                       {" "}
                       Apellidos
@@ -336,43 +343,45 @@ const CreateUser: React.FC<CreateUserProps> = ({ onCloseModal, userInfo, setIsEd
                       type="text"
                       name="lastName"
                       value={userDataInputs.lastName}
-                      className={` block px-2 h-[35px]  text-black py-2.5  w-[500px] input-form-create`}
+                      className={` block px-2 h-[35px]  text-black py-2.5  w-[200px]  2xl:w-[500px] input-form-create`}
                       placeholder=" "
                       onChange={handleChange}
                     />
                   </div>
                 </div>
-                <div className="my-3 flex flex-row  items-start justify-start gap-4 ">
-                  <div className=" relative  w-[200px] min-w-[200px] flex flex-col justify-start items-start">
-                    <label className="form-title-md required" htmlFor="">
-                      {" "}
-                      Documento
-                    </label>
-                    <input
-                      // id={name}
-                      type="text"
-                      name="document"
-                      value={userDataInputs.document}
-                      className={` block px-2 h-[35px]  text-black py-2.5  w-[200px] input-form-create`}
-                      placeholder=" "
-                      onChange={handleChange}
-                    />
-                  </div>
-                  <div className=" relative   flex flex-col justify-start items-start">
-                    <label className="form-title-md required" htmlFor="">
-                      {" "}
-                      Correo Electronico
-                    </label>
-                    <input
-                      // id={name}
-                      type="text"
-                      name="email"
-                      value={userDataInputs.email}
-                      className={` block px-2 h-[35px]  text-black py-2.5  w-[500px]
+                <div className="my-3 flex flex-col xl:flex-row   items-start justify-start gap-4 ">
+                  <div className="flex flex-col lg:flex-row  items-start justify-start gap-4 ">
+                    <div className=" relative  w-[200px] min-w-[200px] flex flex-col justify-start items-start">
+                      <label className="form-title-md required" htmlFor="">
+                        {" "}
+                        Documento
+                      </label>
+                      <input
+                        // id={name}
+                        type="text"
+                        name="document"
+                        value={userDataInputs.document}
+                        className={` block px-2 h-[35px]  text-black py-2.5  w-[200px] input-form-create`}
+                        placeholder=" "
+                        onChange={handleChange}
+                      />
+                    </div>
+                    <div className=" relative   flex flex-col justify-start items-start">
+                      <label className="form-title-md required" htmlFor="">
+                        {" "}
+                        Correo Electronico
+                      </label>
+                      <input
+                        // id={name}
+                        type="text"
+                        name="email"
+                        value={userDataInputs.email}
+                        className={` block px-2 h-[35px]  text-black py-2.5 w-[250px] 2xl:w-[287px]
                          input-form-create`}
-                      placeholder=" "
-                      onChange={handleChange}
-                    />
+                        placeholder=" "
+                        onChange={handleChange}
+                      />
+                    </div>
                   </div>
                   <div className=" relative   flex flex-col justify-start items-start">
                     <label className="form-title-md" htmlFor="">
@@ -405,36 +414,38 @@ const CreateUser: React.FC<CreateUserProps> = ({ onCloseModal, userInfo, setIsEd
                     </div>
                   </div>
                 </div>
-                <div className="my-3 flex flex-row  items-start justify-start gap-4 ">
-                  <div className=" relative  w-[200px] min-w-[200px] flex flex-col justify-start items-start">
-                    <label className="form-title-md" htmlFor="">
-                      {" "}
-                      Celular
-                    </label>
-                    <input
-                      // id={name}
-                      type="text"
-                      name="cellphone"
-                      value={userDataInputs.cellphone}
-                      className={` block px-2 h-[35px]  text-black py-2.5  w-[200px] input-form-create`}
-                      placeholder=" "
-                      onChange={handleChange}
-                    />
-                  </div>
-                  <div className=" relative w-[200px]  flex flex-col justify-start items-start">
-                    <label className="form-title-md" htmlFor="">
-                      {" "}
-                      Telefono fijo
-                    </label>
-                    <input
-                      // id={name}
-                      type="text"
-                      name="phone"
-                      value={userDataInputs.phone}
-                      className={` block px-2 h-[35px]  text-black py-2.5  w-[200px] input-form-create`}
-                      placeholder=" "
-                      onChange={handleChange}
-                    />
+                <div className="my-3 flex flex-col xl:flex-row  items-start justify-start gap-4 ">
+                  <div className="flex flex-col lg:flex-row  items-start justify-start gap-4 ">
+                    <div className=" relative  w-[200px] min-w-[200px] flex flex-col justify-start items-start">
+                      <label className="form-title-md" htmlFor="">
+                        {" "}
+                        Celular
+                      </label>
+                      <input
+                        // id={name}
+                        type="text"
+                        name="cellphone"
+                        value={userDataInputs.cellphone}
+                        className={` block px-2 h-[35px]  text-black py-2.5  w-[200px] input-form-create`}
+                        placeholder=" "
+                        onChange={handleChange}
+                      />
+                    </div>
+                    <div className=" relative w-[200px]  flex flex-col justify-start items-start">
+                      <label className="form-title-md" htmlFor="">
+                        {" "}
+                        Telefono fijo
+                      </label>
+                      <input
+                        // id={name}
+                        type="text"
+                        name="phone"
+                        value={userDataInputs.phone}
+                        className={` block px-2 h-[35px]  text-black py-2.5  w-[200px] input-form-create`}
+                        placeholder=" "
+                        onChange={handleChange}
+                      />
+                    </div>
                   </div>
                   <div className=" relative w-[200px]  flex flex-col justify-start items-start">
                     <label className="form-title-md" htmlFor="dob">
@@ -463,7 +474,7 @@ const CreateUser: React.FC<CreateUserProps> = ({ onCloseModal, userInfo, setIsEd
                     /> */}
                   </div>
                 </div>
-                <div className="my-3 flex flex-row  items-start justify-start gap-4 ">
+                <div className="my-3 flex flex-col lg:flex-row   items-start justify-start gap-4 ">
                   <div className=" relative w-[200px]  flex flex-col justify-start items-start">
                     <label className="form-title-md" htmlFor="">
                       Nivel de Estudio
@@ -493,7 +504,7 @@ const CreateUser: React.FC<CreateUserProps> = ({ onCloseModal, userInfo, setIsEd
                       type="text"
                       name="profession"
                       value={userDataInputs.profession}
-                      className={` block px-2 h-[35px]  text-black py-2.5  w-[500px] input-form-create`}
+                      className={` block px-2 h-[35px]  text-black py-2.5   input-form-create`}
                       placeholder=" "
                       onChange={handleChange}
                     />
@@ -521,7 +532,7 @@ const CreateUser: React.FC<CreateUserProps> = ({ onCloseModal, userInfo, setIsEd
                 <div className=" w-full">
                   <h3 className="text-start text-[20px]">Datos Laborales</h3> <hr className="border-t border-gray-300 my-3" />
                 </div>
-                <div className="my-3 flex flex-row gap-4 ">
+                <div className="my-3 flex flex-col 2xl:flex-row gap-4 ">
                   <div className=" relative  w-[500px]   flex flex-col justify-start items-start">
                     <label className="form-title-md" htmlFor="">
                       {" "}
@@ -575,38 +586,40 @@ const CreateUser: React.FC<CreateUserProps> = ({ onCloseModal, userInfo, setIsEd
                     /> */}
                   </div>
                 </div>
-                <div className="my-3 flex flex-row gap-4 ">
-                  <div className=" relative  w-[395px]   flex flex-col justify-start items-start">
-                    <label className="form-title-md" htmlFor="">
-                      {" "}
-                      Funcion
-                    </label>
-                    <input
-                      // id={name}
-                      type="text"
-                      name="function"
-                      value={userDataInputs.function}
-                      className={` px-2 h-[35px]  text-black py-2.5  w-[395px]  input-form-create`}
-                      placeholder=" "
-                      onChange={handleChange}
-                    />
+                <div className="my-3 flex flex-col xl:flex-row gap-4 ">
+                  <div className="flex flex-col lg:flex-row  items-start justify-start gap-4 ">
+                    <div className=" relative w-[200px]   2xl:w-[395px]   flex flex-col justify-start items-start">
+                      <label className="form-title-md" htmlFor="">
+                        {" "}
+                        Funcion
+                      </label>
+                      <input
+                        // id={name}
+                        type="text"
+                        name="function"
+                        value={userDataInputs.function}
+                        className={` px-2 h-[35px]  text-black py-2.5 w-[200px]   2xl:w-[395px]  input-form-create`}
+                        placeholder=" "
+                        onChange={handleChange}
+                      />
+                    </div>
+                    <div className=" relative  w-[250px]   2xl:w-[395px]  flex flex-col justify-start items-start">
+                      <label className="form-title-md" htmlFor="">
+                        {" "}
+                        Situacion
+                      </label>
+                      <input
+                        // id={name}
+                        type="text"
+                        name="situation"
+                        value={userDataInputs.situation}
+                        className={` block px-2 h-[35px]  text-black py-2.5  w-[250px]   2xl:w-[395px] input-form-create`}
+                        placeholder=" "
+                        onChange={handleChange}
+                      />
+                    </div>
                   </div>
-                  <div className=" relative  w-[395px]  flex flex-col justify-start items-start">
-                    <label className="form-title-md" htmlFor="">
-                      {" "}
-                      Situacion
-                    </label>
-                    <input
-                      // id={name}
-                      type="text"
-                      name="situation"
-                      value={userDataInputs.situation}
-                      className={` block px-2 h-[35px]  text-black py-2.5  w-[395px] input-form-create`}
-                      placeholder=" "
-                      onChange={handleChange}
-                    />
-                  </div>
-                  <div className=" relative w-[200px]  flex flex-col justify-start items-start">
+                  <div className=" relative  2xl:w-[200px]  flex flex-col justify-start items-start">
                     <label className="form-title-md" htmlFor="dob">
                       Fecha de Ingreso
                     </label>
@@ -616,7 +629,7 @@ const CreateUser: React.FC<CreateUserProps> = ({ onCloseModal, userInfo, setIsEd
                       value={userDataInputs.incomeDate}
                       name="incomeDate"
                       onChange={handleChange}
-                      className="block px-2 h-[35px] text-black py-2.5 w-[200px]
+                      className="block px-2 h-[35px] text-black py-2.5  2xl:w-[200px] 
             text-sm bg-transparent border border-[#E2E8F0] appearance-none 
             dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-[#4151cada] peer rounded-lg"
                     />

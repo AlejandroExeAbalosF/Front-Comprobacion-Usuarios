@@ -143,30 +143,86 @@ const RegistrationTableR = () => {
                   {/* opacity-70  truncate */}
                   {user.email}
                 </p>
-                <dl className="sm:hidden">
+                <dl className="md:hidden">
                   <dt className="sr-only">Estado</dt>
                   <dd className="flex items-center justify-center">
                     {user?.registrations.length > 0 ? (
-                      user.registrations[0].status ? (
-                        <div className="ml-14 inline-block  text-center px-2 py-1 font-sans text-xs font-bold text-green-900 uppercase rounded-md select-none whitespace-nowrap bg-green-500/20">
+                      user.registrations[0].status === "TRABAJANDO" ? (
+                        <div
+                          className={`  items-center px-2 py-1 font-sans text-xs font-bold text-green-900 uppercase rounded-md select-none whitespace-nowrap ${
+                            user.registrations[0].type === "LLEGADA_TARDE" ? "bg-red-500/20" : "bg-green-500/20"
+                          }  `}
+                          title={user.registrations[0].type === "LLEGADA_TARDE" ? "Llegada tarde" : ""}
+                        >
+                          <span className="">Trabajando</span>
+                        </div>
+                      ) : user.registrations[0].status === "PRESENTE" ? (
+                        <div
+                          className={`grid items-center px-2 py-1 font-sans text-xs font-bold text-blue-900 uppercase rounded-md select-none whitespace-nowrap ${
+                            user.registrations[0].type === "LLEGADA_TARDE" ||
+                            user.registrations[0].type === "LLEGADA_TARDE-SALIDA_TEMPRANA" ||
+                            user.registrations[0].type === "SALIDA_TEMPRANA"
+                              ? "bg-red-500/20"
+                              : "bg-blue-500/20"
+                          }`}
+                          title={
+                            user.registrations[0].type === "LLEGADA_TARDE"
+                              ? "Llegada tarde"
+                              : user.registrations[0].type === "LLEGADA_TARDE-SALIDA_TEMPRANA"
+                              ? "Llegada tarde - Salida temprana"
+                              : user.registrations[0].type === "SALIDA_TEMPRANA"
+                              ? "Salida temprana"
+                              : ""
+                          }
+                        >
                           <span className="">Presente</span>
                         </div>
-                      ) : (
-                        <div className="ml-14 inline-block  text-center px-2 py-1 font-sans text-xs font-bold text-blue-900 uppercase rounded-md select-none whitespace-nowrap bg-blue-500/20">
-                          <span className="">Inactivo</span>
+                      ) : user.registrations[0].status === "AUSENTE" ? (
+                        <div className="  items-center px-2 py-1 font-sans text-xs font-bold text-amber-900 uppercase rounded-md select-none whitespace-nowrap bg-blue-gray-500/20 bg-amber-500/20">
+                          <span className="">Ausente</span>
                         </div>
-                      )
-                    ) : (
-                      <div className="ml-14 inline-block  text-center px-2 py-1 font-sans text-xs font-bold uppercase rounded-md select-none whitespace-nowrap bg-blue-gray-500/20 text-blue-gray-900">
-                        <span className="">No Estado</span>
-                      </div>
-                    )}
+                      ) : user.registrations[0].status === "NO_LABORABLE" ? (
+                        <div className=" grid items-center px-2 py-1 font-sans text-xs font-bold uppercase rounded-md select-none whitespace-nowrap bg-blue-gray-500/20 text-blue-gray-900">
+                          <span className="">Día No Laboral</span>
+                        </div>
+                      ) : null
+                    ) : null}
                   </dd>
                 </dl>
               </div>
             </div>
           </td>
-          <td className="hidden lg:table-cell p-4 border-b border-[#cfd8dc]">
+          <td className="  table-cell sm:hidden w-[100px] gap-2 text-center  items-center p-4 border-b border-[#cfd8dc]">
+            <div className="flex flex-col items-center justify-center">
+              <p className="lg:w-auto block font-sans text-sm text-center antialiased font-normal leading-normal text-blue-gray-900">
+                {user?.registrations.length > 0 && user.registrations[0].entryDate
+                  ? dayjs(user.registrations[0].entryDate).format("DD/MM/YYYY")
+                  : "-"}
+              </p>
+              <p className="lg:w-auto  block font-sans text-sm text-center antialiased font-normal leading-normal text-blue-gray-900">
+                {user?.registrations.length > 0 && user.registrations[0].entryDate
+                  ? user.registrations[0].status !== "AUSENTE" && user.registrations[0].status !== "NO_LABORABLE"
+                    ? dayjs(user.registrations[0].entryDate).format("HH:mm")
+                    : null
+                  : null}
+              </p>
+            </div>
+            <div className="flex flex-col items-center justify-center">
+              <p className="lg:w-auto  block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
+                {user?.registrations.length > 0 && user.registrations[0].exitDate
+                  ? dayjs(user.registrations[0].exitDate).format("DD/MM/YYYY")
+                  : "-"}
+              </p>
+              <p className="lg:w-auto  block font-sans text-sm text-center antialiased font-normal leading-normal text-blue-gray-900">
+                {user?.registrations.length > 0 && user.registrations[0].exitDate
+                  ? user.registrations[0].status !== "AUSENTE" && user.registrations[0].status !== "NO_LABORABLE"
+                    ? dayjs(user.registrations[0].exitDate).format("HH:mm")
+                    : null
+                  : null}
+              </p>
+            </div>
+          </td>
+          <td className="hidden 2xl:table-cell p-4 border-b border-[#cfd8dc]">
             <p className=" font-sans text-sm  flex flex-col items-center lg:items-start antialiased font-normal leading-normal text-blue-gray-900">
               {user.document}
             </p>
@@ -202,7 +258,7 @@ const RegistrationTableR = () => {
             </div>
           </td>
         </PhotoProvider>
-        <td className="hidden sm:table-cell w-[100px] text-center p-4 border-b border-[#cfd8dc]">
+        <td className="hidden  md:table-cell w-[100px] text-center p-4 border-b border-[#cfd8dc]">
           {user?.registrations.length > 0 ? (
             user.registrations[0].status === "TRABAJANDO" ? (
               <div
@@ -245,7 +301,7 @@ const RegistrationTableR = () => {
             ) : null
           ) : null}
         </td>
-        <td className=" sm:table-cell w-[100px] text-center flex flex-col items-center p-4 border-b border-[#cfd8dc]">
+        <td className="hidden sm:table-cell w-[100px] text-center  items-center p-4 border-b border-[#cfd8dc]">
           <p className="lg:w-auto block font-sans text-sm text-center antialiased font-normal leading-normal text-blue-gray-900">
             {user?.registrations.length > 0 && user.registrations[0].entryDate
               ? dayjs(user.registrations[0].entryDate).format("DD/MM/YYYY")
@@ -259,7 +315,7 @@ const RegistrationTableR = () => {
               : null}
           </p>
         </td>
-        <td className=" sm:table-cell w-[100px] text-center  p-4 border-b border-[#cfd8dc]">
+        <td className="hidden sm:table-cell w-[100px] text-center  p-4 border-b border-[#cfd8dc]">
           <p className="lg:w-auto  block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
             {user?.registrations.length > 0 && user.registrations[0].exitDate
               ? dayjs(user.registrations[0].exitDate).format("DD/MM/YYYY")
@@ -267,14 +323,14 @@ const RegistrationTableR = () => {
           </p>
           <p className="lg:w-auto  block font-sans text-sm text-center antialiased font-normal leading-normal text-blue-gray-900">
             {user?.registrations.length > 0 && user.registrations[0].exitDate
-            ? user.registrations[0].status !== "AUSENTE" && user.registrations[0].status !== "NO_LABORABLE"
-              ? dayjs(user.registrations[0].exitDate).format("HH:mm")
-              : null
+              ? user.registrations[0].status !== "AUSENTE" && user.registrations[0].status !== "NO_LABORABLE"
+                ? dayjs(user.registrations[0].exitDate).format("HH:mm")
+                : null
               : null}
           </p>
         </td>
-        <td className="hidden w-[130px] lg:table-cell lg:flex lg:flex-row items-center p-4 border-b border-[#cfd8dc]">
-          <div className="flex flex-row items-center justify-around ">
+        <td className="w-[50px] sm:w-[110px]  lg:table-cell  lg:flex-row items-center pr-4 sm:p-4 border-b border-[#cfd8dc]">
+          <div className=" flex flex-col sm:flex-row items-center justify-around gap-2">
             <BsFillPersonLinesFill
               className="w-7 h-7 cursor-pointer"
               onClick={(e) => handleOpenModal(user, e)}
@@ -286,8 +342,6 @@ const RegistrationTableR = () => {
               id="userRegisters"
             />
           </div>
-          <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900"></p>
-          <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900"></p>
         </td>
       </motion.tr>
     );
@@ -306,10 +360,10 @@ const RegistrationTableR = () => {
   };
   //!-----------------------------------------------------------
   return (
-    <section className="2xl:w-[1500px] lg:w-[1200px] md:w-[900px]  h-[700px]">
+    <section className="2xl:w-[1500px] lg:w-[1200px] md:w-[800px] sm:w-[670px] w-[470px] h-[700px] max-h-[700px] ">
       <h2 className="notificationsext-2xl ml-5  text-2xl flex  items-start">Listado de Empleados</h2>
       <div className="xs:w-4/5 m-auto my-2 relative flex flex-col w-full h-full text-gray-700 bg-white shadow-md rounded-xl bg-clip-border">
-        <div className="relative mx-4 mt-4 overflow-hidden text-gray-700 bg-white rounded-none bg-clip-border">
+        <div className="relative h-[200px] md:h-auto mx-4 mt-4 overflow-hidden text-gray-700 bg-white rounded-none bg-clip-border">
           <div className="flex flex-col justify-between gap-8 mb-4 md:flex-row md:items-center">
             {/* <div>
               <h5 className="block font-sans text-xl antialiased font-semibold leading-snug tracking-normal text-blue-gray-900">
@@ -372,16 +426,22 @@ const RegistrationTableR = () => {
         {/* Tabla */}
         <div className=" overflow-auto overflow-x-hidden  h-full p-0 m-0">
           <table className="w-full  text-left table-auto min-w-max min-h-max border-collapse">
-            <thead className="sticky top-0 bg-white shadow-md" style={{ top: "-0.5px" }}>
+            <thead className="sticky top-0 bg-white shadow-md" style={{ top: "-1.8px" }}>
               <tr className="bg-[#F5F7F8]">
                 <th
-                  className="cursor-pointer w-[250px] sm:w-[350px] p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
+                  className="cursor-pointer w-[150px] 2xl:w-[300px] sm:w-[150px] p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
                   onClick={onClickName}
                 >
                   <p className="block font-sans text-sm antialiased font-bold leading-none ">Empleados</p>
                 </th>
                 <th
-                  className=" hidden lg:table-cell w-[150px]  cursor-pointer p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
+                  className="table-cell sm:hidden cursor-pointer  p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
+                  onClick={onClickName}
+                >
+                  <p className="block font-sans text-sm text-center antialiased font-bold  leading-none">Ingreso/Salida</p>
+                </th>
+                <th
+                  className=" hidden 2xl:table-cell 2xl:w-[150px]  cursor-pointer p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
                   onClick={onClickName}
                 >
                   <p className=" font-sans text-sm text-center lg:text-start  antialiased font-bold  leading-none ">Documento</p>
@@ -396,24 +456,24 @@ const RegistrationTableR = () => {
                   <p className=" block font-sans text-sm antialiased font-bold  leading-none ">Captura de Ingreso</p>
                 </th>
                 <th
-                  className="hidden sm:table-cell  w-[150px] cursor-pointer p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
+                  className="hidden md:table-cell  w-[150px] cursor-pointer p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
                   onClick={onClickName}
                 >
                   <p className="block font-sans text-sm text-center antialiased font-bold  leading-none">Estado</p>
                 </th>
                 <th
-                  className=" sm:table-cell cursor-pointer  p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
+                  className="hidden sm:table-cell cursor-pointer  p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
                   onClick={onClickName}
                 >
                   <p className="block font-sans text-sm text-center antialiased font-bold  leading-none">Ingreso</p>
                 </th>
                 <th
-                  className=" sm:table-cell cursor-pointer  p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
+                  className="hidden sm:table-cell w-[120px] cursor-pointer  p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
                   onClick={onClickName}
                 >
                   <p className="block font-sans text-sm text-center antialiased font-bold  leading-none">Salida</p>
                 </th>
-                <th className="hidden lg:table-cell p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50">
+                <th className="w-[50px] sm:w-auto lg:table-cell sm:p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50">
                   <p className="block font-sans text-sm antialiased font-bold  leading-none"></p>
                 </th>
               </tr>

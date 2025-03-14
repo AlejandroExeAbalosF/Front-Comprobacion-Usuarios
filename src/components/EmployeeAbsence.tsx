@@ -73,11 +73,11 @@ const EmployeeAbsence: React.FC<Props> = ({ userInfo, onClose }) => {
     });
   };
   return (
-    <section className="2xl:w-[1084px] lg:w-[800px] md:w-[800px]  h-[620px]  ">
+    <section className="w-[375px] sm:w-auto md:w-[390px] lg:w-[590px] xl:w-[890px] 2xl:w-[1024px] h-[670px]  flex flex-col justify-center items-center">
       <div className="xs:w-4/5 m-auto my-2 relative flex flex-col w-full h-full text-gray-700 bg-white shadow-md rounded-xl bg-clip-border">
         <h2 className="notificationsext-2xl ml-5  text-2xl flex  items-start">Fechas de Ausencia</h2>
-        <div className="relative mx-4 mt-4 overflow-hidden text-gray-700 bg-white rounded-none bg-clip-border">
-          <div className="flex flex-col justify-between gap-8 mb-4 md:flex-row md:items-center">
+        <div className="relative h-[200px] lg:h-auto mx-4 mt-4 overflow-hidden text-gray-700 bg-white rounded-none bg-clip-border">
+          <div className="flex flex-col justify-between gap-8 mb-4 lg:flex-row lg:items-center">
             {/* <div>
           <h5 className="block font-sans text-xl antialiased font-semibold leading-snug tracking-normal text-blue-gray-900">
             Recent Transactions
@@ -119,6 +119,7 @@ const EmployeeAbsence: React.FC<Props> = ({ userInfo, onClose }) => {
               </div>
             </div>
             {/* <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Agregar empleado</button> */}
+
             <button
               className="rounded-md bg-blue-600 py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-blue-700 focus:shadow-none active:bg-blue-700 hover:bg-blue-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none ml-2"
               id="createEmployeeAbsence"
@@ -134,19 +135,19 @@ const EmployeeAbsence: React.FC<Props> = ({ userInfo, onClose }) => {
             <thead className="sticky top-0 bg-white shadow-md" style={{ top: "-0.5px" }}>
               <tr className="bg-[#F5F7F8]">
                 <th
-                  className="cursor-pointer w-[150px] p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
+                  className="cursor-pointer w-[100px] xl:w-[150px] p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
                   // onClick={onClickName}
                 >
                   <p className="block font-sans text-sm text-center antialiased font-bold leading-none ">Tipo</p>
                 </th>
                 <th
-                  className="cursor-pointer w-[150px] p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
+                  className="hidden xl:table-cell cursor-pointer w-[100px] xl:w-[150px] p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
                   // onClick={onClickName}
                 >
                   <p className="block font-sans text-sm text-center antialiased font-bold leading-none ">Articulo</p>
                 </th>
                 <th
-                  className=" hidden lg:table-cell w-[400px]  cursor-pointer p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
+                  className=" hidden 2xl:table-cell  cursor-pointer p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
                   // onClick={onClickName}
                 >
                   <p className=" font-sans text-sm text-center lg:text-start  antialiased font-bold  leading-none ">
@@ -157,13 +158,13 @@ const EmployeeAbsence: React.FC<Props> = ({ userInfo, onClose }) => {
                   <p className=" font-sans text-sm text-center antialiased font-bold  leading-none ">Fecha de Inicio</p>
                 </th>
                 <th
-                  className="hidden lg:table-cell  w-[130px] p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
+                  className="hidden xl:table-cell  w-[130px] p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
                   // onClick={onClickName}
                 >
                   <p className=" block font-sans text-sm text-center antialiased font-bold  leading-none ">Fecha de Fin</p>
                 </th>
 
-                <th className="hidden lg:table-cell p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50">
+                <th className="w-[100px] lg:w-[130px] p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50">
                   <p className="block font-sans text-sm antialiased font-bold  leading-none"></p>
                 </th>
               </tr>
@@ -177,23 +178,24 @@ const EmployeeAbsence: React.FC<Props> = ({ userInfo, onClose }) => {
                       {employeeAbsence.type}
                     </p>
                   </td>
-                  <td className="p-4 border-b border-[#cfd8dc] ">
+                  <td className="hidden xl:table-cell p-4 border-b border-[#cfd8dc] ">
                     <p className="lg:w-auto block font-sans text-sm text-center antialiased font-normal leading-normal text-blue-gray-900">
                       {employeeAbsence.articulo}
                     </p>
                   </td>
-                  <td className="hidden lg:table-cell p-4 border-b border-[#cfd8dc]">
-                    {" "}
-                    <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                      {employeeAbsence.description}{" "}
-                    </p>
+                  <td className="hidden 2xl:table-cell  p-4 border-b border-[#cfd8dc]">
+                    <div className="w-[400px] h-[40px] overflow-hidden flex items-center">
+                      <p className="w-full text-sm text-start font-normal leading-normal text-blue-gray-900 break-words line-clamp-2">
+                        {employeeAbsence.description}{" "}
+                      </p>
+                    </div>
                   </td>
                   <td className="hidden lg:table-cell p-4 border-b border-[#cfd8dc]">
                     <p className="lg:w-auto block font-sans text-sm text-center antialiased font-normal leading-normal text-blue-gray-900">
                       {dayjs(employeeAbsence.startDate).format("DD/MM/YYYY")}
                     </p>
                   </td>
-                  <td className="hidden lg:table-cell p-4 border-b border-[#cfd8dc]">
+                  <td className="hidden xl:table-cell p-4 border-b border-[#cfd8dc]">
                     <p className="lg:w-auto block font-sans text-sm text-center antialiased font-normal leading-normal text-blue-gray-900">
                       {dayjs(employeeAbsence.endDate).format("DD/MM/YYYY")}
                     </p>

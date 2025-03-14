@@ -152,7 +152,6 @@ const Menu = () => {
             onMouseLeave={!isTouchDevice ? handleMouseLeave : undefined} // Solo aplica en dispositivos no táctiles
           >
             <ul className="space-y-2">
-              <li className="hover:bg-gray-100 p-2 rounded cursor-pointer ">Perfil</li>
               {user?.rol === "admin" && ( // Solo muestra el enlace si el usuario es admin
                 <li className="hover:bg-gray-100 p-2 rounded cursor-pointer" onClick={handleConfiguracionClick}>
                   Configuración

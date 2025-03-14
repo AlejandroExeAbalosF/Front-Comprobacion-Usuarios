@@ -110,7 +110,7 @@ const ModalGeneric: React.FC<ModalProps> = ({
           ) : typeModal === "userDetails" ? (
             <DetailsUser userInfo={data as IUser | null} onCloseModal={onClose} />
           ) : typeModal === "userRegisters" ? (
-            <RegistersTable userInfo={data as IUser | null} />
+            <RegistersTable userInfo={data as IUser | null} onCloseModal={onClose} />
           ) : typeModal === "createEmployee" ? (
             <CreateUser onCloseModal={onClose} />
           ) : typeModal === "createNonLaborDate" ? (
