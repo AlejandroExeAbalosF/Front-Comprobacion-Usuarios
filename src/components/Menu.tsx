@@ -5,6 +5,9 @@ import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { logout } from "../redux/slices/authSlice";
 import { formatName } from "../utils/format";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+
+const BACK_API_URL = import.meta.env.VITE_LOCAL_API_URL;
 
 const useIsTouchDevice = () => {
   const [isTouchDevice, setIsTouchDevice] = useState(false);
@@ -79,6 +82,8 @@ const Menu = () => {
     dispatch(logout());
     localStorage.removeItem("validateUserArGobSal_user");
     toast.success("Sesión cerrada");
+    //! hacer animacion de carga para desloguearse
+    axios.post(`${BACK_API_URL}/auth/logout`, {}, { withCredentials: true });
     navigate("/");
   };
 

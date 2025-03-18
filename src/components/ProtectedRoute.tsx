@@ -15,6 +15,10 @@ const ProtectedRoute = () => {
 
   // return <Outlet />; // Renderizar las rutas protegidas
   // Ejecuta InitAuth solo en rutas protegidas
+  // const storedUser = localStorage.getItem("validateUserArGobSal_user");
+  // console.log("storedUser", storedUser);
+  // console.log("user", user);
+  // console.log("loading", loading);
   return (
     <>
       <InitAuth />

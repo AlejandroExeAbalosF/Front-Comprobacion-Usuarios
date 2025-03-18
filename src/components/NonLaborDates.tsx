@@ -67,10 +67,10 @@ const NonLaborDates = () => {
     });
   };
   return (
-    <section className="2xl:w-[1500px] lg:w-[1200px] md:w-[900px]  h-[700px]  p-2">
-      <div className="xs:w-4/5 m-auto my-2 relative flex flex-col w-full h-full text-gray-700 bg-white shadow-md rounded-xl bg-clip-border">
+    <section className="w-[400px] sm:w-[600px] md:w-[800px] lg:w-[1000px] xl:w-[1300px] 2xl:w-[1485px] h-[710px]  p-2">
+      <div className="xs:w-4/5  relative flex flex-col w-full h-full text-gray-700 bg-white shadow-md rounded-xl bg-clip-border">
         <h2 className="notificationsext-2xl ml-5  text-2xl flex  items-start">Fechas no laborales</h2>
-        <div className="relative mx-4 mt-4 overflow-hidden text-gray-700 bg-white rounded-none bg-clip-border">
+        <div className="relative mx-4 mt-4 overflow-hidden text-gray-700 bg-white rounded-none bg-clip-border h-[200px] md:h-auto">
           <div className="flex flex-col justify-between gap-8 mb-4 md:flex-row md:items-center">
             {/* <div>
             <h5 className="block font-sans text-xl antialiased font-semibold leading-snug tracking-normal text-blue-gray-900">
@@ -128,30 +128,32 @@ const NonLaborDates = () => {
             <thead className="sticky top-0 bg-white shadow-md" style={{ top: "-0.5px" }}>
               <tr className="bg-[#F5F7F8]">
                 <th
-                  className="cursor-pointer w-[250px] sm:w-[350px] p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
+                  className="cursor-pointer w-[100px] xl:w-[300px] sm:w-[150px] p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
                   // onClick={onClickName}
                 >
                   <p className="block font-sans text-sm text-center antialiased font-bold leading-none ">Tipo</p>
                 </th>
                 <th
-                  className=" hidden lg:table-cell w-[450px]  cursor-pointer p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
+                  className=" hidden md:table-cell md:w-[200px] xl:w-[500px] lg:w-[300px] w-[150px]  cursor-pointer p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
                   // onClick={onClickName}
                 >
                   <p className=" font-sans text-sm text-center lg:text-start  antialiased font-bold  leading-none ">
                     Descripcion
                   </p>
                 </th>
-                <th className="hidden lg:table-cell  w-[200px] p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50">
-                  <p className=" font-sans text-sm text-center antialiased font-bold  leading-none ">Fecha de Inicio</p>
+                <th className=" w-[150px] xl:w-[200px] p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50">
+                  <p className=" font-sans text-sm text-center antialiased font-bold  leading-none ">
+                    Fecha de Inicio <span className=" md:hidden">/Fecha de Fin</span>
+                  </p>
                 </th>
                 <th
-                  className="hidden lg:table-cell  w-[200px] p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
+                  className="hidden md:table-cell   w-[100px] xl:w-[200px] p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
                   // onClick={onClickName}
                 >
                   <p className=" block font-sans text-sm text-center antialiased font-bold  leading-none ">Fecha de Fin</p>
                 </th>
 
-                <th className="hidden lg:table-cell p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50">
+                <th className=" p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50">
                   <p className="block font-sans text-sm antialiased font-bold  leading-none"></p>
                 </th>
               </tr>
@@ -165,18 +167,22 @@ const NonLaborDates = () => {
                       {laborDate.type}
                     </p>
                   </td>
-                  <td className="hidden lg:table-cell p-4 border-b border-[#cfd8dc]">
-                    {" "}
-                    <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                      {laborDate.description}{" "}
-                    </p>
+                  <td className="hidden md:table-cell p-4 border-b border-[#cfd8dc]">
+                    <div className="w-[200px] md:w-[200px] lg:w-[300px] xl:w-full h-[40px] overflow-hidden flex items-center">
+                      <p className="w-full text-sm text-start font-normal leading-normal text-blue-gray-900 break-words line-clamp-2">
+                        {laborDate.description}{" "}
+                      </p>
+                    </div>
                   </td>
-                  <td className="hidden lg:table-cell p-4 border-b border-[#cfd8dc]">
+                  <td className=" p-4 border-b border-[#cfd8dc]">
                     <p className="lg:w-auto block font-sans text-sm text-center antialiased font-normal leading-normal text-blue-gray-900">
                       {dayjs(laborDate.startDate).format("DD/MM/YYYY")}
                     </p>
+                    <p className="md:hidden block font-sans text-sm text-center antialiased font-normal leading-normal text-blue-gray-900">
+                      {dayjs(laborDate.endDate).format("DD/MM/YYYY")}
+                    </p>
                   </td>
-                  <td className="hidden lg:table-cell p-4 border-b border-[#cfd8dc]">
+                  <td className="hidden md:table-cell p-4 border-b border-[#cfd8dc]">
                     <p className="lg:w-auto block font-sans text-sm text-center antialiased font-normal leading-normal text-blue-gray-900">
                       {dayjs(laborDate.endDate).format("DD/MM/YYYY")}
                     </p>

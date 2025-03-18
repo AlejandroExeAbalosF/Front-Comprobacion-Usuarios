@@ -450,7 +450,9 @@ const RegistersTable: React.FC<{ userInfo?: IUser | null; onCloseModal?: () => v
                   className=" table-cell w-[150px] cursor-pointer  p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
                   // onClick={onClickName}
                 >
-                  <p className="block font-sans text-sm text-center antialiased font-bold  leading-none">Estado<p className="2xl:hidden">/Justificación</p></p>
+                  <p className="w-[100px] block font-sans text-sm text-center antialiased font-bold  leading-none">
+                    Estado<span className="2xl:hidden">/Justificación</span>
+                  </p>
                 </th>
 
                 <th

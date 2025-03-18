@@ -2,12 +2,11 @@ import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import { INotificaciónData, IRegistration, IUser } from "../../helpers/types";
 import { toast } from "sonner";
-import { useNotifications } from "../../hooks/useNotifications";
+import { useNotifications } from "../../hooks/useNotifications.tsx";
 import dayjs from "dayjs";
 import { formatName } from "../../utils/format";
 import { BsFillPersonLinesFill } from "react-icons/bs";
 import { BsReverseLayoutTextWindowReverse } from "react-icons/bs";
-import ModalRegistration from "../modalRegistration/ModalRegistration";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { setFilterColumn, setSearchTerm, setUsers, updateUserFromNotification } from "../../redux/slices/usersEmpSlice";
 import ModalGeneric from "../ModalGeneric";
@@ -122,8 +121,9 @@ const RegistrationTableR = () => {
       <motion.tr key={user.id} className={`hover:bg-slate-50 ${user.id === highlightedUserId ? "highlighted" : ""}`}>
         <PhotoProvider
           maskOpacity={0.5}
-          key={`${user.id}-${user?.registrations.length > 0 && user.registrations[0].entryCapture ? user.registrations[0].entryCapture : 0
-            }-${user?.registrations.length > 0 && user.registrations[0].exitCapture ? user.registrations[0].exitCapture : 0}`}
+          key={`${user.id}-${
+            user?.registrations.length > 0 && user.registrations[0].entryCapture ? user.registrations[0].entryCapture : 0
+          }-${user?.registrations.length > 0 && user.registrations[0].exitCapture ? user.registrations[0].exitCapture : 0}`}
         >
           <td className="w-[270px] p-4 border-b border-[#cfd8dc] ">
             <div className="flex items-center gap-3 ">
@@ -148,28 +148,30 @@ const RegistrationTableR = () => {
                     {user?.registrations.length > 0 ? (
                       user.registrations[0].status === "TRABAJANDO" ? (
                         <div
-                          className={`  items-center px-2 py-1 font-sans text-xs font-bold text-green-900 uppercase rounded-md select-none whitespace-nowrap ${user.registrations[0].type === "LLEGADA_TARDE" ? "bg-red-500/20" : "bg-green-500/20"
-                            }  `}
+                          className={`  items-center px-2 py-1 font-sans text-xs font-bold text-green-900 uppercase rounded-md select-none whitespace-nowrap ${
+                            user.registrations[0].type === "LLEGADA_TARDE" ? "bg-red-500/20" : "bg-green-500/20"
+                          }  `}
                           title={user.registrations[0].type === "LLEGADA_TARDE" ? "Llegada tarde" : ""}
                         >
                           <span className="">Trabajando</span>
                         </div>
                       ) : user.registrations[0].status === "PRESENTE" ? (
                         <div
-                          className={`grid items-center px-2 py-1 font-sans text-xs font-bold text-blue-900 uppercase rounded-md select-none whitespace-nowrap ${user.registrations[0].type === "LLEGADA_TARDE" ||
-                              user.registrations[0].type === "LLEGADA_TARDE-SALIDA_TEMPRANA" ||
-                              user.registrations[0].type === "SALIDA_TEMPRANA"
+                          className={`grid items-center px-2 py-1 font-sans text-xs font-bold text-blue-900 uppercase rounded-md select-none whitespace-nowrap ${
+                            user.registrations[0].type === "LLEGADA_TARDE" ||
+                            user.registrations[0].type === "LLEGADA_TARDE-SALIDA_TEMPRANA" ||
+                            user.registrations[0].type === "SALIDA_TEMPRANA"
                               ? "bg-red-500/20"
                               : "bg-blue-500/20"
-                            }`}
+                          }`}
                           title={
                             user.registrations[0].type === "LLEGADA_TARDE"
                               ? "Llegada tarde"
                               : user.registrations[0].type === "LLEGADA_TARDE-SALIDA_TEMPRANA"
-                                ? "Llegada tarde - Salida temprana"
-                                : user.registrations[0].type === "SALIDA_TEMPRANA"
-                                  ? "Salida temprana"
-                                  : ""
+                              ? "Llegada tarde - Salida temprana"
+                              : user.registrations[0].type === "SALIDA_TEMPRANA"
+                              ? "Salida temprana"
+                              : ""
                           }
                         >
                           <span className="">Presente</span>
@@ -220,7 +222,6 @@ const RegistrationTableR = () => {
                 </p>
               </div>
             </div>
-
           </td>
           <td className="hidden 2xl:table-cell p-4 border-b border-[#cfd8dc]">
             <p className=" font-sans text-sm  flex flex-col items-center lg:items-start antialiased font-normal leading-normal text-blue-gray-900">
@@ -228,7 +229,7 @@ const RegistrationTableR = () => {
             </p>
           </td>
 
-          <td className="hidden lg:table-cell p-4 border-b border-[#cfd8dc]">
+          <td className="hidden xl:table-cell p-4 border-b border-[#cfd8dc]">
             {/* <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">{user.cellphone}</p> */}
             <div className="w-[100px] h-[50px] flex items-center justify-center">
               {user?.registrations.length > 0 && user.registrations[0].exitCapture ? (
@@ -243,7 +244,7 @@ const RegistrationTableR = () => {
               )}
             </div>
           </td>
-          <td className="hidden lg:table-cell p-4 border-b border-[#cfd8dc]">
+          <td className="hidden xl:table-cell p-4 border-b border-[#cfd8dc]">
             <div className="w-[100px] h-[50px] flex items-center justify-center">
               {user?.registrations.length > 0 && user.registrations[0].entryCapture ? (
                 <PhotoView src={`${user.registrations[0].entryCapture}`}>
@@ -262,28 +263,30 @@ const RegistrationTableR = () => {
           {user?.registrations.length > 0 ? (
             user.registrations[0].status === "TRABAJANDO" ? (
               <div
-                className={`  items-center px-2 py-1 font-sans text-xs font-bold text-green-900 uppercase rounded-md select-none whitespace-nowrap ${user.registrations[0].type === "LLEGADA_TARDE" ? "bg-red-500/20" : "bg-green-500/20"
-                  }  `}
+                className={`  items-center px-2 py-1 font-sans text-xs font-bold text-green-900 uppercase rounded-md select-none whitespace-nowrap ${
+                  user.registrations[0].type === "LLEGADA_TARDE" ? "bg-red-500/20" : "bg-green-500/20"
+                }  `}
                 title={user.registrations[0].type === "LLEGADA_TARDE" ? "Llegada tarde" : ""}
               >
                 <span className="">Trabajando</span>
               </div>
             ) : user.registrations[0].status === "PRESENTE" ? (
               <div
-                className={`grid items-center px-2 py-1 font-sans text-xs font-bold text-blue-900 uppercase rounded-md select-none whitespace-nowrap ${user.registrations[0].type === "LLEGADA_TARDE" ||
-                    user.registrations[0].type === "LLEGADA_TARDE-SALIDA_TEMPRANA" ||
-                    user.registrations[0].type === "SALIDA_TEMPRANA"
+                className={`grid items-center px-2 py-1 font-sans text-xs font-bold text-blue-900 uppercase rounded-md select-none whitespace-nowrap ${
+                  user.registrations[0].type === "LLEGADA_TARDE" ||
+                  user.registrations[0].type === "LLEGADA_TARDE-SALIDA_TEMPRANA" ||
+                  user.registrations[0].type === "SALIDA_TEMPRANA"
                     ? "bg-red-500/20"
                     : "bg-blue-500/20"
-                  }`}
+                }`}
                 title={
                   user.registrations[0].type === "LLEGADA_TARDE"
                     ? "Llegada tarde"
                     : user.registrations[0].type === "LLEGADA_TARDE-SALIDA_TEMPRANA"
-                      ? "Llegada tarde - Salida temprana"
-                      : user.registrations[0].type === "SALIDA_TEMPRANA"
-                        ? "Salida temprana"
-                        : ""
+                    ? "Llegada tarde - Salida temprana"
+                    : user.registrations[0].type === "SALIDA_TEMPRANA"
+                    ? "Salida temprana"
+                    : ""
                 }
               >
                 <span className="">Presente</span>
@@ -358,7 +361,7 @@ const RegistrationTableR = () => {
   };
   //!-----------------------------------------------------------
   return (
-    <section className="2xl:w-[1500px] lg:w-[1200px] md:w-[800px] sm:w-[670px] w-[470px] h-[700px] max-h-[700px] ">
+    <section className="2xl:w-[1500px] xl:w-[1300px] lg:w-[1000px] md:w-[800px] sm:w-[670px] w-[470px] h-[700px] max-h-[700px] ">
       <h2 className="notificationsext-2xl ml-5  text-2xl flex  items-start">Listado de Empleados</h2>
       <div className="xs:w-4/5 m-auto my-2 relative flex flex-col w-full h-full text-gray-700 bg-white shadow-md rounded-xl bg-clip-border">
         <div className="relative h-[200px] md:h-auto mx-4 mt-4 overflow-hidden text-gray-700 bg-white rounded-none bg-clip-border">
@@ -444,11 +447,11 @@ const RegistrationTableR = () => {
                 >
                   <p className=" font-sans text-sm text-center lg:text-start  antialiased font-bold  leading-none ">Documento</p>
                 </th>
-                <th className="hidden lg:table-cell  w-[200px] p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50">
+                <th className="hidden xl:table-cell  w-[200px] p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50">
                   <p className=" font-sans text-sm antialiased font-bold  leading-none ">Captura de Salida</p>
                 </th>
                 <th
-                  className="hidden lg:table-cell  w-[200px] p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
+                  className="hidden xl:table-cell  w-[200px] p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
                   onClick={onClickName}
                 >
                   <p className=" block font-sans text-sm antialiased font-bold  leading-none ">Captura de Ingreso</p>

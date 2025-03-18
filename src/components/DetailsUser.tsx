@@ -12,12 +12,12 @@ const DetailsUser: React.FC<{ userInfo?: IUser | null; onCloseModal?: (isVisible
   userInfo,
   onCloseModal,
 }) => {
-  console.log("userInfo", userInfo);
+  // console.log("userInfo", userInfo);
 
   const userRedux = useAppSelector((state) => state.auth.user); // Obtén el usuario desde Redux
   const [isEditing, setIsEditing] = useState(false);
   const [isEmployeeAbsences, setIsEmployeeAbsences] = useState(false); // [isEmployeeAbsences]
-  
+
   // console.log("userRedux", isEmployeeAbsences && userInfo?.id == userRedux?.id);
   const handleCloseEmployeeAbsences = () => setIsEmployeeAbsences(false);
   const handleModal = () => {
@@ -34,17 +34,22 @@ const DetailsUser: React.FC<{ userInfo?: IUser | null; onCloseModal?: (isVisible
           <CreateUser setIsEditing={setIsEditing} userInfo={userInfo} onCloseModal={onCloseModal} />
         </>
       ) : (
-        <div className="w-[400px] sm:w-[600px] md:w-[800px] lg:w-[1000px] xl:w-[1300px] 2xl:w-[1500px] h-200">
-          <h2 className="mt-4  text-center font-[500] text-[30px]">
-            Detalles del Usuario : {userInfo && formatName(userInfo?.name, userInfo?.lastName)}{" "}
-          </h2>
-          <button
-            onClick={handleModal}
-            className="absolute top-[-1px] right-[-1px]  rounded-lg text-gray-400   hover:text-[#160852] cursor-pointer "
-          >
-            <IoIosClose className="w-10 h-10" />
-          </button>
-          <div className="flex flex-col overflow-auto bg-white h-[700px] md:h-auto md:overflow-hidden md:flex-row w-auto p-6 ">
+        <div className="w-[400px] sm:w-[600px] md:w-[800px] lg:w-[1000px] xl:w-[1300px] 2xl:w-[1470px] h-auto  ">
+          {userInfo?.id !== userRedux?.id ? (
+            <>
+              <h2 className="mt-4  text-center font-[500] text-[25px]">
+                Detalles del Usuario : {userInfo && formatName(userInfo?.name, userInfo?.lastName)}{" "}
+              </h2>
+              <button
+                onClick={handleModal}
+                className="absolute top-[-1px] right-[-1px]  rounded-lg text-gray-400   hover:text-[#160852] cursor-pointer "
+              >
+                <IoIosClose className="w-10 h-10" />
+              </button>
+            </>
+          ) : null}
+
+          <div className="flex flex-col overflow-auto bg-white h-[700px] md:h-auto md:overflow-hidden md:flex-row w-auto p-3  shadow-md rounded-xl bg-clip-border">
             <div className="flex flex-col md:justify-between lg:justify-normal items-center">
               <div className="w-[380px] h-[300px] flex flex-col justify-center items-center">
                 <div className="flex justify-center items-center  mt-1 bg-[#fff8f2] w-[252px] h-[252px] rounded-[50%] shadow-md ">
@@ -99,14 +104,13 @@ const DetailsUser: React.FC<{ userInfo?: IUser | null; onCloseModal?: (isVisible
               </div>
               {userInfo?.id !== userRedux?.id && (
                 <button
-                className="hidden md:block lg:hidden rounded-md bg-blue-600 py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-blue-700 focus:shadow-none active:bg-blue-700 hover:bg-blue-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none ml-2"
-                id="employeeAbsences"
-                onClick={() => setIsEmployeeAbsences(true)}
-              >
-                Fechas de Ausencias
-              </button>
+                  className="hidden md:block lg:hidden rounded-md bg-blue-600 py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-blue-700 focus:shadow-none active:bg-blue-700 hover:bg-blue-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none ml-2"
+                  id="employeeAbsences"
+                  onClick={() => setIsEmployeeAbsences(true)}
+                >
+                  Fechas de Ausencias
+                </button>
               )}
-              
             </div>
 
             <div className="  ">
@@ -114,7 +118,7 @@ const DetailsUser: React.FC<{ userInfo?: IUser | null; onCloseModal?: (isVisible
                 <EmployeeAbsence userInfo={userInfo} onClose={handleCloseEmployeeAbsences} />
               ) : (
                 <div className=" flex flex-col justify-center items-center">
-                  <main className="w-[375px] p-2 sm:w-[590px] sm:p-4 md:p-0 md:w-[590px] lg:p-2 lg:w-[590px] xl:w-[890px] 2xl:w-[1054px] h-[607px] overflow-auto">
+                  <main className="w-[375px]  sm:w-[590px] sm:p-4 md:p-0 md:w-[590px] lg:w-[590px] xl:w-[890px] 2xl:w-[1054px] h-[607px] overflow-auto">
                     <section className="">
                       <div className=" w-full">
                         <h3 className="text-start text-[20px]">Datos Personales</h3>{" "}
@@ -247,25 +251,25 @@ const DetailsUser: React.FC<{ userInfo?: IUser | null; onCloseModal?: (isVisible
                   <div className="flex flex-col justify-center items-center gap-3 md:flex-row md:justify-between md:items-end md:w-full mt-6">
                     {userInfo?.id !== userRedux?.id && (
                       <button
-                      className="block md:hidden lg:block rounded-md bg-blue-600 py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-blue-700 focus:shadow-none active:bg-blue-700 hover:bg-blue-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none ml-2"
-                      id="employeeAbsences"
-                      onClick={() => setIsEmployeeAbsences(true)}
-                    >
-                      Fechas de Ausencias
-                    </button>
+                        className="block md:hidden lg:block rounded-md bg-blue-600 py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-blue-700 focus:shadow-none active:bg-blue-700 hover:bg-blue-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none ml-2"
+                        id="employeeAbsences"
+                        onClick={() => setIsEmployeeAbsences(true)}
+                      >
+                        Fechas de Ausencias
+                      </button>
                     )}
-                    
+
                     <div>
                       {userInfo?.id !== userRedux?.id && (
                         <button
-                        className="rounded-md bg-red-600 py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-red-700 focus:shadow-none active:bg-red-700 hover:bg-red-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none ml-2"
-                        type="button"
-                        onClick={handleModal}
-                      >
-                        Cerrar
-                      </button>
-                      ) }
-                      
+                          className="rounded-md bg-red-600 py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-red-700 focus:shadow-none active:bg-red-700 hover:bg-red-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none ml-2"
+                          type="button"
+                          onClick={handleModal}
+                        >
+                          Cerrar
+                        </button>
+                      )}
+
                       <button
                         className="rounded-md bg-blue-600 py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-blue-700 focus:shadow-none active:bg-blue-700 hover:bg-blue-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none ml-2"
                         id="createEmployee"

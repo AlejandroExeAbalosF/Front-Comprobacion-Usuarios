@@ -36,8 +36,7 @@ export default function Configuration() {
       {/* <SideBar /> */}
       <Menu />
       <main className=" w-auto h-[830px] text-center   flex flex-col items-center justify-start bg-white shadow-xlrounded-md  m-4">
-        
-        <div className="relative 2xl:w-[1550px] lg:w-[1200px] md:w-[900px] flex flex-col  mt-5 w-full">
+        <div className="relative 2xl:w-[1550px] xl:w-[1380px] lg:w-[1080px] md:w-[900px] flex flex-col  mt-5 w-full">
           {/* Icono alineado a la izquierda */}
           <IoMdArrowRoundBack
             className="absolute  left-4 w-10 h-10 cursor-pointer"
@@ -46,10 +45,14 @@ export default function Configuration() {
           />
 
           {/* Título centrado */}
-          
+
           <h1 className="text-3xl ml-[80px]">Configuración</h1>
         </div>
-        <div className="flex 2xl:w-[1550px] lg:w-[1200px] md:w-[900px]  h-[750px] mt-4 ">
+        <div
+          className="flex 2xl:w-[1570px] 
+       
+        mt-4 "
+        >
           <div>
             {tabs.map((tab) => (
               <Link to={tab.path} key={tab.id} style={{ textDecoration: "none" }}>
@@ -66,19 +69,25 @@ export default function Configuration() {
                   title={`${tab.name}`}
                 >
                   <div className="flex flex-col justify-center items-center">
-                  {tab.label}
-                  <p className="text-sm leading-[13px] font-normal mt-1 ">{tab.name}</p>
+                    {tab.label}
+                    <p className="text-sm leading-[13px] font-normal mt-1 ">{tab.name}</p>
                   </div>
-                 
                 </motion.div>
               </Link>
             ))}
           </div>
-          <div className="w-full bg-[#f0f8ff]">
+          <div className="w-full bg-[#f0f8ff] overflow-hidden ">
             <Routes>
               <Route path="perfil" element={<Profile userInfo={user} />} />
               <Route path="fechas_no_laboral" element={<NonLaborDates />} />
-              <Route path="/" element={<div>Selecciona una pestaña</div>} />
+              <Route
+                path="/"
+                element={
+                  <div className="2xl:w-[1500px] xl:w-[1300px] lg:w-[1000px] md:w-[820px]  h-[710px]">
+                    <div>Selecciona una pestaña</div>
+                  </div>
+                }
+              />
             </Routes>
           </div>
         </div>

@@ -19,6 +19,7 @@ interface CreateUserProps {
 }
 const CreateUser: React.FC<CreateUserProps> = ({ onCloseModal, userInfo, setIsEditing }) => {
   const dispatch = useAppDispatch();
+  const userRedux = useAppSelector((state) => state.auth.user); // Obtén el usuario desde Redux
   // const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   // Calcular la fecha máxima permitida (hace 18 años desde hoy)
   const initialState = {
@@ -94,7 +95,7 @@ const CreateUser: React.FC<CreateUserProps> = ({ onCloseModal, userInfo, setIsEd
   }, []);
   const handleModal = () => {
     // console.log(isVisible);
-    if (userInfo && setIsEditing ) {
+    if (userInfo && setIsEditing) {
       setIsEditing(false);
     } else if (onCloseModal) {
       onCloseModal(false);
@@ -220,17 +221,22 @@ const CreateUser: React.FC<CreateUserProps> = ({ onCloseModal, userInfo, setIsEd
     }
   };
   return (
-    <div className="w-[400px] sm:w-[600px] md:w-[800px] lg:w-[1000px] xl:w-[1300px] 2xl:w-[1500px] h-200">
-      <h2 className="mt-4  text-center font-[500] text-[30px]">
-        {userInfo ? `Editar Empleado: ${formatName(userInfo?.name, userInfo?.lastName)}` : "Crear Empleado"}
-      </h2>
-      <button
-        onClick={handleModal}
-        className="absolute top-[-1px] right-[-1px] rounded-lg text-gray-400   hover:text-[#160852] cursor-pointer "
-      >
-        <IoIosClose className="w-10 h-10" />
-      </button>
-      <div className="flex flex-col overflow-auto h-[700px] md:h-auto md:overflow-hidden md:flex-row w-auto p-6 ">
+    <div className="w-[400px] sm:w-[600px] md:w-[800px] lg:w-[1000px] xl:w-[1300px] 2xl:w-[1470px] h-auto">
+      {userInfo?.id !== userRedux?.id ? (
+        <>
+          <h2 className="mt-4  text-center font-[500] text-[25px]">
+            {userInfo ? `Editar Empleado: ${formatName(userInfo?.name, userInfo?.lastName)}` : "Crear Empleado"}
+          </h2>
+          <button
+            onClick={handleModal}
+            className="absolute top-[-1px] right-[-1px] rounded-lg text-gray-400   hover:text-[#160852] cursor-pointer "
+          >
+            <IoIosClose className="w-10 h-10" />
+          </button>
+        </>
+      ) : null}
+
+      <div className="flex flex-col overflow-auto bg-white h-[700px] md:h-auto md:overflow-hidden md:flex-row w-auto p-3  shadow-md rounded-xl bg-clip-border">
         <div className="flex flex-col items-center">
           <div className="w-[380px] h-[300px] flex flex-col justify-center items-center">
             <div className="flex relative justify-center items-center  mt-1 bg-gray-400 hover:bg-[#69696965] w-[252px] h-[252px] rounded-[50%] shadow-md ">

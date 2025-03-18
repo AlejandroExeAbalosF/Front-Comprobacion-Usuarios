@@ -6,7 +6,7 @@ import DetailsUser from "./DetailsUser";
 const BACK_API_URL = import.meta.env.VITE_LOCAL_API_URL;
 
 const Profile: React.FC<{ userInfo?: IUser | null }> = ({ userInfo }) => {
-  console.log("userInfo", userInfo);
+  // console.log("userInfo asd", userInfo);
   const [user, setUser] = useState<IUser | null>(null);
   useEffect(() => {
     if (userInfo) {
@@ -14,14 +14,14 @@ const Profile: React.FC<{ userInfo?: IUser | null }> = ({ userInfo }) => {
         .get(`${BACK_API_URL}/users/${userInfo.id}`, { withCredentials: true })
         .then(({ data }) => {
           setUser(data);
-          console.log("user", data);
+          // console.log("user", data);
         })
         .catch((error) => console.error(error));
     }
   }, [userInfo]);
   return (
-    <div className="2xl:w-[1500px] lg:w-[1200px] md:w-[900px]  h-[800px] overflow-auto">
-      <div className=" bg-white ">
+    <div className="2xl:w-[1500px] xl:w-[1300px] lg:w-[1000px] md:w-[820px]  h-[710px] overflow-hidden">
+      <div className="  p-2">
         <DetailsUser userInfo={user} />
       </div>
     </div>
