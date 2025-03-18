@@ -33,7 +33,7 @@ const RegisterE = () => {
 
   useEffect(() => {
     // Comprobamos las cámaras al cargar el componente
-    checkCameras();
+    if (typeof window !== "undefined" && navigator.mediaDevices) checkCameras();
 
     // Escuchamos cambios en los dispositivos multimedia
     const handleDeviceChange = () => {
@@ -41,11 +41,13 @@ const RegisterE = () => {
       checkCameras(); // Volvemos a verificar las cámaras disponibles
     };
 
-    navigator.mediaDevices.addEventListener("devicechange", handleDeviceChange);
+    if (typeof window !== "undefined" && navigator.mediaDevices)
+      navigator.mediaDevices.addEventListener("devicechange", handleDeviceChange);
 
     // Limpiamos el listener cuando se desmonta el componente
     return () => {
-      navigator.mediaDevices.removeEventListener("devicechange", handleDeviceChange);
+      if (typeof window !== "undefined" && navigator.mediaDevices)
+        navigator.mediaDevices.removeEventListener("devicechange", handleDeviceChange);
     };
   }, []);
 
