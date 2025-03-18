@@ -30,7 +30,7 @@ const useIsTouchDevice = () => {
 
 const Menu = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isModalOpen = useAppSelector((state) => state.modal.isModalOpen);
   const isTouchDevice = useIsTouchDevice(); // Detecta si el dispositivo es táctil
   const dispatch = useAppDispatch();

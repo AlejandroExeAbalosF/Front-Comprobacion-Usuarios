@@ -135,8 +135,8 @@ const usersEmpSlice = createSlice({
       console.log("register", register);
       console.log("state.users", current(state.users));
       const user = state.users.find((user) => user.id === register.id);
-      if (user) console.log("user",current(user));
-    }
+      if (user) console.log("user", current(user));
+    },
   },
 });
 
@@ -185,15 +185,18 @@ const sortUsers = (filterColumn: IFilterColumn, users: IUser[]) => {
     switch (filterColumn.type) {
       case "Empleados":
         return filterColumn.order ? b.name.localeCompare(a.name) : a.name.localeCompare(b.name);
-      case "Ingreso":
+      case "Ingreso": {
         const dateA = a.registrations[0]?.entryDate ? new Date(a.registrations[0].entryDate).getTime() : 0;
         const dateB = b.registrations[0]?.entryDate ? new Date(b.registrations[0].entryDate).getTime() : 0;
         return filterColumn.order ? dateB - dateA : dateA - dateB;
-      case "Estado":
-        const priority = { TRABAJANDO: 1, PRESENTE: 2, AUSENTE: 3 };
-        const typeA = a.registrations[0]?.status || "AUSENTE";
-        const typeB = b.registrations[0]?.status || "AUSENTE";
+      }
+      case "Estado": {
+        const priority: Record<"TRABAJANDO" | "PRESENTE" | "AUSENTE", number>  = { TRABAJANDO: 1, PRESENTE: 2, AUSENTE: 3 };
+        
+const typeA = (a.registrations[0]?.status || "AUSENTE") as keyof typeof priority;
+const typeB = (b.registrations[0]?.status || "AUSENTE") as keyof typeof priority;
         return filterColumn.order ? priority[typeA] - priority[typeB] : priority[typeB] - priority[typeA];
+      }
       case "Documento":
         return filterColumn.order ? a.document - b.document : b.document - a.document;
       case "Rol":
@@ -206,5 +209,6 @@ const sortUsers = (filterColumn: IFilterColumn, users: IUser[]) => {
   return sortedUsers; // Devolver nuevo array sin modificar el original
 };
 
-export const { setUsers, setSearchTerm, setFilterColumn, updateUserFromNotification, addUser , updateUserRegister} = usersEmpSlice.actions;
+export const { setUsers, setSearchTerm, setFilterColumn, updateUserFromNotification, addUser, updateUserRegister } =
+  usersEmpSlice.actions;
 export default usersEmpSlice.reducer;

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Buttonn from "../Buttonn";
 import { dataInputs } from "../loginU/helpers/dataInputs";
 // import validateInputLoginU from "./helpers/validateInputLoginU";

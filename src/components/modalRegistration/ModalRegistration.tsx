@@ -1,4 +1,4 @@
-import { IRegistration, IUser } from "../../helpers/types";
+import { IUser } from "../../helpers/types";
 import { formatName } from "../../utils/format";
 
 interface ModalProps {

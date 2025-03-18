@@ -14,7 +14,7 @@ interface Props {
   onUpdate?: (nonLaborDate: INonLaborDate) => void;
 }
 
-const CreateNonLaborDate: React.FC<Props> = ({ onCloseModal, nonLaborDate, setIsEditing, onUpdate }) => {
+const CreateNonLaborDate: React.FC<Props> = ({ onCloseModal, nonLaborDate, onUpdate }) => {
   console.log("nonLaborDate", nonLaborDate);
   const selectType = [
     { type: "FERIADO_FIJO", name: "Feriado Fijo" },
@@ -56,7 +56,9 @@ const CreateNonLaborDate: React.FC<Props> = ({ onCloseModal, nonLaborDate, setIs
         .then(({ data }) => {
           console.log("data", data);
           toast.success("Fecha actualizada exitosamente");
-          if (data.data) onUpdate(data.data);
+          if (data && data.data && onUpdate) {
+            onUpdate(data.data);
+          }
           onCloseModal?.();
         })
         .catch((error) => {
@@ -69,7 +71,9 @@ const CreateNonLaborDate: React.FC<Props> = ({ onCloseModal, nonLaborDate, setIs
         .then(({ data }) => {
           console.log("data", data);
           toast.success("Fecha creada exitosamente");
-          onUpdate(data.data);
+          if (data && data.data && onUpdate) {
+            onUpdate(data.data);
+          }
           onCloseModal?.();
         })
         .catch((error) => {

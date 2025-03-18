@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
-import { INotificaciónData, IRegistration, IUser } from "../../helpers/types";
+import { INotificaciónData, IUser } from "../../helpers/types";
 import { toast } from "sonner";
 import { useNotifications } from "../../hooks/useNotifications.tsx";
 import dayjs from "dayjs";
@@ -25,11 +25,11 @@ const RegistrationTableR = () => {
   //   });
 
   const dispatch = useAppDispatch();
-  const { usersFilter, searchTerm, filterColumn, highlightedUserId } = useAppSelector((state) => state.usersEmp);
+  const { usersFilter, filterColumn, highlightedUserId } = useAppSelector((state) => state.usersEmp);
   const { user } = useAppSelector((state) => state.auth);
   // console.log("user", user);
   //----------
-  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+  // const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [userDetails, setUserDetails] = useState<IUser | null>();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isTypeModal, setIsTypeModal] = useState("");
@@ -88,7 +88,7 @@ const RegistrationTableR = () => {
           //   setUsersFilter(response.data);
         }
       } catch (error) {
-        toast.error("Error al cargar Empleados.");
+        toast.error("Error al cargar Empleados.", error ? error : "");
       }
       // Ordenar el array de propiedades por el número de casa de forma ascendente
       //   const sortedUsers = response.data.sort(
@@ -488,7 +488,12 @@ const RegistrationTableR = () => {
       </div>
       {/* Modal */}
       {isModalOpen && (
-        <ModalGeneric isVisible={isModalOpen} onClose={handleCloseModal} data={userDetails} typeModal={isTypeModal} />
+        <ModalGeneric
+          isVisible={isModalOpen}
+          onClose={handleCloseModal}
+          data={userDetails}
+          typeModal={isTypeModal as "userDetails" | "userRegisters" | "createEmployee"}
+        />
       )}
     </section>
   );

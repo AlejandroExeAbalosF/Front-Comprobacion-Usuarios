@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import "../components/registerE/styles/iconWarning.css";
 
 export default function Proof() {
@@ -9,7 +8,6 @@ export default function Proof() {
         <div className="w-[400px] h-[500px]">
           <span className="loader"></span>
         </div>
-
 
         <section className="w-[400px] h-[500px] text-center  m-0 flex flex-col items-center justify-start  shadow-xl p-24 rounded-md bg-white ">
           <div role="status">

@@ -1,13 +1,13 @@
 import dayjs from "dayjs";
 import { useEffect, useRef, useState } from "react";
-import DatePicker from "react-datepicker";
+
 import "react-datepicker/dist/react-datepicker.css"; // Importa los estilos predeterminados
 import { ISecretariat, IShift, IUser } from "../helpers/types";
 import axios from "axios";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { addUser } from "../redux/slices/usersEmpSlice";
 import { toast } from "sonner";
-import { formatName, formatTime } from "../utils/format";
+import { formatName } from "../utils/format";
 import { IoIosClose } from "react-icons/io";
 
 const BACK_API_URL = import.meta.env.VITE_LOCAL_API_URL;
@@ -48,8 +48,8 @@ const CreateUser: React.FC<CreateUserProps> = ({ onCloseModal, userInfo, setIsEd
   const selectRef = useRef(null);
 
   const [userDataInputs, setUserDataInputs] = useState(initialState);
-  const [errors, setErrors] = useState(initialState);
-  const [birthDate, setBirthDate] = useState("");
+  // const [errors, setErrors] = useState(initialState);
+  // const [birthDate, setBirthDate] = useState("");
   const [ImagePrevius, setImagePrevious] = useState<string | null>(userInfo?.image || null);
   const [userDataImage, setUserDataImage] = useState<File | null>(null);
   const [secretariatsInfo, setSecretariatsInfo] = useState<ISecretariat[]>([]);

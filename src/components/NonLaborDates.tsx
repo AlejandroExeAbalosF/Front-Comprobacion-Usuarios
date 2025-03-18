@@ -1,17 +1,15 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { INonLaborDate } from "../helpers/types";
+import { IEmployeeAbsence, INonLaborDate, IRegistration } from "../helpers/types";
 import { FiEdit } from "react-icons/fi";
 import { useAppDispatch } from "../redux/hooks";
 import { closeModal } from "../redux/slices/modalSlice";
 import ModalGeneric from "./ModalGeneric";
-import { formatTime } from "../utils/format";
+
 import dayjs from "dayjs";
-import { toZonedTime, format } from "date-fns-tz";
 
 // Fecha en UTC
-const timeZone = "America/Argentina/Buenos_Aires";
 
 const BACK_API_URL = import.meta.env.VITE_LOCAL_API_URL;
 const NonLaborDates = () => {
@@ -52,17 +50,18 @@ const NonLaborDates = () => {
   };
   //-----------
 
-  const handleUpdateAndAdd = (updatedOrNewRecord: INonLaborDate) => {
+  const handleUpdateAndAdd = (updatedOrNewRecord: IRegistration | INonLaborDate | IEmployeeAbsence) => {
+    const uodatedOrNew = updatedOrNewRecord as INonLaborDate;
     setNonLaborDates((prev) => {
       // Busca si el registro ya existe en la lista
-      const exists = prev.some((item) => item.id === updatedOrNewRecord.id);
+      const exists = prev.some((item) => item.id === uodatedOrNew.id);
 
       if (exists) {
         // Si existe, actualiza el registro
-        return prev.map((item) => (item.id === updatedOrNewRecord.id ? updatedOrNewRecord : item));
+        return prev.map((item) => (item.id === uodatedOrNew.id ? uodatedOrNew : item));
       } else {
         // Si no existe, agrega el nuevo registro al principio de la lista
-        return [updatedOrNewRecord, ...prev];
+        return [uodatedOrNew, ...prev];
       }
     });
   };
@@ -211,7 +210,7 @@ const NonLaborDates = () => {
           isVisible={isModalOpen}
           onClose={handleCloseModal}
           data={nonDateLaborDetails}
-          typeModal={isTypeModal}
+          typeModal={isTypeModal as "createNonLaborDate"}
           onUpdate={handleUpdateAndAdd}
         />
       )}

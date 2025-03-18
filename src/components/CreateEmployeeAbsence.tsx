@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { IArticulo, IEmployeeAbsence, INonLaborDate, IUser } from "../helpers/types";
+import { IArticulo, IEmployeeAbsence, INonLaborDate } from "../helpers/types";
 import { cleanObject } from "../utils/format";
 import axios from "axios";
 import { toast } from "sonner";
@@ -15,7 +15,7 @@ interface Props {
   onUpdate?: (employeeAbsence: INonLaborDate) => void;
 }
 
-const CreateEmployeeAbsence: React.FC<Props> = ({ onCloseModal, employeeAbsence, userId, setIsEditing, onUpdate }) => {
+const CreateEmployeeAbsence: React.FC<Props> = ({ onCloseModal, employeeAbsence, userId, onUpdate }) => {
   // console.log("userId", userId);
   const [art = "", inc = "", subInc = ""] = employeeAbsence?.articulo?.split("-") || ["", "", ""];
   console.log("art", art, inc, subInc);
@@ -35,18 +35,18 @@ const CreateEmployeeAbsence: React.FC<Props> = ({ onCloseModal, employeeAbsence,
     subInciso: employeeAbsence?.type === "ARTICULO" ? subInc || "" : "",
   };
   const [employeeAbsenceDataInputs, setEmployeeAbsenceDataInputs] = useState(initialState);
-  const [articulos, setArticulos] = useState<IArticulo[]>([]);
+  // const [articulos, setArticulos] = useState<IArticulo[]>([]);
   const [articulosType, setArticulosType] = useState<IArticulo[]>([]);
-  const [selectedArticulo, setSelectedArticulo] = useState(null);
-  const [selectedInciso, setSelectedInciso] = useState(null);
+  const [selectedArticulo, setSelectedArticulo] = useState<string | null>(null);
+  const [selectedInciso, setSelectedInciso] = useState<string | null>(null);
 
   useEffect(() => {
     const info = async () => {
       await axios
         .get(`${BACK_API_URL}/articulos`, { withCredentials: true })
         .then(({ data }) => {
-          setArticulos(data);
-          setArticulosType(data.filter((art) => art.statusType === "AUSENTE"));
+          // setArticulos(data);
+          setArticulosType(data.filter((art: IArticulo) => art.statusType === "AUSENTE"));
         })
         .catch((error) => {
           console.error(error);
@@ -87,7 +87,7 @@ const CreateEmployeeAbsence: React.FC<Props> = ({ onCloseModal, employeeAbsence,
     if (name === "inciso") {
       // console.log("inciso", e.target.value);
 
-      const selectInciso = articulosType.find((a) => a.name === selectedArticulo)?.incisos.find((i) => i.name === value);
+      const selectInciso = articulosType.find((a) => a.name === selectedArticulo)?.incisos?.find((i) => i.name === value);
       console.log("inciso", selectInciso);
       if (selectInciso?.subIncisos && selectInciso?.subIncisos.length > 0) {
         console.log("inciso", selectInciso);
@@ -114,8 +114,8 @@ const CreateEmployeeAbsence: React.FC<Props> = ({ onCloseModal, employeeAbsence,
       // console.log("subInciso", e.target.value);
       const selectSubInciso = articulosType
         .find((a) => a.name === selectedArticulo)
-        ?.incisos.find((i) => i.name === selectedInciso)
-        ?.subIncisos.find((s) => s.name === value);
+        ?.incisos?.find((i) => i.name === selectedInciso)
+        ?.subIncisos?.find((s) => s.name === value);
       // console.log("subInciso", selectSubInciso);
       // setSelectedSubInciso(value);
       setEmployeeAbsenceDataInputs((prev) => ({
@@ -178,7 +178,9 @@ const CreateEmployeeAbsence: React.FC<Props> = ({ onCloseModal, employeeAbsence,
         .then(({ data }) => {
           console.log("data", data);
           toast.success("Fecha creada exitosamente");
-          onUpdate(data.data);
+          if (data && data.data && onUpdate) {
+            onUpdate(data.data);
+          }
           onCloseModal?.();
         })
         .catch((error) => {
@@ -244,7 +246,6 @@ const CreateEmployeeAbsence: React.FC<Props> = ({ onCloseModal, employeeAbsence,
                     />
                   </div>
                 </div>
-
               </div>
               {employeeAbsenceDataInputs.type === "ARTICULO" && (
                 <div className="">
@@ -288,7 +289,7 @@ const CreateEmployeeAbsence: React.FC<Props> = ({ onCloseModal, employeeAbsence,
                             <option value="">Seleccione un Inciso</option>
                             {articulosType
                               .find((art) => art.name === selectedArticulo)
-                              ?.incisos.map((inciso) => (
+                              ?.incisos?.map((inciso) => (
                                 <option key={inciso.id} value={inciso.name}>
                                   {inciso.name}
                                 </option>
@@ -315,8 +316,8 @@ const CreateEmployeeAbsence: React.FC<Props> = ({ onCloseModal, employeeAbsence,
                             <option value="">Seleccione un SubInciso</option>
                             {articulosType
                               .find((art) => art.name === selectedArticulo)
-                              ?.incisos.find((inc) => selectedArticulo + inc.name === selectedArticulo + selectedInciso)
-                              ?.subIncisos.map((subinciso) => (
+                              ?.incisos?.find((inc) => selectedArticulo + inc.name === selectedArticulo + selectedInciso)
+                              ?.subIncisos?.map((subinciso) => (
                                 <option key={subinciso.id} value={subinciso.name}>
                                   {subinciso.name}
                                 </option>

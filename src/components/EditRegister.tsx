@@ -12,7 +12,7 @@ interface IEditRegister {
   register?: IRegistration | null;
   onCloseModal?: () => void;
 
-  onUpdate?: () => void;
+  onUpdate?: (register: IRegistration) => void;
 }
 
 const EditRegister: React.FC<IEditRegister> = ({ register, onCloseModal, onUpdate }) => {
@@ -53,11 +53,11 @@ const EditRegister: React.FC<IEditRegister> = ({ register, onCloseModal, onUpdat
   const [typeJustification, setTypeJustification] = useState(initialTypePresente);
   const [articulos, setArticulos] = useState<IArticulo[]>([]);
   const [articulosType, setArticulosType] = useState<IArticulo[]>([]);
-  const [incisos, setIncisos] = useState([]);
-  const [subIncisos, setSubIncisos] = useState([]);
+  // const [incisos, setIncisos] = useState([]);
+  // const [subIncisos, setSubIncisos] = useState([]);
 
-  const [selectedArticulo, setSelectedArticulo] = useState(null);
-  const [selectedInciso, setSelectedInciso] = useState(null);
+  const [selectedArticulo, setSelectedArticulo] = useState<string | null>(null);
+  const [selectedInciso, setSelectedInciso] = useState<string | null>(null);
 
   useEffect(() => {
     const info = async () => {
@@ -65,7 +65,7 @@ const EditRegister: React.FC<IEditRegister> = ({ register, onCloseModal, onUpdat
         .get(`${BACK_API_URL}/articulos`, { withCredentials: true })
         .then(({ data }) => {
           setArticulos(data);
-          setArticulosType(data.filter((art) => art.statusType === register?.status));
+          setArticulosType(data.filter((art: IArticulo) => art.statusType === register?.status));
         })
         .catch((error) => {
           console.error(error);
@@ -94,8 +94,8 @@ const EditRegister: React.FC<IEditRegister> = ({ register, onCloseModal, onUpdat
         register.status === "AUSENTE"
           ? initialTypeAusente
           : register.status === "PRESENTE"
-            ? initialTypePresente
-            : initialTypeNoLaborable;
+          ? initialTypePresente
+          : initialTypeNoLaborable;
       setTypeJustification(newTypeJustification);
 
       // Establecer los valores iniciales en registerData
@@ -167,7 +167,7 @@ const EditRegister: React.FC<IEditRegister> = ({ register, onCloseModal, onUpdat
     if (name === "inciso") {
       // console.log("inciso", e.target.value);
 
-      const selectInciso = articulosType.find((a) => a.name === selectedArticulo)?.incisos.find((i) => i.name === value);
+      const selectInciso = articulosType.find((a) => a.name === selectedArticulo)?.incisos?.find((i) => i.name === value);
       console.log("inciso", selectInciso);
       if (selectInciso?.subIncisos && selectInciso?.subIncisos.length > 0) {
         console.log("inciso", selectInciso);
@@ -194,8 +194,8 @@ const EditRegister: React.FC<IEditRegister> = ({ register, onCloseModal, onUpdat
       // console.log("subInciso", e.target.value);
       const selectSubInciso = articulosType
         .find((a) => a.name === selectedArticulo)
-        ?.incisos.find((i) => i.name === selectedInciso)
-        ?.subIncisos.find((s) => s.name === value);
+        ?.incisos?.find((i) => i.name === selectedInciso)
+        ?.subIncisos?.find((s) => s.name === value);
       // console.log("subInciso", selectSubInciso);
       // setSelectedSubInciso(value);
       setRegisterData((prev) => ({
@@ -227,15 +227,15 @@ const EditRegister: React.FC<IEditRegister> = ({ register, onCloseModal, onUpdat
         register?.status === "PRESENTE" && register?.articulo && value === "PRESENTE"
           ? art
           : register?.status === "AUSENTE" && register?.articulo && value === "AUSENTE"
-            ? art
-            : "null"
+          ? art
+          : "null"
       );
       setSelectedArticulo(
         register?.status === "PRESENTE" && register?.articulo && value === "PRESENTE"
           ? art
           : register?.status === "AUSENTE" && register?.articulo && value === "AUSENTE"
-            ? art
-            : null
+          ? art
+          : null
       );
       // const selectInciso = articulosType.find((a) => a.name === selectedArticulo)?.incisos.find((i) => i.name === inc);
       // // console.log("inciso asd", selectInciso);
@@ -259,22 +259,22 @@ const EditRegister: React.FC<IEditRegister> = ({ register, onCloseModal, onUpdat
           value === "AUSENTE" || value === "NO_LABORABLE"
             ? ""
             : register?.status === "AUSENTE" || register?.status === "NO_LABORABLE"
-              ? ""
-              : dayjs(register?.entryDate).format("HH:mm"),
+            ? ""
+            : dayjs(register?.entryDate).format("HH:mm"),
         exitHour:
           value === "AUSENTE" || value === "NO_LABORABLE"
             ? ""
             : register?.exitDate
-              ? dayjs(register?.exitDate).format("HH:mm")
-              : "",
+            ? dayjs(register?.exitDate).format("HH:mm")
+            : "",
         description:
           value === "PRESENTE"
             ? ""
             : value === "NO_LABORABLE" && register?.status === "NO_LABORABLE"
-              ? register?.description || ""
-              : value === "AUSENTE" && register?.status === "AUSENTE"
-                ? register?.description || ""
-                : "",
+            ? register?.description || ""
+            : value === "AUSENTE" && register?.status === "AUSENTE"
+            ? register?.description || ""
+            : "",
         articulo: art,
         inciso: inc,
         subInciso: subInc,
@@ -335,8 +335,11 @@ const EditRegister: React.FC<IEditRegister> = ({ register, onCloseModal, onUpdat
       .then(({ data }) => {
         console.log("data actualizada", data);
         toast.success("Registro actualizado exitosamente");
-        if (data.register) onUpdate(data.register);
-        if (onCloseModal) onCloseModal(false);
+        if (data && data.register && onUpdate) {
+          onUpdate(data.register);
+        }
+        // if (data.register) onUpdate(data.register);
+        if (onCloseModal) onCloseModal();
       })
       .catch((error) => {
         console.error("Error al actualizar el registro:", error.response.data.message);
@@ -453,7 +456,7 @@ const EditRegister: React.FC<IEditRegister> = ({ register, onCloseModal, onUpdat
                               <option value="">Seleccione un Inciso</option>
                               {articulosType
                                 .find((art) => art.name === selectedArticulo)
-                                ?.incisos.map((inciso) => (
+                                ?.incisos?.map((inciso) => (
                                   <option key={inciso.id} value={inciso.name}>
                                     {inciso.name}
                                   </option>
@@ -480,8 +483,8 @@ const EditRegister: React.FC<IEditRegister> = ({ register, onCloseModal, onUpdat
                               <option value="">Seleccione un SubInciso</option>
                               {articulosType
                                 .find((art) => art.name === selectedArticulo)
-                                ?.incisos.find((inc) => selectedArticulo + inc.name === selectedArticulo + selectedInciso)
-                                ?.subIncisos.map((subinciso) => (
+                                ?.incisos?.find((inc) => selectedArticulo + inc.name === selectedArticulo + selectedInciso)
+                                ?.subIncisos?.map((subinciso) => (
                                   <option key={subinciso.id} value={subinciso.name}>
                                     {subinciso.name}
                                   </option>
@@ -598,7 +601,7 @@ const EditRegister: React.FC<IEditRegister> = ({ register, onCloseModal, onUpdat
                             <option value="">Seleccione un Inciso</option>
                             {articulosType
                               .find((art) => art.name === selectedArticulo)
-                              ?.incisos.map((inciso) => (
+                              ?.incisos?.map((inciso) => (
                                 <option key={inciso.id} value={inciso.name}>
                                   {inciso.name}
                                 </option>
@@ -625,8 +628,8 @@ const EditRegister: React.FC<IEditRegister> = ({ register, onCloseModal, onUpdat
                             <option value="">Seleccione un SubInciso</option>
                             {articulosType
                               .find((art) => art.name === selectedArticulo)
-                              ?.incisos.find((inc) => selectedArticulo + inc.name === selectedArticulo + selectedInciso)
-                              ?.subIncisos.map((subinciso) => (
+                              ?.incisos?.find((inc) => selectedArticulo + inc.name === selectedArticulo + selectedInciso)
+                              ?.subIncisos?.map((subinciso) => (
                                 <option key={subinciso.id} value={subinciso.name}>
                                   {subinciso.name}
                                 </option>

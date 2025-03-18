@@ -12,7 +12,7 @@ import CreateEmployeeAbsence from "./CreateEmployeeAbsence";
 interface ModalProps {
   isVisible?: boolean;
   onClose: () => void;
-  data?: IUser | IRegistration | INonLaborDate;
+  data?: IUser | IRegistration | INonLaborDate | null;
   userId?: string | null;
   typeModal?:
     | "userRegisters"
@@ -24,7 +24,7 @@ interface ModalProps {
 
   closeOnBackdropClick?: boolean;
 
-  onUpdate?: () => void;
+  onUpdate?: (updatedRecord: INonLaborDate | IRegistration | IEmployeeAbsence) => void;
 }
 
 const useBodyScrollLock = (isLocked: boolean) => {
@@ -36,22 +36,22 @@ const useBodyScrollLock = (isLocked: boolean) => {
   }, [isLocked]);
 };
 
-interface ModalPropsMap {
-  userRegisters: { userInfo: IUser | null };
-  userDetails: { userInfo: IUser | null; onCloseModal?: (isVisible: boolean) => void };
-  createEmployee: { onCloseModal?: (isVisible: boolean) => void };
-  editRegister: { register: IRegistration | null; onCloseModal?: (isVisible: boolean) => void };
-}
+// interface ModalPropsMap {
+//   userRegisters: { userInfo: IUser | null };
+//   userDetails: { userInfo: IUser | null; onCloseModal?: (isVisible: boolean) => void };
+//   createEmployee: { onCloseModal?: (isVisible: boolean) => void };
+//   editRegister: { register: IRegistration | null; onCloseModal?: (isVisible: boolean) => void };
+// }
 
 // Mapea los componentes a sus props correctas
-const MODAL_COMPONENTS: {
-  [K in keyof ModalPropsMap]: React.FC<ModalPropsMap[K]>;
-} = {
-  userRegisters: RegistersTable,
-  userDetails: DetailsUser,
-  createEmployee: CreateUser,
-  editRegister: EditRegister,
-};
+// const MODAL_COMPONENTS: {
+//   [K in keyof ModalPropsMap]: React.FC<ModalPropsMap[K]>;
+// } = {
+//   userRegisters: RegistersTable,
+//   userDetails: DetailsUser,
+//   createEmployee: CreateUser,
+//   editRegister: EditRegister,
+// };
 
 const ModalGeneric: React.FC<ModalProps> = ({
   isVisible = false,
@@ -62,8 +62,8 @@ const ModalGeneric: React.FC<ModalProps> = ({
   closeOnBackdropClick = true,
   onUpdate,
 }) => {
-  const ModalContent = typeModal ? MODAL_COMPONENTS[typeModal] : null;
-  console.log("ModalContent", ModalContent);
+  // const ModalContent = typeModal ? MODAL_COMPONENTS[typeModal] : null;
+  // console.log("ModalContent", ModalContent);
   const dispatch = useAppDispatch();
 
   useBodyScrollLock(isVisible);
@@ -82,12 +82,12 @@ const ModalGeneric: React.FC<ModalProps> = ({
     }
   };
 
-  const modalProps =
-    typeModal === "editRegister"
-      ? { register: data as IRegistration | null }
-      : typeModal === "userDetails" || typeModal === "userRegisters"
-      ? { userInfo: data as IUser | null }
-      : {};
+  // const modalProps =
+  //   typeModal === "editRegister"
+  //     ? { register: data as IRegistration | null }
+  //     : typeModal === "userDetails" || typeModal === "userRegisters"
+  //     ? { userInfo: data as IUser | null }
+  //     : {};
 
   return (
     <div

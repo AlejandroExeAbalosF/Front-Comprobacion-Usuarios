@@ -1,5 +1,5 @@
 import { formatName } from "../utils/format";
-import { IRegistration, IUser } from "../helpers/types";
+import { IEmployeeAbsence, INonLaborDate, IRegistration, IUser } from "../helpers/types";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "sonner";
@@ -8,7 +8,7 @@ import { PhotoProvider, PhotoView } from "react-photo-view";
 import { FiEdit } from "react-icons/fi";
 import ModalGeneric from "./ModalGeneric";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
-import { updateUserFromNotification, updateUserRegister } from "../redux/slices/usersEmpSlice";
+import { updateUserFromNotification } from "../redux/slices/usersEmpSlice";
 import { IoIosClose } from "react-icons/io";
 
 const BACK_API_URL = import.meta.env.VITE_LOCAL_API_URL;
@@ -21,10 +21,10 @@ const RegistersTable: React.FC<{ userInfo?: IUser | null; onCloseModal?: () => v
   const [selectedMonth, setSelectedMonth] = useState<string>("");
   const [selectedYear, setSelectedYear] = useState<string>("");
   const [savedFilter, setSavedFilter] = useState<IRegistration[]>([]);
-  const [filterColumn, setFilterColumn] = useState({
-    type: "Ingreso",
-    order: false,
-  });
+  // const [filterColumn, setFilterColumn] = useState({
+  //   type: "Ingreso",
+  //   order: false,
+  // });
 
   const [details, setDetails] = useState<IRegistration | null>();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -34,6 +34,11 @@ const RegistersTable: React.FC<{ userInfo?: IUser | null; onCloseModal?: () => v
     setIsTypeModal(event.currentTarget.id);
     setDetails(register);
     setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false); // Cierra el modal localmente
+    // dispatch(closeModal()); // Cierra el modal en Redux
   };
 
   useEffect(() => {
@@ -103,14 +108,15 @@ const RegistersTable: React.FC<{ userInfo?: IUser | null; onCloseModal?: () => v
     }
   }, [selectedYear, months]);
 
-  const handleUpdateRegistration = (updatedRecord: IRegistration) => {
+  const handleUpdateRegistration = (updatedRecord: INonLaborDate | IRegistration | IEmployeeAbsence) => {
+    const updated = updatedRecord as IRegistration;
     const userUpdated = usersFilter.find((user) => user.id === userInfo?.id);
     // const updatedRegistrations = {
 
     // }
-    if (userUpdated && userUpdated.registrations[0].id === updatedRecord.id) {
+    if (userUpdated && userUpdated.registrations[0].id === updated.id) {
       // Nuevo objeto con la propiedad renombrada y la nueva propiedad agregada
-      const { id, ...updatedRecordWithoutId } = updatedRecord;
+      const { id, ...updatedRecordWithoutId } = updated;
       const updatedObject = {
         idR: id, // Renombrar 'id' a 'idR'
         id: userInfo?.id, // Agregar nueva propiedad 'id' con otro valor
@@ -118,14 +124,14 @@ const RegistersTable: React.FC<{ userInfo?: IUser | null; onCloseModal?: () => v
       };
       dispatch(updateUserFromNotification([updatedObject]));
     }
-    console.log("updatedRecord", updatedRecord);
-    //record.id === updatedRecord.id ? updatedRecord : record
-    setSavedFilter((prev) => prev.map((record) => (record.id === updatedRecord.id ? updatedRecord : record)));
+    console.log("updated", updated);
+    //record.id === updated.id ? updated : record
+    setSavedFilter((prev) => prev.map((record) => (record.id === updated.id ? updated : record)));
     setRegisterFilter((prev) =>
       prev.map((record) => {
-        if (record.id === updatedRecord.id) {
+        if (record.id === updated.id) {
           console.log("record", record);
-          return updatedRecord;
+          return updated;
         } else {
           return record;
         }
@@ -671,9 +677,9 @@ const RegistersTable: React.FC<{ userInfo?: IUser | null; onCloseModal?: () => v
         {isModalOpen && (
           <ModalGeneric
             isVisible={isModalOpen}
-            onClose={setIsModalOpen}
+            onClose={handleCloseModal}
             data={details}
-            typeModal={isTypeModal}
+            typeModal={isTypeModal as "editRegister"}
             onUpdate={handleUpdateRegistration}
           />
         )}

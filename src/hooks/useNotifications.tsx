@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
-import { INotificaciónData, IRegistration } from "../helpers/types";
+import { INotificaciónData } from "../helpers/types";
 import { toast } from "sonner";
 import dayjs from "dayjs";
 import { BsFillRecordFill } from "react-icons/bs";

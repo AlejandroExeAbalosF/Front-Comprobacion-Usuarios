@@ -29,7 +29,7 @@ const InitAuth = () => {
         localStorage.setItem("validateUserArGobSal_user", JSON.stringify(response.data.user));
       } catch (error) {
         dispatch(logout()); // Desloguea si el token no es válido
-        dispatch(setError({ error: error.response?.data?.message || "Error de autenticación" }));
+        if (error) dispatch(setError({ error: (error as string) || "Error de autenticación" }));
         localStorage.removeItem("validateUserArGobSal_user");
         toast.error("Error de autenticación");
       } finally {

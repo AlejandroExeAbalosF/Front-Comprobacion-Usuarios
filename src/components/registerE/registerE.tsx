@@ -20,7 +20,7 @@ const RegisterE = () => {
 
   const webcamRef = useRef<Webcam>(null);
   //   const [cameraAvailable, setCameraAvailable] = useState(false);
-  const [imgSrc, setImgSrc] = useState<string | null>(null);
+  // const [imgSrc, setImgSrc] = useState<string | null>(null);
   const [isCameraReady, setIsCameraReady] = useState(false);
 
   const [userDataInputs, setUserDataInputs] = useState(initialState);
@@ -74,9 +74,9 @@ const RegisterE = () => {
   };
 
   // Convertir Data URL a File
-  const convertDataURLToFile = (dataUrl, filename = "captured_image") => {
+  const convertDataURLToFile = (dataUrl: string, filename = "captured_image") => {
     const arr = dataUrl.split(",");
-    const mime = arr[0].match(/:(.*?);/)[1];
+    const mime = arr[0].match(/:(.*?);/)?.[1] ?? ""; //Posible inconveniente: Si mime queda como "", el código usará la extensión .png por defecto.
 
     // Diccionario para asignar la extensión según el tipo MIME
     const mimeToExt: Record<string, string> = {
@@ -99,10 +99,10 @@ const RegisterE = () => {
   };
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    capture();
+    // capture();
     console.log(userDataInputs);
     setIsLoading(true);
-    setIsMsg({ type: "loading", message: "Cargando..." });
+    setIsMsg({ type: "loading", message: "Cargando...", status: "" });
     console.log(isCameraReady);
     // if (webcamRef.current) {
 
@@ -146,7 +146,7 @@ const RegisterE = () => {
           }, 3000);
         })
         .catch((error) => {
-          setIsMsg({ type: "error", message: error.response?.data.message || "Hubo un Problema" }); //mejorar el diseño al recibir muchos errores
+          setIsMsg({ type: "error", message: error.response?.data.message || "Hubo un Problema", status: "" }); //mejorar el diseño al recibir muchos errores
           setTimeout(() => {
             setIsLoading(false);
           }, 3000);
@@ -157,7 +157,7 @@ const RegisterE = () => {
       // // setImgSrc(null);
     } else {
       // setImgSrc(null);
-      setIsMsg({ type: "error", message: "Conecte el dispositivo y/o espere un momento" });
+      setIsMsg({ type: "error", message: "Conecte el dispositivo y/o espere un momento", status: "" });
       setTimeout(() => {
         setIsLoading(false);
       }, 3000);
@@ -165,14 +165,14 @@ const RegisterE = () => {
     // console.log(isMsg);
   };
 
-  const capture = () => {
-    if (webcamRef.current) {
-      const imageSrc = webcamRef.current.getScreenshot();
+  // const capture = () => {
+  //   if (webcamRef.current) {
+  //     const imageSrc = webcamRef.current.getScreenshot();
 
-      setImgSrc(imageSrc);
-      // console.log("imagenxxx", imgSrc );
-    }
-  };
+  //     setImgSrc(imageSrc);
+  //     // console.log("imagenxxx", imgSrc );
+  //   }
+  // };
 
   return (
     <>
@@ -212,26 +212,27 @@ const RegisterE = () => {
               </div>
               <h1 className="text-2xl ">{isMsg.message}</h1>
             </section>
-          ) : isMsg.type === "success" ? isMsg.status === "TRABAJANDO" || isMsg.status === "PRESENTE" ? (
-            <section className="w-[400px] h-[500px] text-center  m-0 flex flex-col items-center justify-start bg-[#ebf5ee] shadow-xl p-24 rounded-md">
-              <div className="dummy-positioning d-flex">
-                <div className="success-icon">
-                  <div className="success-icon__tip"></div>
-                  <div className="success-icon__long"></div>
+          ) : isMsg.type === "success" ? (
+            isMsg.status === "TRABAJANDO" || isMsg.status === "PRESENTE" ? (
+              <section className="w-[400px] h-[500px] text-center  m-0 flex flex-col items-center justify-start bg-[#ebf5ee] shadow-xl p-24 rounded-md">
+                <div className="dummy-positioning d-flex">
+                  <div className="success-icon">
+                    <div className="success-icon__tip"></div>
+                    <div className="success-icon__long"></div>
+                  </div>
                 </div>
-              </div>
-              <h1 className="text-2xl ">{isMsg.message}</h1>
-            </section>
-          ) : (
-            <section className="w-[400px] h-[500px] text-center  m-0 flex flex-col items-center justify-start bg-[#f5f5eb] shadow-xl p-24 rounded-md">
-              <div className="screenAlert-icon screenAlert-warning scaleWarning">
-                <span className="screenAlert-body pulseWarningIns"></span>
-                <span className="screenAlert-dot pulseWarningIns"></span>
-              </div>
-              <h1 className="text-2xl ">{isMsg.message}</h1>
-            </section>
-          )
-            : null}
+                <h1 className="text-2xl ">{isMsg.message}</h1>
+              </section>
+            ) : (
+              <section className="w-[400px] h-[500px] text-center  m-0 flex flex-col items-center justify-start bg-[#f5f5eb] shadow-xl p-24 rounded-md">
+                <div className="screenAlert-icon screenAlert-warning scaleWarning">
+                  <span className="screenAlert-body pulseWarningIns"></span>
+                  <span className="screenAlert-dot pulseWarningIns"></span>
+                </div>
+                <h1 className="text-2xl ">{isMsg.message}</h1>
+              </section>
+            )
+          ) : null}
         </>
       ) : (
         <section className="w-[400px] h-[500px] text-center  m-0 flex flex-col items-center justify-start bg-white shadow-xl p-24 rounded-md">
@@ -244,7 +245,8 @@ const RegisterE = () => {
               value={userDataInputs.document}
               onChange={handleChange}
               className={`mt-11 block px-2 h-[35px]  text-black py-2.5  w-[200px]
-                text-sm  bg-transparent border-2  border-gray-300 appearance-none  dark:border-gray-600  focus:outline-none focus:ring-0 focus:border-[#4151cada] peer rounded-lg ${errors.document ? "focus:border-red-600 dark:border-red-600" : "focus:border-[#4151cada]"
+                text-sm  bg-transparent border-2  border-gray-300 appearance-none  dark:border-gray-600  focus:outline-none focus:ring-0 focus:border-[#4151cada] peer rounded-lg ${
+                  errors.document ? "focus:border-red-600 dark:border-red-600" : "focus:border-[#4151cada]"
                 }`}
             />
             {errors.document ? <span className="absolute  text-red-500 block w-full text-[12px]">{errors.document}</span> : null}
@@ -262,7 +264,7 @@ const RegisterE = () => {
               Continuar
             </button> */}
             <Buttonn
-              onClick={capture}
+              // onClick={capture}
               disabled={userDataInputs.document.length === 0 || Object.keys(errors).some((e) => errors[e])}
               text="Continuar"
             />

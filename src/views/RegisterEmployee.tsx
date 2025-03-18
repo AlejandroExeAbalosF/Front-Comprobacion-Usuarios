@@ -1,4 +1,4 @@
-import RegisterE from "../components/registerE/RegisterE";
+import RegisterE from "../components/registerE/registerE";
 
 export default function RegisterEmployee() {
   return (

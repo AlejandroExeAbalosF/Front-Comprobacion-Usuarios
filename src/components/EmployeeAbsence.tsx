@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { IEmployeeAbsence, IUser } from "../helpers/types";
+import { IEmployeeAbsence, INonLaborDate, IRegistration, IUser } from "../helpers/types";
 import { useAppDispatch } from "../redux/hooks";
 import { closeModal } from "../redux/slices/modalSlice";
 import ModalGeneric from "./ModalGeneric";
@@ -10,7 +10,7 @@ import dayjs from "dayjs";
 
 interface Props {
   onClose: () => void;
-  userInfo?: IUser;
+  userInfo?: IUser | null;
   typeModal?: "userRegisters" | "userDetails" | "createEmployee" | "editRegister" | "createNonLaborDate";
 
   closeOnBackdropClick?: boolean;
@@ -44,7 +44,7 @@ const EmployeeAbsence: React.FC<Props> = ({ userInfo, onClose }) => {
     }
   }, [userInfo]);
   // Función para abrir el modal y cargar datos
-  const handleOpenModal = (employeeAbsenceDate: IEmployeeAbsence | null, event: React.SyntheticEvent) => {
+  const handleOpenModal = (event: React.SyntheticEvent) => {
     console.log("id", event.currentTarget.id);
     setIsTypeModal(event.currentTarget.id);
     // setNonDateLaborDetails(nonLaborDate);
@@ -58,17 +58,18 @@ const EmployeeAbsence: React.FC<Props> = ({ userInfo, onClose }) => {
   };
   //-----------
 
-  const handleUpdateAndAdd = (updatedOrNewRecord: IEmployeeAbsence) => {
+  const handleUpdateAndAdd = (updatedOrNewRecord: INonLaborDate | IRegistration | IEmployeeAbsence) => {
+    const updatedOrNew = updatedOrNewRecord as IEmployeeAbsence;
     setEmployeeAbsenceDetails((prev) => {
       // Busca si el registro ya existe en la lista
-      const exists = prev.some((item) => item.id === updatedOrNewRecord.id);
+      const exists = prev.some((item) => item.id === updatedOrNew.id);
 
       if (exists) {
         // Si existe, actualiza el registro
-        return prev.map((item) => (item.id === updatedOrNewRecord.id ? updatedOrNewRecord : item));
+        return prev.map((item) => (item.id === updatedOrNew.id ? updatedOrNew : item));
       } else {
         // Si no existe, agrega el nuevo registro al principio de la lista
-        return [updatedOrNewRecord, ...prev];
+        return [updatedOrNew, ...prev];
       }
     });
   };
@@ -123,7 +124,7 @@ const EmployeeAbsence: React.FC<Props> = ({ userInfo, onClose }) => {
             <button
               className="rounded-md bg-blue-600 py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-blue-700 focus:shadow-none active:bg-blue-700 hover:bg-blue-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none ml-2"
               id="createEmployeeAbsence"
-              onClick={(e) => handleOpenModal(null, e)}
+              onClick={(e) => handleOpenModal(e)}
             >
               Agregar Fecha
             </button>
@@ -246,7 +247,7 @@ const EmployeeAbsence: React.FC<Props> = ({ userInfo, onClose }) => {
           onClose={handleCloseModal}
           // data={nonDateLaborDetails}
           userId={userInfo?.id}
-          typeModal={isTypeModal}
+          typeModal={isTypeModal as "createEmployeeAbsence"}
           onUpdate={handleUpdateAndAdd}
         />
       )}

@@ -1,6 +1,10 @@
-const validateInputLoginU = ({ username, password }) => {
+interface LoginInput {
+  username: string;
+  password: string;
+}
+const validateInputLoginU = ({ username, password }: LoginInput) => {
   const passwordRegExp = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*\W)(?!.*\s).{8,15}$/;
-  const onlypositivenumbers = /^[0-9]+$/;
+  // const onlypositivenumbers = /^[0-9]+$/;
   const errors = {
     username: "",
     password: "",

@@ -1,10 +1,9 @@
-import RegistrationTableR from "../components/registrationTable/RegistrationTableR";
 import Menu from "../components/Menu";
 import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "../redux/hooks";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { BrowserRouter as Router, Route, Routes, Link, useLocation, Outlet } from "react-router-dom";
+import { Route, Routes, Link } from "react-router-dom";
 import Profile from "../components/Profile";
 import NonLaborDates from "../components/NonLaborDates";
 import { BsCalendarWeek } from "react-icons/bs";
