@@ -32,37 +32,43 @@ const RegisterE = () => {
   const [cameraAvailable, setCameraAvailable] = useState<boolean | null>(null); // Estado para indicar si hay cámaras
 
   useEffect(() => {
-    // Comprobamos las cámaras al cargar el componente
-    if (typeof window !== "undefined" && navigator.mediaDevices) checkCameras();
+    const checkCameras = async () => {
+      try {
+        // Comprobamos que mediaDevices esté disponible antes de intentar acceder a él
+        if (navigator.mediaDevices && typeof navigator.mediaDevices.enumerateDevices === "function") {
+          const devices = await navigator.mediaDevices.enumerateDevices();
+          const videoDevices = devices.filter((device) => device.kind === "videoinput");
+          setCameraAvailable(videoDevices.length > 0);
+        } else {
+          console.error("navigator.mediaDevices no está disponible");
+          setCameraAvailable(false);
+        }
+      } catch (error) {
+        console.error("Error al enumerar dispositivos:", error);
+        setCameraAvailable(false);
+      }
+    };
 
-    // Escuchamos cambios en los dispositivos multimedia
     const handleDeviceChange = () => {
       console.log("Cambio detectado en dispositivos.");
       checkCameras(); // Volvemos a verificar las cámaras disponibles
     };
 
-    if (typeof window !== "undefined" && navigator.mediaDevices)
+    // Verificamos si addEventListener está disponible
+    if (navigator.mediaDevices && typeof navigator.mediaDevices.addEventListener === "function") {
       navigator.mediaDevices.addEventListener("devicechange", handleDeviceChange);
+    }
+
+    // Comprobamos las cámaras al cargar el componente
+    checkCameras();
 
     // Limpiamos el listener cuando se desmonta el componente
     return () => {
-      if (typeof window !== "undefined" && navigator.mediaDevices)
+      if (navigator.mediaDevices && typeof navigator.mediaDevices.removeEventListener === "function") {
         navigator.mediaDevices.removeEventListener("devicechange", handleDeviceChange);
+      }
     };
   }, []);
-
-  // Función para verificar las cámaras disponibles
-  const checkCameras = async () => {
-    try {
-      const devices = await navigator.mediaDevices.enumerateDevices();
-      const videoDevices = devices.filter((device) => device.kind === "videoinput");
-      //   setCameraDevices(videoDevices);
-      setCameraAvailable(videoDevices.length > 0);
-    } catch (error) {
-      console.error("Error al enumerar dispositivos:", error);
-      setCameraAvailable(false);
-    }
-  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value, name } = e.target;
