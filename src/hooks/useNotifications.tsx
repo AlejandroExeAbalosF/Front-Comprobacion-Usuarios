@@ -7,12 +7,18 @@ import { BsFillRecordFill } from "react-icons/bs";
 import { formatName } from "../utils/format";
 
 const BACK_API_URL = import.meta.env.VITE_LOCAL_API_URL;
-const socket = io(BACK_API_URL); // Asegúrate de que la URL es la correcta
+const socket = io(BACK_API_URL, {
+  transports: ["websocket"], // Usa solo WebSocket para evitar problemas con polling
+  withCredentials: true, // Permite enviar cookies si el backend usa autenticación
+}); // Asegúrate de que la URL es la correcta
 
 export function useNotifications() {
   const [notifications, setNotifications] = useState<INotificaciónData[]>([]);
 
   useEffect(() => {
+    socket.on("connect", () => {
+      console.log("Conectado al WebSocket Server");
+    });
     socket.on("employeeValidated", (data) => {
       if (data.status === "TRABAJANDO") {
         // toast.success(`Empleado ${data.name} ${data.lastName} ha ingresado`);
