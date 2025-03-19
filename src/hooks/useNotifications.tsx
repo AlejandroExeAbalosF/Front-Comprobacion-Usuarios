@@ -6,7 +6,7 @@ import dayjs from "dayjs";
 import { BsFillRecordFill } from "react-icons/bs";
 import { formatName } from "../utils/format";
 
-const BACK_API_URL = import.meta.env.VITE_LOCAL_API_URL;
+const BACK_API_URL = import.meta.env.VITE_LOCAL_WEBSOCKET_URL_BACK;
 const socket = io(BACK_API_URL, {
   transports: ["websocket"], // Usa solo WebSocket para evitar problemas con polling
   withCredentials: true, // Permite enviar cookies si el backend usa autenticación

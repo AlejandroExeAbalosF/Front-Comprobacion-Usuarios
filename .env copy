@@ -1,1 +1,3 @@
+#
 VITE_LOCAL_API_URL=http://localhost:3306
+VITE_LOCAL_WEBSOCKET_URL_BACK=ws://localhost:3000
