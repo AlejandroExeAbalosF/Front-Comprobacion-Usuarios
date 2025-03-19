@@ -236,7 +236,7 @@ const CreateUser: React.FC<CreateUserProps> = ({ onCloseModal, userInfo, setIsEd
         </>
       ) : null}
 
-      <div className="flex flex-col overflow-auto bg-white h-[700px] md:h-auto md:overflow-hidden md:flex-row w-auto p-3  shadow-md rounded-xl bg-clip-border">
+      <div className="flex flex-col overflow-auto bg-white h-[73vh]   md:flex-row w-auto p-3  shadow-md rounded-xl bg-clip-border">
         <div className="flex flex-col items-center">
           <div className="w-[380px] h-[300px] flex flex-col justify-center items-center">
             <div className="flex relative justify-center items-center  mt-1 bg-gray-400 hover:bg-[#69696965] w-[252px] h-[252px] rounded-[50%] shadow-md ">

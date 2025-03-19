@@ -7,6 +7,7 @@ import axios from "axios";
 import { useAppDispatch } from "../../redux/hooks";
 import { loginSuccess } from "../../redux/slices/authSlice";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 const BACK_API_URL = import.meta.env.VITE_LOCAL_API_URL;
 const LoginU = () => {
   const dispatch = useAppDispatch();
@@ -69,6 +70,7 @@ const LoginU = () => {
       })
       .catch((error) => {
         console.error("Error al iniciar sesión:", error);
+        toast.error(error.response.data.message || "Error al iniciar sesión");
       });
   };
   return (

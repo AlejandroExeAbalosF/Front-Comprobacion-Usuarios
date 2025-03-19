@@ -125,7 +125,7 @@ const RegistrationTableR = () => {
             user?.registrations.length > 0 && user.registrations[0].entryCapture ? user.registrations[0].entryCapture : 0
           }-${user?.registrations.length > 0 && user.registrations[0].exitCapture ? user.registrations[0].exitCapture : 0}`}
         >
-          <td className="w-[270px] p-4 border-b border-[#cfd8dc] ">
+          <td className="w-[235px] p-4 border-b border-[#cfd8dc] ">
             <div className="flex items-center gap-3 ">
               <PhotoView src={`${user.image}`}>
                 <img
@@ -135,13 +135,14 @@ const RegistrationTableR = () => {
                 />
               </PhotoView>
               <div className="flex flex-col w-[150px] sm:w-[250px]  lg:w-full">
-                <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900 overflow-hidden text-ellipsis">
-                  {formatName(user.name, user.lastName)}
-                </p>
-                <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900 ">
-                  {/* opacity-70  truncate */}
-                  {user.email}
-                </p>
+                <div className="flex flex-col h-[40px] w-[150px] overflow-hidden">
+                  <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900 overflow-hidden text-ellipsis whitespace-nowrap">
+                    {formatName(user.name, user.lastName)}
+                  </p>
+                  <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900 overflow-hidden text-ellipsis whitespace-nowrap">
+                    {user.email}
+                  </p>
+                </div>
                 <dl className="md:hidden">
                   <dt className="sr-only">Estado</dt>
                   <dd className="flex items-center justify-center">
@@ -361,7 +362,7 @@ const RegistrationTableR = () => {
   };
   //!-----------------------------------------------------------
   return (
-    <section className="2xl:w-[1500px] xl:w-[1300px] lg:w-[1000px] md:w-[800px] sm:w-[670px] w-[470px] h-[700px] max-h-[700px] ">
+    <section className="2xl:w-[1500px] xl:w-[1300px] lg:w-[1000px] md:w-[800px] sm:w-[670px] w-[410px] h-[700px] max-h-[700px] ">
       <h2 className="notificationsext-2xl ml-5  text-2xl flex  items-start">Listado de Empleados</h2>
       <div className="xs:w-4/5 m-auto my-2 relative flex flex-col w-full h-full text-gray-700 bg-white shadow-md rounded-xl bg-clip-border">
         <div className="relative h-[200px] md:h-auto mx-4 mt-4 overflow-hidden text-gray-700 bg-white rounded-none bg-clip-border">
@@ -430,7 +431,7 @@ const RegistrationTableR = () => {
             <thead className="sticky top-0 bg-white shadow-md" style={{ top: "-1.8px" }}>
               <tr className="bg-[#F5F7F8]">
                 <th
-                  className="cursor-pointer w-[200px] 2xl:w-[300px] sm:w-[150px] p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
+                  className="cursor-pointer w-[190px] 2xl:w-[300px] sm:w-[150px] p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
                   onClick={onClickName}
                 >
                   <p className="block font-sans text-sm antialiased font-bold leading-none ">Empleados</p>
