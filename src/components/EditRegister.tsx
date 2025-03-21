@@ -354,7 +354,7 @@ const EditRegister: React.FC<IEditRegister> = ({ register, onCloseModal, onUpdat
   // const p = articulos.find((art) => art.name === selectedArticulo)?.incisos;
   // console.log("p", p);
   return (
-    <div className="w-[400px] sm:w-[600px] md:w-[700px] lg:w-[800px] xl:w-[900px] 2xl:w-[1000px]  h-200">
+    <div className="w-[400px] sm:w-[600px] md:w-[700px] lg:w-[800px] xl:w-[900px] 2xl:w-[1000px]  h-auto">
       <h2 className="mt-4 text-center font-[500] text-[30px]">
         Editar Registro {register ? dayjs(register.entryDate).format("DD/MM/YYYY") : "a"}
       </h2>
@@ -364,9 +364,9 @@ const EditRegister: React.FC<IEditRegister> = ({ register, onCloseModal, onUpdat
       >
         <IoIosClose className="w-10 h-10" />
       </button>
-      <div className="flex flex-col justify-center items-center">
+      <div className="flex flex-col justify-center items-center h-[53vh] overflow-auto mb-2">
         <form onSubmit={handleSubmit} className="flex flex-col justify-center items-center">
-          <main className="w-[300px] sm:w-[500px] md:w-[600px] lg:w-[700px] xl:w-[800px] 2xl:w-[900px] h-[650px] ">
+          <main className="w-[300px] sm:w-[500px] md:w-[600px] lg:w-[700px] xl:w-[800px] 2xl:w-[900px] h-[53vh] ">
             <section>
               <div className="w-full">
                 <h3 className="text-start text-[20px]">Estado y Justificación</h3>
@@ -655,22 +655,22 @@ const EditRegister: React.FC<IEditRegister> = ({ register, onCloseModal, onUpdat
                 </div>
               )}
             </section>
+            <div className="flex justify-end items-end w-full mt-6 relative top-10">
+              <button
+                className="rounded-md bg-red-600 py-2 px-4 border text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-red-700 active:bg-red-700 ml-2"
+                type="button"
+                onClick={handleModal}
+              >
+                Cancelar
+              </button>
+              <button
+                className="rounded-md bg-green-600 py-2 px-4 border text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-green-700 active:bg-green-700 ml-2"
+                type="submit"
+              >
+                Guardar
+              </button>
+            </div>
           </main>
-          <div className="flex justify-end items-end w-full mt-6">
-            <button
-              className="rounded-md bg-red-600 py-2 px-4 border text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-red-700 active:bg-red-700 ml-2"
-              type="button"
-              onClick={handleModal}
-            >
-              Cancelar
-            </button>
-            <button
-              className="rounded-md bg-green-600 py-2 px-4 border text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-green-700 active:bg-green-700 ml-2"
-              type="submit"
-            >
-              Guardar
-            </button>
-          </div>
         </form>
       </div>
     </div>

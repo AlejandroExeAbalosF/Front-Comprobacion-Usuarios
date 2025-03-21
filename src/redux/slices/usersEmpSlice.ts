@@ -149,9 +149,9 @@ const updateRegistrations = (registrations: IRegistration[], notification: any) 
               status: notification.status,
               entryDate:
                 reg.entryDate ||
-                (notification.status === "TRABAJANDO" || notification.status === "AUSENTE" ? notification.date : undefined),
+                (notification.status === "TRABAJANDO" || notification.status === "AUSENTE" || notification.status === "NO_LABORABLE" ? notification.date : undefined),
               entryCapture: reg.entryCapture || (notification.status === "TRABAJANDO" ? notification.capture : undefined),
-              exitDate: notification.status === "PRESENTE" ? notification.date : reg.exitDate,
+              exitDate: notification.status === "PRESENTE" || notification.status === "AUSENTE" || notification.status === "NO_LABORABLE" ? notification.date : reg.exitDate,
               exitCapture: notification.status === "PRESENTE" ? notification.capture : reg.exitCapture,
               type: notification?.type,
             }
@@ -160,9 +160,9 @@ const updateRegistrations = (registrations: IRegistration[], notification: any) 
               id: notification.idR,
               status: notification.status,
               entryDate:
-                notification.status === "TRABAJANDO" || notification.status === "AUSENTE" ? notification.date : undefined,
+                notification.status === "TRABAJANDO" || notification.status === "AUSENTE" || notification.status === "NO_LABORABLE"  ? notification.date : undefined,
               entryCapture: notification.status === "TRABAJANDO" ? notification.capture : undefined,
-              exitDate: notification.status === "PRESENTE" ? notification.date : undefined,
+              exitDate: notification.status === "PRESENTE" || notification.status === "AUSENTE" || notification.status === "NO_LABORABLE" ? notification.date : undefined,
               exitCapture: notification.status === "PRESENTE" ? notification.capture : undefined,
               type: notification?.type,
             }
@@ -171,9 +171,9 @@ const updateRegistrations = (registrations: IRegistration[], notification: any) 
         {
           id: notification.idR,
           status: notification.status,
-          entryDate: notification.status === "TRABAJANDO" || notification.status === "AUSENTE" ? notification.date : undefined,
+          entryDate: notification.status === "TRABAJANDO" || notification.status === "AUSENTE" || notification.status === "NO_LABORABLE"  ? notification.date : undefined,
           entryCapture: notification.status === "TRABAJANDO" ? notification.capture : undefined,
-          exitDate: notification.status === "PRESENTE" ? notification.date : undefined,
+          exitDate: notification.status === "PRESENTE" || notification.status === "AUSENTE" || notification.status === "NO_LABORABLE" ? notification.date : undefined,
           exitCapture: notification.status === "PRESENTE" ? notification.capture : undefined,
           type: notification?.type,
         },

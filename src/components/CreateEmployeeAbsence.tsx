@@ -190,13 +190,13 @@ const CreateEmployeeAbsence: React.FC<Props> = ({ onCloseModal, employeeAbsence,
     }
   };
   return (
-    <div className="w-[900px] h-[470px]">
+    <div className="w-[400px] sm:w-[500px] md:w-[600px]  2xl:w-[900px] h-[54vh] overflow-auto">
       <h2 className="mt-4 text-center font-[500] text-[30px]">
         {employeeAbsence ? "Editar Fecha" : "Crear Nueva Fecha No Laboral"}
       </h2>
       <div className="flex flex-col justify-center items-center">
         <form onSubmit={handleSubmit} className="flex flex-col justify-center items-center">
-          <main className="w-[800px] h-[340px] ">
+          <main className="w-[300px] sm:w-[400px]  md:w-[500px] xl:w-[800px] h-[340px] ">
             <section>
               <div className="w-full">
                 <hr className="border-t border-gray-300 my-3" />
@@ -335,7 +335,7 @@ const CreateEmployeeAbsence: React.FC<Props> = ({ onCloseModal, employeeAbsence,
                         name="description"
                         value={employeeAbsenceDataInputs.description}
                         onChange={handleChange}
-                        className="w-[800px] h-[100px] p-1 mt-1 input-form-create resize-none outline-none"
+                        className="w-[300px] sm:w-[400px]  md:w-[500px] xl:w-[800px] h-[100px] p-1 mt-1 input-form-create resize-none outline-none"
                         readOnly={false}
                       />
                     </div>

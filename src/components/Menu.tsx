@@ -118,7 +118,8 @@ const Menu = () => {
         <div className="w-[200px] ml-3">
           <img
             onClick={handleStartClick}
-            src="https://www.salta.gob.ar/public/images/logo-gobierno-salta-2023.svg"
+            // src="https://www.salta.gob.ar/public/images/logo-gobierno-salta-2023.svg"
+            src="/logo-gobierno-salta-2023.svg"
             alt=""
             className="w-[200px]  sm:w-full sm:h-full cursor-pointer"
           />

@@ -205,8 +205,8 @@ const RegistersTable: React.FC<{ userInfo?: IUser | null; onCloseModal?: () => v
   };
 
   return (
-    <div className="w-[400px] sm:w-[600px] md:w-[800px] lg:w-[1000px] xl:w-[1300px] 2xl:w-[1500px] h-[900px]">
-      <div className="xs:w-4/5 m-auto my-2 relative flex flex-col w-full h-[800px] text-gray-700 bg-white shadow-md rounded-xl bg-clip-border">
+    <div className="w-[400px] sm:w-[600px] md:w-[800px]  lg:w-[1000px] xl:w-[1300px] 2xl:w-[1500px]   h-auto">
+      <div className=" m-auto my-2 relative flex flex-col w-full  overflow-auto h-[85vh] text-gray-700 bg-white shadow-md rounded-xl bg-clip-border">
         {/* <h3 className="ml-6 text-start w-[400px]"></h3> */}
         <h2 className="mt-4   text-center font-[500] text-[30px]">
           Registros del Empleado : {userInfo && formatName(userInfo?.name, userInfo?.lastName)}{" "}
@@ -217,8 +217,8 @@ const RegistersTable: React.FC<{ userInfo?: IUser | null; onCloseModal?: () => v
         >
           <IoIosClose className="w-10 h-10" />
         </button>
-        <div className="relative h-[330px] sm:h-[300px] md:h-[200px] xl:h-[110px] mx-4 mt-4 overflow-hidden  text-gray-700 bg-white rounded-none bg-clip-border">
-          <div className="flex flex-col justify-between gap-8 mb-4 md:flex-row md:items-center">
+        <div className="overflow-auto relative h-[330px] sm:h-[300px] md:h-[200px] xl:h-[110px]    text-gray-700 bg-white rounded-none bg-clip-border">
+          <div className="flex flex-col justify-between gap-8  md:flex-row md:items-center">
             <div className="flex w-full flex-col xl:flex-row gap-2 shrink-0 md:w-max">
               <div className="w-full md:w-[360px] ">
                 <div className="my-3 relative h-10  min-w-[200px]">
@@ -546,7 +546,7 @@ const RegistersTable: React.FC<{ userInfo?: IUser | null; onCloseModal?: () => v
                     <p className="lg:w-auto block font-sans text-sm text-center antialiased font-normal leading-normal text-blue-gray-900">
                       {register?.entryDate ? dayjs(register.entryDate).format("DD/MM/YYYY") : "-"}
                     </p>
-                    {register?.status !== "AUSENTE" ? (
+                    {register?.status !== "AUSENTE" && register?.status !== "NO_LABORABLE" ? (
                       <p className="lg:w-auto block font-sans text-sm text-center antialiased font-normal leading-normal text-blue-gray-900">
                         {register?.entryDate ? dayjs(register.entryDate).format("HH:mm") : "-"}
                       </p>
@@ -555,16 +555,18 @@ const RegistersTable: React.FC<{ userInfo?: IUser | null; onCloseModal?: () => v
                       <p className="lg:w-auto block font-sans text-sm text-center antialiased font-normal leading-normal text-blue-gray-900">
                         {register?.exitDate ? dayjs(register.exitDate).format("DD/MM/YYYY") : "-"}
                       </p>
-                      <p className="lg:w-auto block font-sans text-sm text-center antialiased font-normal leading-normal text-blue-gray-900">
-                        {register?.exitDate ? dayjs(register.exitDate).format("HH:mm") : "-"}
-                      </p>
+                      {register?.status !== "AUSENTE" && register?.status !== "NO_LABORABLE" ? (
+                        <p className="lg:w-auto block font-sans text-sm text-center antialiased font-normal leading-normal text-blue-gray-900">
+                          {register?.exitDate ? dayjs(register.exitDate).format("HH:mm") : "-"}
+                        </p>
+                      ) : null}
                     </div>
                   </td>
                   <td className="hidden lg:table-cell p-4 border-b border-[#cfd8dc] ">
                     <p className="lg:w-auto block font-sans text-sm text-center antialiased font-normal leading-normal text-blue-gray-900">
                       {register?.entryDate ? dayjs(register.entryDate).format("DD/MM/YYYY") : "-"}
                     </p>
-                    {register?.status !== "AUSENTE" ? (
+                    {register?.status !== "AUSENTE" && register?.status !== "NO_LABORABLE" ? (
                       <p className="lg:w-auto block font-sans text-sm text-center antialiased font-normal leading-normal text-blue-gray-900">
                         {register?.entryDate ? dayjs(register.entryDate).format("HH:mm") : "-"}
                       </p>
@@ -574,9 +576,11 @@ const RegistersTable: React.FC<{ userInfo?: IUser | null; onCloseModal?: () => v
                     <p className="lg:w-auto block font-sans text-sm text-center antialiased font-normal leading-normal text-blue-gray-900">
                       {register?.exitDate ? dayjs(register.exitDate).format("DD/MM/YYYY") : "-"}
                     </p>
-                    <p className="lg:w-auto block font-sans text-sm text-center antialiased font-normal leading-normal text-blue-gray-900">
-                      {register?.exitDate ? dayjs(register.exitDate).format("HH:mm") : "-"}
-                    </p>
+                    {register?.status !== "AUSENTE" && register?.status !== "NO_LABORABLE" ? (
+                      <p className="lg:w-auto block font-sans text-sm text-center antialiased font-normal leading-normal text-blue-gray-900">
+                        {register?.exitDate ? dayjs(register.exitDate).format("HH:mm") : "-"}
+                      </p>
+                    ) : null}
                   </td>
                   <td className="table-cell w-[100px] text-center p-4 border-b border-[#cfd8dc]">
                     {register?.status ? (

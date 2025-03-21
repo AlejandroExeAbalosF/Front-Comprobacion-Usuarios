@@ -9,6 +9,7 @@ module.exports = {
       screens: {
         '3xl': '1660px',
         // => @media (min-width: 1536px) { ... }
+        'short': { 'raw': '(max-height: 600px)' },
       },
     },
   },

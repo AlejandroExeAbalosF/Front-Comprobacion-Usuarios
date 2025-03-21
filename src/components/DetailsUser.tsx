@@ -49,7 +49,7 @@ const DetailsUser: React.FC<{ userInfo?: IUser | null; onCloseModal?: (isVisible
             </>
           ) : null}
 
-          <div className="flex flex-col overflow-auto bg-white h-[700px] md:h-auto md:overflow-hidden md:flex-row w-auto p-3  shadow-md rounded-xl bg-clip-border">
+          <div className="flex flex-col overflow-auto bg-white h-[73vh] mb-2 md:flex-row w-auto p-3  bg-clip-border">
             <div className="flex flex-col md:justify-between lg:justify-normal items-center">
               <div className="w-[380px] h-[300px] flex flex-col justify-center items-center">
                 <div className="flex justify-center items-center  mt-1 bg-[#fff8f2] w-[252px] h-[252px] rounded-[50%] shadow-md ">
@@ -118,7 +118,7 @@ const DetailsUser: React.FC<{ userInfo?: IUser | null; onCloseModal?: (isVisible
                 <EmployeeAbsence userInfo={userInfo} onClose={handleCloseEmployeeAbsences} />
               ) : (
                 <div className=" flex flex-col justify-center items-center">
-                  <main className="w-[375px]  sm:w-[590px] sm:p-4 md:p-0 md:w-[590px] lg:w-[590px] xl:w-[890px] 2xl:w-[1054px] h-[607px] overflow-auto">
+                  <main className="w-[375px]  sm:w-[590px] sm:p-4 md:p-0 md:w-[590px] lg:w-[590px] xl:w-[890px] 2xl:w-[1054px] h-auto overflow-auto">
                     <section className="">
                       <div className=" w-full">
                         <h3 className="text-start text-[20px]">Datos Personales</h3>{" "}
