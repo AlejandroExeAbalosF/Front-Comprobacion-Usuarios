@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import axios from "axios";
-import { useAppDispatch } from "../redux/hooks";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { loginSuccess, logout, setError, setLoading, restoreUser } from "../redux/slices/authSlice";
 import { toast } from "sonner";
 
@@ -8,6 +8,7 @@ const BACK_API_URL = import.meta.env.VITE_LOCAL_API_URL;
 
 const InitAuth = () => {
   const dispatch = useAppDispatch();
+  const { user } = useAppSelector((state) => state.auth);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -25,7 +26,7 @@ const InitAuth = () => {
           withCredentials: true,
         });
         // console.log("response data in init auth", response.data);
-        dispatch(loginSuccess({ user: response.data.user })); // Actualizar estado con datos del servidor
+        dispatch(loginSuccess({ user: user || response.data.user })); // Actualizar estado con datos del servidor
         localStorage.setItem("validateUserArGobSal_user", JSON.stringify(response.data.user));
       } catch (error) {
         dispatch(logout()); // Desloguea si el token no es válido

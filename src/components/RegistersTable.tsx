@@ -154,6 +154,8 @@ const RegistersTable: React.FC<{ userInfo?: IUser | null; onCloseModal?: () => v
         ? `${BACK_API_URL}/reports/pdf/porcentaje-mes`
         : idType === "excelPlanilla"
         ? `${BACK_API_URL}/reports/excel/planilla-mes`
+        : idType === "excelPorcentaje"
+        ? `${BACK_API_URL}/reports/excel/porcentaje-mes`
         : "";
     if (selectedMonth && selectedYear && userInfo) {
       const data = {
@@ -217,11 +219,11 @@ const RegistersTable: React.FC<{ userInfo?: IUser | null; onCloseModal?: () => v
         >
           <IoIosClose className="w-10 h-10" />
         </button>
-        <div className="overflow-auto relative h-[330px] sm:h-[300px] md:h-[200px] xl:h-[110px]    text-gray-700 bg-white rounded-none bg-clip-border">
+        <div className="overflow-auto relative h-[330px] sm:h-[250px] md:h-[150px] xl:h-[110px]    text-gray-700 bg-white rounded-none bg-clip-border">
           <div className="flex flex-col justify-between gap-8  md:flex-row md:items-center">
-            <div className="flex w-full flex-col xl:flex-row gap-2 shrink-0 md:w-max">
+            <div className="m-0 flex w-full flex-col xl:flex-row gap-2 shrink-0 md:w-max">
               <div className="w-full md:w-[360px] ">
-                <div className="my-3 relative h-10  min-w-[200px]">
+                <div className="ml-3 my-3 relative h-10 w-[380px] sm:w-[570px] md:w-auto  sm:min-w-[200px]">
                   <div className="absolute grid w-5 h-5 top-2/4 right-3 -translate-y-2/4 place-items-center text-blue-gray-500">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -333,7 +335,11 @@ const RegistersTable: React.FC<{ userInfo?: IUser | null; onCloseModal?: () => v
                           }`}
                         />
                       </button>
-                      <button className="relative h-[35px] max-h-[35px] w-[35px] max-w-[35px]">
+                      <button
+                        id="excelPorcentaje"
+                        onClick={handleReport}
+                        className="relative h-[35px] max-h-[35px] w-[35px] max-w-[35px]"
+                      >
                         <img
                           src="/icons/excel-document-svgrepo-com.svg"
                           alt="icono"
@@ -401,7 +407,11 @@ const RegistersTable: React.FC<{ userInfo?: IUser | null; onCloseModal?: () => v
                       }`}
                     />
                   </button>
-                  <button className="relative h-[35px] max-h-[35px] w-[35px] max-w-[35px]">
+                  <button
+                    id="excelPorcentaje"
+                    onClick={handleReport}
+                    className="relative h-[35px] max-h-[35px] w-[35px] max-w-[35px]"
+                  >
                     <img
                       src="/icons/excel-document-svgrepo-com.svg"
                       alt="icono"
@@ -435,7 +445,7 @@ const RegistersTable: React.FC<{ userInfo?: IUser | null; onCloseModal?: () => v
                   <p className=" font-sans text-sm text-center  antialiased font-bold  leading-none ">Captura de Ingreso</p>
                 </th>
                 <th
-                  className="table-cell lg:hidden cursor-pointer  p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
+                  className="table-cell lg:hidden cursor-pointer  p-1 border-y border-[#cbd5e0] bg-blue-gray-50/50"
                   // onClick={onClickName}
                 >
                   <p className="block font-sans text-sm text-center antialiased font-bold  leading-none">Ingreso/Salida</p>

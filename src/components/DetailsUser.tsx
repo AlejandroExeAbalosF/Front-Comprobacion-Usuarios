@@ -8,10 +8,11 @@ import EmployeeAbsence from "./EmployeeAbsence";
 import { IoIosClose } from "react-icons/io";
 import { useAppSelector } from "../redux/hooks";
 
-const DetailsUser: React.FC<{ userInfo?: IUser | null; onCloseModal?: (isVisible: boolean) => void }> = ({
-  userInfo,
-  onCloseModal,
-}) => {
+const DetailsUser: React.FC<{
+  userInfo?: IUser | null;
+  onCloseModal?: (isVisible: boolean) => void;
+  update?: (record: IUser) => void;
+}> = ({ userInfo, onCloseModal, update }) => {
   // console.log("userInfo", userInfo);
 
   const userRedux = useAppSelector((state) => state.auth.user); // Obtén el usuario desde Redux
@@ -31,7 +32,7 @@ const DetailsUser: React.FC<{ userInfo?: IUser | null; onCloseModal?: (isVisible
     <>
       {isEditing ? (
         <>
-          <CreateUser setIsEditing={setIsEditing} userInfo={userInfo} onCloseModal={onCloseModal} />
+          <CreateUser setIsEditing={setIsEditing} userInfo={userInfo} onCloseModal={onCloseModal} onUpdate={update} />
         </>
       ) : (
         <div className="w-[400px] sm:w-[600px] md:w-[800px] lg:w-[1000px] xl:w-[1300px] 2xl:w-[1470px] h-auto  ">
@@ -118,7 +119,7 @@ const DetailsUser: React.FC<{ userInfo?: IUser | null; onCloseModal?: (isVisible
                 <EmployeeAbsence userInfo={userInfo} onClose={handleCloseEmployeeAbsences} />
               ) : (
                 <div className=" flex flex-col justify-center items-center">
-                  <main className="w-[375px]  sm:w-[590px] sm:p-4 md:p-0 md:w-[590px] lg:w-[590px] xl:w-[890px] 2xl:w-[1054px] h-auto overflow-auto">
+                  <main className="w-[375px] sm:w-[590px] md:w-[390px] lg:w-[590px] xl:w-[890px] 2xl:w-[1054px] h-[607px] overflow-auto pl-2">
                     <section className="">
                       <div className=" w-full">
                         <h3 className="text-start text-[20px]">Datos Personales</h3>{" "}

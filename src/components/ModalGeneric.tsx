@@ -12,7 +12,7 @@ import CreateEmployeeAbsence from "./CreateEmployeeAbsence";
 interface ModalProps {
   isVisible?: boolean;
   onClose: () => void;
-  data?: IUser | IRegistration | INonLaborDate | null;
+  data?: IUser | IRegistration | INonLaborDate | IEmployeeAbsence | null;
   userId?: string | null;
   typeModal?:
     | "userRegisters"
@@ -116,7 +116,12 @@ const ModalGeneric: React.FC<ModalProps> = ({
           ) : typeModal === "createNonLaborDate" ? (
             <CreateNonLaborDate onCloseModal={onClose} onUpdate={onUpdate} nonLaborDate={data as INonLaborDate} />
           ) : typeModal === "createEmployeeAbsence" ? (
-            <CreateEmployeeAbsence onCloseModal={onClose} onUpdate={onUpdate} userId={userId} />
+            <CreateEmployeeAbsence
+              onCloseModal={onClose}
+              onUpdate={onUpdate}
+              userId={userId}
+              employeeAbsence={data as IEmployeeAbsence}
+            />
           ) : null
         ) : (
           "No se encontró el Modal"

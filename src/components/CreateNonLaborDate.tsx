@@ -83,18 +83,18 @@ const CreateNonLaborDate: React.FC<Props> = ({ onCloseModal, nonLaborDate, onUpd
     }
   };
   return (
-    <div className="w-[900px] h-100">
-      <h2 className="mt-4 text-center font-[500] text-[30px]">
+    <div className="w-[400px] sm:w-[500px] md:w-[600px] xl:w-[700px]  2xl:w-[700px]  ">
+      <h2 className="mt-4 text-center font-[500] text-[25px]">
         {nonLaborDate ? "Editar Fecha" : "Crear Nueva Fecha No Laboral"}
       </h2>
-      <div className="flex flex-col justify-center items-center">
-        <form onSubmit={handleSubmit} className="flex flex-col justify-center items-center">
-          <main className="w-[800px] h-[270px] ">
+      <div className="h-[40vh] overflow-auto">
+        <form onSubmit={handleSubmit} className="flex flex-col justify-center items-center ">
+          <main className="w-[300px] sm:w-[400px]  md:w-[500px] lg:w-[500px] xl:w-[600px] 2xl:w-[600px]   ">
             <section>
               <div className="w-full">
                 <hr className="border-t border-gray-300 my-3" />
               </div>
-              <div className="my-3 h-[120px] flex flex-col xl:flex-row xl:h-auto gap-4">
+              <div className="my-3 h-auto flex flex-col xl:flex-row xl:h-auto gap-4">
                 <div className="relative w-[250px] flex flex-col justify-start items-start">
                   <label className="form-title-md" htmlFor="type">
                     Tipo
@@ -140,21 +140,21 @@ const CreateNonLaborDate: React.FC<Props> = ({ onCloseModal, nonLaborDate, onUpd
                 </div>
               </div>
               <div className="my-3 h-[120px] flex flex-col xl:flex-row xl:h-auto gap-4">
-                <div className=" relative  w-[500px]   flex flex-col justify-start items-start">
+                <div className=" w-[200px]   flex flex-col justify-start items-start">
                   <label className="form-title-md"> Descripción</label>
 
                   <textarea
                     name="description"
                     value={nonDateLaborDataInputs.description}
                     onChange={handleChange}
-                    className="w-[500px] h-[100px] p-1 mt-1 input-form-create resize-none outline-none"
+                    className="w-[300px] sm:w-[400px]  md:w-[500px] lg:w-[500px] xl:w-[500px] 2xl:w-[600px]  h-[100px] p-1 mt-1 input-form-create resize-none outline-none"
                     readOnly={false}
                   />
                 </div>
               </div>
             </section>
           </main>
-          <div className="flex justify-end items-end w-full mt-6">
+          <div className="flex justify-end items-end w-full mt-6 mr-6 mb-6">
             <button
               className="rounded-md bg-red-600 py-2 px-4 border text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-red-700 active:bg-red-700 ml-2"
               type="button"

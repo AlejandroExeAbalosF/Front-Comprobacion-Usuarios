@@ -160,18 +160,18 @@ const CreateEmployeeAbsence: React.FC<Props> = ({ onCloseModal, employeeAbsence,
     }
     console.log("data", data);
     if (employeeAbsence) {
-      // axios
-      //   .put(`${BACK_API_URL}/non-working-day/${EmployeeAbsence.id}`, data, { withCredentials: true })
-      //   .then(({ data }) => {
-      //     console.log("data", data);
-      //     toast.success("Fecha actualizada exitosamente");
-      //     if (data.data) onUpdate(data.data);
-      //     onCloseModal?.();
-      //   })
-      //   .catch((error) => {
-      //     console.error(error.response.data.message);
-      //     toast.error(error.response.data.message);
-      //   });
+      axios
+        .put(`${BACK_API_URL}/employee-absences/${employeeAbsence.id}`, data, { withCredentials: true })
+        .then(({ data }) => {
+          console.log("data", data);
+          toast.success("Fecha actualizada exitosamente");
+          if (onUpdate) onUpdate(data.data);
+          onCloseModal?.();
+        })
+        .catch((error) => {
+          console.error(error.response.data.message);
+          toast.error(error.response.data.message);
+        });
     } else {
       axios
         .post(`${BACK_API_URL}/employee-absences/user/${userId}`, data, { withCredentials: true })
@@ -190,18 +190,18 @@ const CreateEmployeeAbsence: React.FC<Props> = ({ onCloseModal, employeeAbsence,
     }
   };
   return (
-    <div className="w-[400px] sm:w-[500px] md:w-[600px]  2xl:w-[900px] h-[54vh] overflow-auto">
-      <h2 className="mt-4 text-center font-[500] text-[30px]">
+    <div className="w-[400px] sm:w-[500px] md:w-[600px] xl:w-[700px]  2xl:w-[700px]  ">
+      <h2 className="mt-4 text-center font-[500] text-[25px]">
         {employeeAbsence ? "Editar Fecha" : "Crear Nueva Fecha No Laboral"}
       </h2>
-      <div className="flex flex-col justify-center items-center">
+      <div className="h-[40vh] overflow-auto">
         <form onSubmit={handleSubmit} className="flex flex-col justify-center items-center">
-          <main className="w-[300px] sm:w-[400px]  md:w-[500px] xl:w-[800px] h-[340px] ">
+          <main className="w-[300px] sm:w-[400px]  md:w-[500px] xl:w-[800px] ">
             <section>
               <div className="w-full">
                 <hr className="border-t border-gray-300 my-3" />
               </div>
-              <div className="my-3 h-[120px] flex flex-col xl:flex-row xl:h-auto gap-4">
+              <div className="my-3  flex flex-col xl:flex-row xl:h-auto gap-4">
                 <div className="relative w-[200px] flex flex-col justify-start items-start">
                   <label className="form-title-md" htmlFor="type">
                     Tipo
@@ -220,7 +220,7 @@ const CreateEmployeeAbsence: React.FC<Props> = ({ onCloseModal, employeeAbsence,
                     ))}
                   </select>
                 </div>
-                <div className="flex flex-row justify-start items-start gap-4">
+                <div className="flex flex-col sm:flex-row justify-start items-start gap-4">
                   <div className=" relative  w-[150px]  flex flex-col justify-start items-start">
                     <label className="form-title-md"> Fecha de inicio</label>
                     <input
@@ -249,7 +249,7 @@ const CreateEmployeeAbsence: React.FC<Props> = ({ onCloseModal, employeeAbsence,
               </div>
               {employeeAbsenceDataInputs.type === "ARTICULO" && (
                 <div className="">
-                  <div className="my-2 w-[650px]  grid grid-cols-3 grid-rows-1 gap-1">
+                  <div className="my-3  grid grid-cols-1 grid-rows-1 sm:grid-cols-2 sm:grid-rows-2 md:grid-cols-3 md:grid-rows-1 gap-4">
                     {/* Select de Artículos */}
                     <div className="w-[200px]  flex flex-col justify-start items-start">
                       <label htmlFor="articulo" className="form-title-md">
@@ -357,7 +357,7 @@ const CreateEmployeeAbsence: React.FC<Props> = ({ onCloseModal, employeeAbsence,
               </div> */}
             </section>
           </main>
-          <div className="flex justify-end items-end w-full mt-6">
+          <div className="flex justify-end items-end w-full mt-6 mr-6 mb-6">
             <button
               className="rounded-md bg-red-600 py-2 px-4 border text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-red-700 active:bg-red-700 ml-2"
               type="button"

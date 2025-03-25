@@ -24,6 +24,7 @@ const EmployeeAbsence: React.FC<Props> = ({ userInfo, onClose }) => {
   //   console.log("userInfo", userInfo);
   const dispatch = useAppDispatch();
   const [employeeAbsenceDetails, setEmployeeAbsenceDetails] = useState<IEmployeeAbsence[]>([]);
+  const [employeeAbsence, setEmployeeAbsence] = useState<IEmployeeAbsence | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isTypeModal, setIsTypeModal] = useState("");
 
@@ -44,10 +45,10 @@ const EmployeeAbsence: React.FC<Props> = ({ userInfo, onClose }) => {
     }
   }, [userInfo]);
   // Función para abrir el modal y cargar datos
-  const handleOpenModal = (event: React.SyntheticEvent) => {
+  const handleOpenModal = (employeeAbsence: IEmployeeAbsence | null, event: React.SyntheticEvent) => {
     console.log("id", event.currentTarget.id);
     setIsTypeModal(event.currentTarget.id);
-    // setNonDateLaborDetails(nonLaborDate);
+    setEmployeeAbsence(employeeAbsence);
     setIsModalOpen(true);
   };
 
@@ -124,7 +125,7 @@ const EmployeeAbsence: React.FC<Props> = ({ userInfo, onClose }) => {
             <button
               className="rounded-md bg-blue-600 py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-blue-700 focus:shadow-none active:bg-blue-700 hover:bg-blue-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none ml-2"
               id="createEmployeeAbsence"
-              onClick={(e) => handleOpenModal(e)}
+              onClick={(e) => handleOpenModal(null, e)}
             >
               Agregar Fecha
             </button>
@@ -226,9 +227,9 @@ const EmployeeAbsence: React.FC<Props> = ({ userInfo, onClose }) => {
                     <div className="flex items-center justify-center">
                       <FiEdit
                         className="w-7 h-7 cursor-pointer"
-                        id="createNonLaborDate"
+                        id="createEmployeeAbsence"
                         // onClick={(e) => handleOpenModal(null, e)}
-                        // onClick={(e) => handleOpenModal(employeeAbsence, e)}
+                        onClick={(e) => handleOpenModal(employeeAbsence, e)}
 
                         // id="editRegister"
                       />
@@ -245,7 +246,7 @@ const EmployeeAbsence: React.FC<Props> = ({ userInfo, onClose }) => {
         <ModalGeneric
           isVisible={isModalOpen}
           onClose={handleCloseModal}
-          // data={nonDateLaborDetails}
+          data={employeeAbsence}
           userId={userInfo?.id}
           typeModal={isTypeModal as "createEmployeeAbsence"}
           onUpdate={handleUpdateAndAdd}

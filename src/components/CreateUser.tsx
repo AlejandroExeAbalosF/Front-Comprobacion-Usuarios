@@ -16,8 +16,9 @@ interface CreateUserProps {
   onCloseModal?: (isVisible: boolean) => void;
   userInfo?: IUser | null;
   setIsEditing?: (isEditing: boolean) => void;
+  onUpdate?: (updatedRecord: IUser) => void;
 }
-const CreateUser: React.FC<CreateUserProps> = ({ onCloseModal, userInfo, setIsEditing }) => {
+const CreateUser: React.FC<CreateUserProps> = ({ onCloseModal, userInfo, setIsEditing, onUpdate }) => {
   const dispatch = useAppDispatch();
   const userRedux = useAppSelector((state) => state.auth.user); // Obtén el usuario desde Redux
   // const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -153,13 +154,14 @@ const CreateUser: React.FC<CreateUserProps> = ({ onCloseModal, userInfo, setIsEd
         .then(({ data }) => {
           console.log("data", data);
           toast.success("Empleado actualizado exitosamente");
-          if (onCloseModal) onCloseModal(false);
+          handleModal();
           const user: IUser = {
             ...data.user,
             registrations: userInfo.registrations,
           };
           // console.log("userActuualizado", user);
-          dispatch(addUser(user));
+          if (onUpdate && userInfo?.id === userRedux?.id) onUpdate(user);
+          else dispatch(addUser(user));
         })
         .catch((error) => {
           console.error("Error al iniciar sesión:", error.response.data.message);
@@ -318,7 +320,7 @@ const CreateUser: React.FC<CreateUserProps> = ({ onCloseModal, userInfo, setIsEd
         </div>
         <div className=" ">
           <form onSubmit={handleSubmit} className="flex  flex-col justify-center items-center ">
-            <main className="w-[375px] sm:w-[590px] md:w-[390px] lg:w-[590px] xl:w-[890px] 2xl:w-[1054px] h-[607px] overflow-auto ">
+            <main className="w-[375px] sm:w-[590px] md:w-[390px] lg:w-[590px] xl:w-[890px] 2xl:w-[1054px] h-[607px] overflow-auto pl-2 ">
               <section className="">
                 <div className=" w-full">
                   <h3 className="text-start text-[20px]">Datos Personales</h3> <hr className="border-t border-gray-300 my-3" />

@@ -6,14 +6,17 @@ import { motion } from "framer-motion";
 import { Route, Routes, Link } from "react-router-dom";
 import Profile from "../components/Profile";
 import NonLaborDates from "../components/NonLaborDates";
+// import Accordion from "../components/accordion/Accordion";
 import { BsCalendarWeek } from "react-icons/bs";
 import { ImProfile } from "react-icons/im";
 import { IoMdArrowRoundBack } from "react-icons/io";
+import Accordion from "../components/accordion/Accordion";
 
 export default function Configuration() {
   const navigate = useNavigate();
   const user = useAppSelector((state) => state.auth.user); // Obtén el usuario desde Redux
   const [activeTab, setActiveTab] = useState(location.pathname);
+  const [activeAccordion, setActiveAccordion] = useState("");
 
   useEffect(() => {
     if (user?.rol !== "admin") {
@@ -30,29 +33,37 @@ export default function Configuration() {
       path: "/configuracion/fechas_no_laboral",
     },
   ];
+
+  // Contenido de las rutas podría ser un objeto/mapa para evitar duplicación
+  const routesContent = {
+    perfil: <Profile userInfo={user} />,
+    fechas_no_laboral: <NonLaborDates />,
+    default: <div className="...">Selecciona una pestaña</div>,
+  };
+
   return (
     <>
       {/* <SideBar /> */}
       <Menu />
-      <main className=" w-auto h-[830px] text-center   flex flex-col items-center justify-start bg-white shadow-xlrounded-md  m-4">
-        <div className="relative 2xl:w-[1550px] xl:w-[1380px] lg:w-[1080px] md:w-[900px] flex flex-col  mt-5 w-full">
+      <main className=" w-auto h-[830px] text-center   flex flex-col items-center justify-start bg-white shadow-xlrounded-md sm:m-4 mt-4">
+        <div className="relative 2xl:w-[1570px] xl:w-[1380px] lg:w-[1080px] md:w-[770px] sm:w-[510px] w-[380px] flex flex-col  mt-5 ">
           {/* Icono alineado a la izquierda */}
           <IoMdArrowRoundBack
-            className="absolute  left-4 w-10 h-10 cursor-pointer"
+            className="absolute  lg:left-4 w-10 h-10 cursor-pointer"
             onClick={() => navigate("/inicio")}
             title="Volver"
           />
 
           {/* Título centrado */}
 
-          <h1 className="text-3xl ml-[80px]">Configuración</h1>
+          <h1 className="text-3xl m-0 lg:ml-[80px]">Configuración</h1>
         </div>
         <div
-          className="flex 2xl:w-[1570px] 
+          className="flex 2xl:w-[1570px] xl:w-[1380px] lg:w-[1080px] md:w-[700px]
        
         mt-4 "
         >
-          <div>
+          <div className="hidden lg:block">
             {tabs.map((tab) => (
               <Link to={tab.path} key={tab.id} style={{ textDecoration: "none" }}>
                 <motion.div
@@ -75,7 +86,8 @@ export default function Configuration() {
               </Link>
             ))}
           </div>
-          <div className="w-full bg-[#f0f8ff] overflow-hidden ">
+
+          <div className="hidden lg:block w-full bg-[#f0f8ff] overflow-hidden ">
             <Routes>
               <Route path="perfil" element={<Profile userInfo={user} />} />
               <Route path="fechas_no_laboral" element={<NonLaborDates />} />
@@ -89,6 +101,22 @@ export default function Configuration() {
               />
             </Routes>
           </div>
+        </div>
+        <div className="block lg:hidden lg:w-[1080px] md:w-[780px] sm:w-[610px] w-[400px] overflow-auto">
+          {tabs.map((tab) => (
+            // <Link to={tab.path} key={tab.id} style={{ textDecoration: "none" }}>
+            <Accordion
+              title={tab.name}
+              icon={tab.label}
+              // active={activeTab === tab.path}
+              // onClick={() => setActiveTab(tab.path)}
+              activeAccordion={activeAccordion}
+              setActiveAccordion={setActiveAccordion}
+            >
+              {routesContent[tab.id as keyof typeof routesContent] || routesContent.default}
+            </Accordion>
+            // </Link>
+          ))}
         </div>
       </main>
     </>
