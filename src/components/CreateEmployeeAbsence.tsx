@@ -190,7 +190,7 @@ const CreateEmployeeAbsence: React.FC<Props> = ({ onCloseModal, employeeAbsence,
     }
   };
   return (
-    <div className="w-[400px] sm:w-[500px] md:w-[600px] xl:w-[700px]  2xl:w-[700px]  ">
+    <div className="w-[400px] sm:w-[500px] md:w-[600px] xl:w-[700px]  2xl:w-[900px]  ">
       <h2 className="mt-4 text-center font-[500] text-[25px]">
         {employeeAbsence ? "Editar Fecha" : "Crear Nueva Fecha No Laboral"}
       </h2>

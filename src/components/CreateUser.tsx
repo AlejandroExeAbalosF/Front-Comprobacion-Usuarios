@@ -62,6 +62,7 @@ const CreateUser: React.FC<CreateUserProps> = ({ onCloseModal, userInfo, setIsEd
 
   useEffect(() => {
     const info = async () => {
+      console.log(user);
       await axios
         .get(`${BACK_API_URL}/ministries/${user?.nameMinistry}`, { withCredentials: true })
         .then(({ data }) => {
@@ -96,10 +97,12 @@ const CreateUser: React.FC<CreateUserProps> = ({ onCloseModal, userInfo, setIsEd
   }, []);
   const handleModal = () => {
     // console.log(isVisible);
-    if (userInfo && setIsEditing) {
+    if (userInfo && setIsEditing && userInfo.id === userRedux?.id) {
       setIsEditing(false);
+      console.log("setIsEditing");
     } else if (onCloseModal) {
       onCloseModal(false);
+      console.log("onCloseModal");
     }
   };
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => {
@@ -140,7 +143,7 @@ const CreateUser: React.FC<CreateUserProps> = ({ onCloseModal, userInfo, setIsEd
         ...data,
         secretariatId: secretariatsInfo && !data.secretariat ? secretariatsInfo[0].id : data.secretariatId,
       };
-
+      console.log(data);
       const formData = new FormData();
       if (userDataImage) formData.append("file", userDataImage);
       Object.entries(dataWithSecretariat).forEach(([key, value]) => {
@@ -268,55 +271,57 @@ const CreateUser: React.FC<CreateUserProps> = ({ onCloseModal, userInfo, setIsEd
               )}
             </div>
           </div>
-          <div className="w-[380px] h-[300px] flex flex-col  items-center">
-            <div>
-              <h3 className="text-start text-[20px]">Horario de Trabajo</h3>
-              <hr className="border-t border-gray-300 my-1" />
-            </div>
-            <div className="my-1 flex flex-row gap-4 ">
-              <div className=" relative  w-[150px]   flex flex-col justify-center items-center">
-                <label className="form-title-md"> Turno</label>
-                <select
-                  name="shiftId"
-                  value={userDataInputs.shiftId}
-                  className="bg-gray-50 w-[150px]  border-[#d6dadf] border-1 text-gray-900 text-sm rounded-lg focus:border-1 focus:ring-blue-500 focus:border-blue-500 block p-[7.5px]   outline-none"
-                  onChange={handleChange}
-                >
-                  {shiftsInfo?.map((shift) => (
-                    <option key={shift.id} value={shift.id}>
-                      {shift.name}
-                    </option>
-                  ))}
-                </select>
+          {userInfo?.id !== userRedux?.id ? (
+            <div className="w-[380px] h-[300px] flex flex-col  items-center">
+              <div>
+                <h3 className="text-start text-[20px]">Horario de Trabajo</h3>
+                <hr className="border-t border-gray-300 my-1" />
+              </div>
+              <div className="my-1 flex flex-row gap-4 ">
+                <div className=" relative  w-[150px]   flex flex-col justify-center items-center">
+                  <label className="form-title-md"> Turno</label>
+                  <select
+                    name="shiftId"
+                    value={userDataInputs.shiftId}
+                    className="bg-gray-50 w-[150px]  border-[#d6dadf] border-1 text-gray-900 text-sm rounded-lg focus:border-1 focus:ring-blue-500 focus:border-blue-500 block p-[7.5px]   outline-none"
+                    onChange={handleChange}
+                  >
+                    {shiftsInfo?.map((shift) => (
+                      <option key={shift.id} value={shift.id}>
+                        {shift.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+              <div className="my-1 flex flex-row gap-4 ">
+                <div className=" relative  w-[150px]   flex flex-col justify-center items-center">
+                  <label className="form-title-md"> Hora de Entrada</label>
+                  <input
+                    // id={name}
+                    type="time"
+                    name="entryHour"
+                    value={userDataInputs.entryHour}
+                    className={` px-2 h-[35px]  text-black py-2.5  w-[150px]  input-form-create`}
+                    placeholder=" "
+                    onChange={handleChange}
+                  />
+                </div>
+                <div className=" relative  w-[150px]  flex flex-col justify-center items-center">
+                  <label className="form-title-md"> Hora de Salida</label>
+                  <input
+                    // id={name}
+                    type="time"
+                    name="exitHour"
+                    value={userDataInputs.exitHour}
+                    className={` px-2 h-[35px]  text-black py-2.5  w-[150px]  input-form-create`}
+                    placeholder=" "
+                    onChange={handleChange}
+                  />
+                </div>
               </div>
             </div>
-            <div className="my-1 flex flex-row gap-4 ">
-              <div className=" relative  w-[150px]   flex flex-col justify-center items-center">
-                <label className="form-title-md"> Hora de Entrada</label>
-                <input
-                  // id={name}
-                  type="time"
-                  name="entryHour"
-                  value={userDataInputs.entryHour}
-                  className={` px-2 h-[35px]  text-black py-2.5  w-[150px]  input-form-create`}
-                  placeholder=" "
-                  onChange={handleChange}
-                />
-              </div>
-              <div className=" relative  w-[150px]  flex flex-col justify-center items-center">
-                <label className="form-title-md"> Hora de Salida</label>
-                <input
-                  // id={name}
-                  type="time"
-                  name="exitHour"
-                  value={userDataInputs.exitHour}
-                  className={` px-2 h-[35px]  text-black py-2.5  w-[150px]  input-form-create`}
-                  placeholder=" "
-                  onChange={handleChange}
-                />
-              </div>
-            </div>
-          </div>
+          ) : null}
         </div>
         <div className=" ">
           <form onSubmit={handleSubmit} className="flex  flex-col justify-center items-center ">

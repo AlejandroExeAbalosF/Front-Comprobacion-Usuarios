@@ -1,5 +1,5 @@
 import Menu from "../components/Menu";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useAppSelector } from "../redux/hooks";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
@@ -14,6 +14,7 @@ import Accordion from "../components/accordion/Accordion";
 
 export default function Configuration() {
   const navigate = useNavigate();
+  const location = useLocation(); // Obtiene la URL actual
   const user = useAppSelector((state) => state.auth.user); // Obtén el usuario desde Redux
   const [activeTab, setActiveTab] = useState(location.pathname);
   const [activeAccordion, setActiveAccordion] = useState("");
@@ -33,6 +34,16 @@ export default function Configuration() {
       path: "/configuracion/fechas_no_laboral",
     },
   ];
+
+  // Al cargar la página, buscar qué acordeón debe estar activo
+  useEffect(() => {
+    const foundTab = tabs.find((tab) => tab.path === location.pathname);
+    if (foundTab) {
+      setActiveAccordion(foundTab.name); // Activa el acordeón con el mismo nombre
+    } else {
+      setActiveAccordion("");
+    }
+  }, [location.pathname]); // Se ejecuta cada vez que cambia la URL
 
   // Contenido de las rutas podría ser un objeto/mapa para evitar duplicación
   const routesContent = {
@@ -105,16 +116,18 @@ export default function Configuration() {
         <div className="block lg:hidden lg:w-[1080px] md:w-[780px] sm:w-[610px] w-[400px] overflow-auto">
           {tabs.map((tab) => (
             // <Link to={tab.path} key={tab.id} style={{ textDecoration: "none" }}>
-            <Accordion
-              title={tab.name}
-              icon={tab.label}
-              // active={activeTab === tab.path}
-              // onClick={() => setActiveTab(tab.path)}
-              activeAccordion={activeAccordion}
-              setActiveAccordion={setActiveAccordion}
-            >
-              {routesContent[tab.id as keyof typeof routesContent] || routesContent.default}
-            </Accordion>
+            <div onClick={() => navigate(tab.path)}>
+              <Accordion
+                title={tab.name}
+                icon={tab.label}
+                // active={activeTab === tab.path}
+                // onClick={() => setActiveTab(tab.path)}
+                activeAccordion={activeAccordion}
+                setActiveAccordion={setActiveAccordion}
+              >
+                {routesContent[tab.id as keyof typeof routesContent] || routesContent.default}
+              </Accordion>
+            </div>
             // </Link>
           ))}
         </div>
