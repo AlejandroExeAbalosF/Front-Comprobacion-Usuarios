@@ -52,7 +52,6 @@ const LoginU = () => {
 
   const handleSubmit = (e: React.MouseEvent<HTMLFormElement>) => {
     e.preventDefault();
-    e.preventDefault();
     console.log(userDataInputs);
     const data = {
       user: userDataInputs.username,
@@ -62,7 +61,7 @@ const LoginU = () => {
     axios
       .post(`${BACK_API_URL}/auth/signin`, data, { withCredentials: true })
       .then(({ data }) => {
-        console.log("data", data);
+        // console.log("data", data);
         dispatch(loginSuccess({ user: data.user }));
         localStorage.setItem("validateUserArGobSal_user", JSON.stringify(data.user));
 
@@ -70,7 +69,18 @@ const LoginU = () => {
       })
       .catch((error) => {
         console.error("Error al iniciar sesión:", error);
-        toast.error(error.response.data.message || "Error al iniciar sesión");
+
+        if (axios.isAxiosError(error)) {
+          if (error.code === "ERR_NETWORK") {
+            toast.error("El servidor no está disponible. Intente más tarde.");
+          } else if (error.response) {
+            toast.error(error.response.data.message || "Error al iniciar sesión");
+          } else {
+            toast.error("Error de conexión");
+          }
+        } else {
+          toast.error("Error inesperado");
+        }
       });
   };
   return (
