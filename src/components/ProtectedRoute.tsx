@@ -1,24 +1,24 @@
 import { Navigate, Outlet } from "react-router-dom";
 import { useAppSelector } from "../redux/hooks";
 import InitAuth from "./InitAuth";
-import { useEffect, useState } from "react";
+// import { useEffect, useState } from "react";
 
 const ProtectedRoute = () => {
   const { user, loading } = useAppSelector((state) => state.auth);
-  const [showContent, setShowContent] = useState(false); // Controla el tiempo de espera
+  // const [showContent, setShowContent] = useState(false); // Controla el tiempo de espera
 
-  useEffect(() => {
-    // if (!loading) {
-    //   setShowContent(true);
-    //   return;
-    // }
+  // useEffect(() => {
+  //   // if (!loading) {
+  //   //   setShowContent(true);
+  //   //   return;
+  //   // }
 
-    const timer = setTimeout(() => {
-      setShowContent(true);
-    }, 2000); // Espera 2 segundos
+  //   const timer = setTimeout(() => {
+  //     setShowContent(true);
+  //   }, 2000); // Espera 2 segundos
 
-    return () => clearTimeout(timer);
-  }, [loading]);
+  //   return () => clearTimeout(timer);
+  // }, [loading]);
 
   return (
     <>
