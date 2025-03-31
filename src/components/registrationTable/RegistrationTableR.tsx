@@ -13,6 +13,8 @@ import ModalGeneric from "../ModalGeneric";
 import { PhotoProvider, PhotoView } from "react-photo-view";
 import { motion } from "framer-motion";
 import { closeModal } from "../../redux/slices/modalSlice";
+import { LazyLoadImage } from "react-lazy-load-image-component";
+import { MdOutlineImageNotSupported } from "react-icons/md";
 
 const RegistrationTableR = () => {
   const BACK_API_URL = import.meta.env.VITE_LOCAL_API_URL;
@@ -127,13 +129,26 @@ const RegistrationTableR = () => {
         >
           <td className="w-[235px] p-4 border-b border-[#cfd8dc] ">
             <div className="flex items-center gap-3 ">
-              <PhotoView src={`${user.image}`}>
-                <img
-                  src={user.image}
-                  alt={user.name || "user"}
-                  className=" inline-block h-12 w-12 !rounded-full object-cover  object-center  cursor-pointer"
-                />
-              </PhotoView>
+              <div className="w-[58px] h-[48px]">
+                <PhotoView src={`${user.image}`}>
+                  <LazyLoadImage
+                    className="inline-block h-12 w-12 !rounded-full object-cover  object-center  cursor-pointer"
+                    src={user.image}
+                    // threshold={40}
+                    placeholder={
+                      <div className="w-[50px] h-[50px] flex items-center justify-center">
+                        {" "}
+                        <span className="loader"></span>
+                      </div>
+                    }
+                  />
+                  {/* <img
+                    src={user.image}
+                    alt={user.name || "user"}
+                    className=" inline-block h-12 w-12 !rounded-full object-cover  object-center  cursor-pointer"
+                  /> */}
+                </PhotoView>
+              </div>
               <div className="flex flex-col w-[150px] sm:w-[250px]  lg:w-full">
                 <div className="flex flex-col h-[40px] w-[150px] overflow-hidden">
                   <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900 overflow-hidden text-ellipsis whitespace-nowrap">
@@ -232,30 +247,51 @@ const RegistrationTableR = () => {
 
           <td className="hidden xl:table-cell p-4 border-b border-[#cfd8dc]">
             {/* <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">{user.cellphone}</p> */}
-            <div className="w-[100px] h-[50px] flex items-center justify-center">
+            <div className="w-full  h-[50px] flex items-center justify-center">
               {user?.registrations.length > 0 && user.registrations[0].exitCapture ? (
                 <PhotoView src={`${user.registrations[0].exitCapture}`}>
-                  <img
+                  {/* <img
                     className="max-w-full max-h-full object-contain cursor-pointer"
                     src={`${user.registrations[0].exitCapture}`}
-                  ></img>
+                  ></img> */}
+                  <LazyLoadImage
+                    className="max-w-full max-h-full object-contain cursor-pointer"
+                    src={`${user.registrations[0].exitCapture}`}
+                    // threshold={40}
+                    placeholder={
+                      <div className="w-[50px] h-[50px] flex items-center justify-center">
+                        {" "}
+                        <span className="loader"></span>
+                      </div>
+                    }
+                  />
                 </PhotoView>
               ) : (
-                "-"
+                <MdOutlineImageNotSupported className="w-10 h-10" />
               )}
             </div>
           </td>
-          <td className="hidden xl:table-cell p-4 border-b border-[#cfd8dc]">
-            <div className="w-[100px] h-[50px] flex items-center justify-center">
+          <td className="hidden xl:table-cell p-4 border-b  border-[#cfd8dc]">
+            <div className="w-full h-[50px] flex  items-center justify-center">
               {user?.registrations.length > 0 && user.registrations[0].entryCapture ? (
                 <PhotoView src={`${user.registrations[0].entryCapture}`}>
-                  <img
+                  {/* <img
                     className="max-w-full max-h-full object-contain cursor-pointer"
                     src={`${user.registrations[0].entryCapture}`}
-                  ></img>
+                  ></img> */}
+                  <LazyLoadImage
+                    className="max-w-full max-h-full object-contain cursor-pointer"
+                    src={`${user.registrations[0].entryCapture}`}
+                    placeholder={
+                      <div className="w-[50px] h-[50px] flex items-center justify-center">
+                        {" "}
+                        <span className="loader"></span>
+                      </div>
+                    }
+                  />
                 </PhotoView>
               ) : (
-                "-"
+                <MdOutlineImageNotSupported className="w-10 h-10" />
               )}
             </div>
           </td>
@@ -449,13 +485,13 @@ const RegistrationTableR = () => {
                   <p className=" font-sans text-sm text-center lg:text-start  antialiased font-bold  leading-none ">Documento</p>
                 </th>
                 <th className="hidden xl:table-cell  w-[200px] p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50">
-                  <p className=" font-sans text-sm antialiased font-bold  leading-none ">Captura de Salida</p>
+                  <p className=" font-sans text-center text-sm antialiased font-bold  leading-none ">Captura de Salida</p>
                 </th>
                 <th
                   className="hidden xl:table-cell  w-[200px] p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"
                   onClick={onClickName}
                 >
-                  <p className=" block font-sans text-sm antialiased font-bold  leading-none ">Captura de Ingreso</p>
+                  <p className=" block font-sans text-center text-sm antialiased font-bold  leading-none ">Captura de Ingreso</p>
                 </th>
                 <th
                   className="hidden md:table-cell  w-[150px] cursor-pointer p-4 border-y border-[#cbd5e0] bg-blue-gray-50/50"

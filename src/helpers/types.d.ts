@@ -46,6 +46,9 @@ export interface IUser {
     registrations: IRegistrations[];
 
     shift: IShift;
+
+    nameSecretariat: string;
+    nameMinistry: string;
   }
 export interface IRegistration {
     id: string;

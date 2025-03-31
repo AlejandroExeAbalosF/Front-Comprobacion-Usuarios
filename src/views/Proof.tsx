@@ -5,7 +5,7 @@ export default function Proof() {
     <main className="inset-0 flex justify-center items-center  p-4 ">
       <section className="w-[1400px] h-[1500px] text-center  m-0 flex flex-col items-center justify-start bg-white shadow-xl p-24 rounded-md">
         <h1>Pagina de prueba</h1>
-        <div className="w-[400px] h-[500px]">
+        <div className="w-[100px] h-[100px]">
           <span className="loader"></span>
         </div>
 
@@ -13,7 +13,7 @@ export default function Proof() {
           <div role="status">
             <svg
               aria-hidden="true"
-              className="w-40 h-40 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
+              className="w-40 h-40 text-gray-200 animate-spin dark:text-gray-300 fill-blue-600"
               viewBox="0 0 100 101"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"

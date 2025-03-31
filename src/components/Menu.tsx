@@ -126,22 +126,16 @@ const Menu = () => {
         </div>
         <div
           ref={containerRef} // Asigna la referencia al contenedor principal
-          className="flex flex-row justify-end items-center h-full gap-4 mr-3"
+          className="flex flex-row justify-end items-center h-full gap-2 ml-3"
           onClick={handleClick} // Maneja el clic en dispositivos táctiles
           onMouseEnter={!isTouchDevice ? handleMouseEnter : undefined} // Solo aplica en dispositivos no táctiles
           onMouseLeave={!isTouchDevice ? handleMouseLeave : undefined} // Solo aplica en dispositivos no táctiles
         >
           <img src={user?.image ? user.image : ""} className="h-[45px] w-[45px] !rounded-full object-cover object-center" />
-          <div>
-            <h2 className="font-sans text-[18px] antialiased font-normal leading-normal text-blue-gray-900">
+          <div className="max-w-[170px] min-w-[120px] h-[40px] overflow-hidden flex items-center">
+            <h2 className="w-full text-sm text-center font-normal leading-5 text-blue-gray-900 break-words line-clamp-2 text-[18px]">
               {user?.name && user?.lastName ? formatName(user.name, user.lastName) : "Usuario"}
             </h2>
-            {/* <h2
-             
-              className="font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900 cursor-pointer"
-            >
-              Cerrar Sesión
-            </h2> */}
           </div>
         </div>
       </div>

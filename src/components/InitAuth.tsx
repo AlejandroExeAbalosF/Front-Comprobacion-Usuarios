@@ -25,7 +25,7 @@ const InitAuth = () => {
         const response = await axios.get(`${BACK_API_URL}/auth/validate-token`, {
           withCredentials: true,
         });
-        // console.log("response data in init auth", response.data);
+        console.log("response data in init auth", response.data);
         dispatch(loginSuccess({ user: user || response.data.user })); // Actualizar estado con datos del servidor
         localStorage.setItem("validateUserArGobSal_user", JSON.stringify(response.data.user));
       } catch (error) {

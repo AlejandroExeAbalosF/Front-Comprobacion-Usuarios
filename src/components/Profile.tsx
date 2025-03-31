@@ -25,8 +25,18 @@ const Profile: React.FC<{ userInfo?: IUser | null }> = ({ userInfo }) => {
 
   const handleUpdate = (updatedRecord: INonLaborDate | IRegistration | IEmployeeAbsence | IUser) => {
     const updated = updatedRecord as IUser;
+    const user = {
+      id: updated.id,
+      name: updated.name,
+      lastName: updated.lastName,
+      email: updated.email,
+      rol: updated.rol,
+      nameSecretariat: updated.secretariat?.name,
+      nameMinistry: updated.secretariat?.ministry?.name,
+      image: updated.image,
+    };
     setUser(updated);
-    dispatch(restoreUser({ user: updated }));
+    dispatch(restoreUser({ user: user as IUser }));
   };
   return (
     <div className="2xl:w-[1500px] xl:w-[1300px] lg:w-[1000px] md:w-[820px]  h-auto overflow-hidden">

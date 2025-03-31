@@ -21,6 +21,7 @@ const RegistersTable: React.FC<{ userInfo?: IUser | null; onCloseModal?: () => v
   const [selectedMonth, setSelectedMonth] = useState<string>("");
   const [selectedYear, setSelectedYear] = useState<string>("");
   const [savedFilter, setSavedFilter] = useState<IRegistration[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   // const [filterColumn, setFilterColumn] = useState({
   //   type: "Ingreso",
   //   order: false,
@@ -42,6 +43,7 @@ const RegistersTable: React.FC<{ userInfo?: IUser | null; onCloseModal?: () => v
   };
 
   useEffect(() => {
+    setIsLoading(true);
     if (userInfo) {
       axios
         .get(`${BACK_API_URL}/registrations/user/${userInfo?.id}`, {
@@ -54,7 +56,8 @@ const RegistersTable: React.FC<{ userInfo?: IUser | null; onCloseModal?: () => v
         })
         .catch((error) => {
           toast.error(error.response.message ?? "Error al cargar registros.");
-        });
+        })
+        .finally(() => setIsLoading(false));
     }
   }, [userInfo]);
 
@@ -425,7 +428,7 @@ const RegistersTable: React.FC<{ userInfo?: IUser | null; onCloseModal?: () => v
             </div>
           </div>
         </div>
-        <div className=" h-full  overflow-auto p-0 m-0 " style={{ scrollbarGutter: "stable" }}>
+        <div className="relative h-full  overflow-auto p-0 m-0 " style={{ scrollbarGutter: "stable" }}>
           <table className="w-full text-left table-auto min-w-max min-h-max ">
             <thead className="sticky top-0 bg-white shadow-md" style={{ top: "-1.8px" }}>
               <tr className="bg-[#F5F7F8]">
@@ -488,8 +491,14 @@ const RegistersTable: React.FC<{ userInfo?: IUser | null; onCloseModal?: () => v
                 </th>
               </tr>
             </thead>
+
             <tbody className="">
               {/*  */}
+              {isLoading && (
+                <div className="absolute  inset-0  w-[100%] flex items-center justify-center">
+                  <span className="loader_table"></span>
+                </div>
+              )}
               {registerFilter.map((register) => (
                 <tr key={register.id} className="hover:bg-slate-50 ">
                   <PhotoProvider
