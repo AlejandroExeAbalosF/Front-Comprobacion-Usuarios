@@ -19,6 +19,7 @@ const LoginU = () => {
   };
   const [userDataInputs, setUserDataInputs] = useState(initialState);
   const [errors, setErrors] = useState(initialState);
+  const [isLoading, setIsLoading] = useState(false);
 
   // useEffect(() => {
   //   const input = document.getElementById("username");
@@ -52,6 +53,8 @@ const LoginU = () => {
 
   const handleSubmit = (e: React.MouseEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setIsLoading(true);
+    console.log("entrada", isLoading);
     console.log(userDataInputs);
     const data = {
       user: userDataInputs.username,
@@ -62,6 +65,8 @@ const LoginU = () => {
       .post(`${BACK_API_URL}/auth/signin`, data, { withCredentials: true })
       .then(({ data }) => {
         // console.log("data", data);
+        setIsLoading(false);
+
         dispatch(loginSuccess({ user: data.user }));
         localStorage.setItem("validateUserArGobSal_user", JSON.stringify(data.user));
 
@@ -81,10 +86,17 @@ const LoginU = () => {
         } else {
           toast.error("Error inesperado");
         }
+        setIsLoading(false);
       });
   };
   return (
-    <form onSubmit={handleSubmit} className="mt-11">
+    <form onSubmit={handleSubmit} className="mt-11 ">
+      {isLoading && (
+        <div className="absolute  inset-0 backdrop-blur-[1px] flex items-center justify-center rounded-md bg-[rgba(255,255,255,0.39)] z-50">
+          <span className="loader_login"></span>
+          {/* <p className="text-black">Cargando...</p> */}
+        </div>
+      )}
       {dataInputs.map(({ name, placeholder, type }) => {
         return (
           <div key={name} className="relative z-0  mb-6 group ">

@@ -116,7 +116,7 @@ export default function Configuration() {
         <div className="block lg:hidden lg:w-[1080px] md:w-[780px] sm:w-[610px] w-[400px] overflow-auto">
           {tabs.map((tab) => (
             // <Link to={tab.path} key={tab.id} style={{ textDecoration: "none" }}>
-            <div onClick={() => navigate(tab.path)}>
+            <div key={tab.id} onClick={() => navigate(tab.path)}>
               <Accordion
                 title={tab.name}
                 icon={tab.label}

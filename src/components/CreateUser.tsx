@@ -156,6 +156,7 @@ const CreateUser: React.FC<CreateUserProps> = ({ onCloseModal, userInfo, setIsEd
         .put(`${BACK_API_URL}/users/update/${userInfo.id}`, formData, { withCredentials: true })
         .then(({ data }) => {
           console.log("data", data);
+
           toast.success("Empleado actualizado exitosamente");
           handleModal();
           const user: IUser = {
