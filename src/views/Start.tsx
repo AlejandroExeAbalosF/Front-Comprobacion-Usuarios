@@ -9,7 +9,7 @@ export default function Start() {
       {/* <SideBar /> */}
       <Menu />
       {/* //! scroll global menos a 769 solucionado con overflow-hidden */}
-      <main className=" w-auto h-[830px] text-center overflow-hidden  flex flex-col items-center justify-start bg-white shadow-xlrounded-md  sm:m-4 mt-4">
+      <main className=" w-auto h-[830px] text-center overflow-hidden  flex flex-col items-center justify-start bg-white shadow-xlrounded-md  lg:m-4 mt-4">
         <section className="">
           <h1 className="text-3xl   mt-5">Bienvenido</h1>
 

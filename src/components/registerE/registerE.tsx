@@ -40,17 +40,15 @@ const RegisterE = () => {
           const videoDevices = devices.filter((device) => device.kind === "videoinput");
           setCameraAvailable(videoDevices.length > 0);
         } else {
-          console.error("navigator.mediaDevices no está disponible");
           setCameraAvailable(false);
         }
       } catch (error) {
-        console.error("Error al enumerar dispositivos:", error);
+        console.error("E:", error);
         setCameraAvailable(false);
       }
     };
 
     const handleDeviceChange = () => {
-      console.log("Cambio detectado en dispositivos.");
       checkCameras(); // Volvemos a verificar las cámaras disponibles
     };
 
@@ -108,10 +106,10 @@ const RegisterE = () => {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // capture();
-    console.log(userDataInputs);
+
     setIsLoading(true);
     setIsMsg({ type: "loading", message: "Cargando...", status: "" });
-    console.log(isCameraReady);
+
     // if (webcamRef.current) {
 
     //   console.log("Captura:", imageSrc);
@@ -123,9 +121,9 @@ const RegisterE = () => {
     // console.log("Captura:", imageSrc);
     if (cameraAvailable && isCameraReady && imageSrc !== null) {
       const newRegister = Number(userDataInputs.document);
-      console.log("Captura: direta", imageSrc);
+
       const img = convertDataURLToFile(imageSrc, "file");
-      console.log("img", img);
+
       const formData = new FormData();
       formData.append("document", newRegister.toString());
       formData.append("file", img);
@@ -135,8 +133,6 @@ const RegisterE = () => {
       //   ducument: formData.get("document"),
       // };
 
-      console.log(formData);
-
       axios
         .post(`${BACK_API_URL}/registrations/dniAndCature`, formData, {
           headers: {
@@ -144,8 +140,6 @@ const RegisterE = () => {
           },
         })
         .then(({ data }) => {
-          console.log("data", data);
-          console.log(data);
           setIsMsg({ type: "success", message: data.message, status: data?.status });
           setUserDataInputs(initialState);
           setErrors(initialState);

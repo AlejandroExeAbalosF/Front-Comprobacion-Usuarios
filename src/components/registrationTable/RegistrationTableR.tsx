@@ -149,8 +149,8 @@ const RegistrationTableR = () => {
                   /> */}
                 </PhotoView>
               </div>
-              <div className="flex flex-col w-[150px] sm:w-[250px]  lg:w-full">
-                <div className="flex flex-col h-[40px] w-[150px] overflow-hidden">
+              <div className="flex flex-col w-[130px] sm:w-[200px]  lg:w-full">
+                <div className="flex flex-col h-[40px] min-w-[150px] max-w-[230px] overflow-hidden">
                   <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900 overflow-hidden text-ellipsis whitespace-nowrap">
                     {formatName(user.name, user.lastName)}
                   </p>

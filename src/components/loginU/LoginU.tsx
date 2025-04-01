@@ -54,8 +54,7 @@ const LoginU = () => {
   const handleSubmit = (e: React.MouseEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
-    console.log("entrada", isLoading);
-    console.log(userDataInputs);
+
     const data = {
       user: userDataInputs.username,
       password: userDataInputs.password,
