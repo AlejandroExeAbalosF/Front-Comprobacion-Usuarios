@@ -11,7 +11,7 @@ const socket = io(BACK_API_URL, {
   transports: ["websocket"], // Usa solo WebSocket para evitar problemas con polling
   withCredentials: true, // Permite enviar cookies si el backend usa autenticación
 }); // Asegúrate de que la URL es la correcta
-socket.emit("message", "Hola desde el cliente!", (response) => {
+socket.emit("message", "Hola desde el cliente!", (response: string) => {
   console.log(response); // "Mensaje recibido: Hola desde el cliente!"
 });
 export function useNotifications() {
